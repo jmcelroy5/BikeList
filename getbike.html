@@ -11,17 +11,17 @@
 	<body>
 		<form id="target">
 
-			<input type="text" name="bike-index-id" placeholder="Bike Index ID"></input><br><br>
+			<input id="bike_serial" type="text" name="bike-index-id" placeholder="Bike Index ID"></input><br><br>
 
 			<button type="submit"> Let's do this! </button><br><br>
 
-			<div id="bike-object"> Object will go here </div><br>
+			<div id="bike_object"> Object will go here </div><br>
 
-			<div id="bike-info"> Bike info list will go here:
-					<ul>
-						<li> Placeholder Info 1 </li>
-					</ul>
+			<div id="bike_info"> Bike info list will go here:
+					<ul></ul>
 			</div>
+
+
 
 		</form>
 		
@@ -31,9 +31,11 @@
 
 		<script>
 
+
 		$("#target").submit(function(e){
 			e.preventDefault();
-			getBike("19012387006");
+			var serial = $("#bike_serial").val();
+			getBike(serial);
 		});
 
 		function getBike(serial) {
@@ -42,12 +44,15 @@
 
 				bikeObject = data["bikes"][0]
 
-				$("#bike-object").text(JSON.stringify(bikeObject,undefined,2));
+				$("#bike_object").text(JSON.stringify(bikeObject,undefined,2));
 
 				for (var key in bikeObject){
-					$("#bike-info > ul").append("<li>" + key + ":  " + bikeObject[key] + "</li>");
+					$("#bike_info > ul").append("<li>" + key + ":  " + bikeObject[key] + "</li>");
 				}
 
+				var bikePic = $("<img>");
+				bikePic.attr('src', bikeObject["photo"]);
+				$("#bike_info").append(bikePic);
 			});
 
 		}
