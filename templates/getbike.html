@@ -44,13 +44,12 @@
 		</form>
 	
 			<div id="bike-info">
-				This stuff should not be showing at first.
 				<h1>Is this your bike?</h1>
-				<img id="bike-pic">
+				<img id="bike-pic"><br><br>
 				<div id='confirm'>
-					<form> 
-						<button action="postbike">Yes</button>
-						<button>No</button>
+					<form>
+						<button id="Yes">Yes</button>
+						<button id="No">No</button>
 					</form>	
 				</div>
 				<ul class="attr-list"></ul>
@@ -84,9 +83,15 @@
 					$("#bike-info").show();
 					var photo = bike["thumb"];
 					$("#bike-pic").attr('src', photo);
+					// add click listener to Yes/No buttons
+					$("#Yes").on("click",function(e){
+						e.preventDefault();
+						postBike(bike); 		// Why isn't this working?
+					});
+					$("#No").on("click", function(e){
+						alert("Oh, bummer!");
+					});
 				}
-				
-
 			});
 		}
 

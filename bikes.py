@@ -1,7 +1,6 @@
 import json
 
-from flask import Flask, render_template, redirect, request, flash, url_for, g
-from flask import session as flask_session
+from flask import Flask, render_template, request
 import model
 
 app = Flask(__name__)
@@ -17,10 +16,10 @@ def add_bike():
 	""" Takes bike object from BikeIndex API and adds bike info to db"""
 
 	bike_JSON= request.form.get("bike")	# Get JSON bike object from ajax ({bike: bikedata})
-	bike_dict = json.loads(bike_JSON)	# JSON string --> Python dictionary
+	bike = json.loads(bike_JSON)	# JSON string --> Python dictionary
 
 	# Pick the bike object out of the list
-	bike = bike_dict['bikes'][0]
+	# bike = bike_dict['bikes'][0]
 
 	# Verify that stolen = false before storing in database
 	stolen = bike['stolen'] 
