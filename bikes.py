@@ -19,13 +19,12 @@ def add_bike():
 	bike_JSON= request.form.get("bike")	# Get JSON bike object from ajax ({bike: bikedata})
 	bike_dict = json.loads(bike_JSON)	# JSON string --> Python dictionary
 
-	# What if no bike was found? Where do I catch that error?
-	# Will need to add a check to make sure we got 1 and only 1 bike back (exact serial match)
+	# Pick the bike object out of the list
 	bike = bike_dict['bikes'][0]
 
 	# Verify that stolen = false before storing in database
 	stolen = bike['stolen'] 
-	# What do we do if stolen = True?
+	# But what do we do if stolen = True?
 
 	# Create new bike instance for bike table
 	new_bike = model.Bike()
@@ -71,7 +70,7 @@ def add_bike():
 
 	# Add bike to session and commit changes
 	model.session.add(new_bike)
-	model.session.commit() # only call this once
+	model.session.commit() 
 
 	print bike_JSON, "added to database. Go see if it's there."
 
