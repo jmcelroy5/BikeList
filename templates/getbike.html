@@ -25,6 +25,10 @@
 		display: list-item;
 		text-align: -webkit-match-parent;
 	}
+	#bike-info{
+		display: None;
+	}
+	}
 
 	</style>
 
@@ -39,7 +43,16 @@
 
 		</form>
 	
-			<div id="bike_info">
+			<div id="bike-info">
+				This stuff should not be showing at first.
+				<h1>Is this your bike?</h1>
+				<img id="bike-pic">
+				<div id='confirm'>
+					<form> 
+						<button action="postbike">Yes</button>
+						<button>No</button>
+					</form>	
+				</div>
 				<ul class="attr-list"></ul>
 			</div>
 		
@@ -67,17 +80,10 @@
 				}
 
 				if (bike){
-					// display photo  to verify we got the right bike:
+					// display bike photo and form for verification
+					$("#bike-info").show();
 					var photo = bike["thumb"];
-					var bikePic = $("<img>");
-					bikePic.attr('src', photo);
-					$("#bike_info").append("<h1>Is this your bike?</h1>");
-					$("#bike_info").append(bikePic);
-					// final submit buttons appear
-					$("#bike_info").append("<button>Yes</button>")
-					$("#bike_info").append("<button>No</button>")
-					// If they click yes then postBike function is called and they're taken to listing form
-					// If they click no, then... well... shoot.
+					$("#bike-pic").attr('src', photo);
 				}
 				
 
