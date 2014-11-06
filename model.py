@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, ForeignKey
-from sqlalchemy import Column, Integer, String, DateTime, update
+from sqlalchemy import Column, Integer, String, DateTime, update, Boolean
 from sqlalchemy.orm import sessionmaker, relationship, backref, scoped_session 
 
 ENGINE = create_engine("sqlite:///bikelist.db", echo=False) 
@@ -16,46 +16,47 @@ Base = declarative_base()
 class Bike(Base):
 	__tablename__ = "bikes"
 
-	id = Column(Integer, primary_key = True)	# Bike Index id
-	# user_id = Column(Integer, ForeignKey('users.id'))
-	# listing_id = Column(Integer, ForeignKey('bikes.id'))
+	id = Column(Integer, primary_key = True)	# Bike Index id 
 	
-	serial = Column(String(20), nullable = False)
+	# Required attributes to add a bike to BikeIndex (according to API docs)
+	serial = Column(String(20), nullable=False)
+	manufacturer = Column(String(64), nullable=False)
+	frame_colors = Column(String(64), nullable=False)
+	rear_tire_narrow = Column(Boolean, nullable=False)
+	rear_wheel_size = Column(String(10), nullable=False) 
+	rear_wheel_size_iso_bsd = Column(Integer, nullable=False)
+
+	# Pretty certain these are inherently required
+	type_of_cycle = Column(String(20), nullable=False) # subclasses for Bike?? 
 	bikeindex_url = Column(String(64), nullable=False)
+	# stolen = Column(Integer, nullable=False)		# Not including this - all bikes should be vetted
+
+	# Attributes I might want to require for valid listing
 	photo = Column(String(64), nullable=True)
+	thumb = Column(String(64), nullable=True)
+	handlebar_type = Column(String(20), nullable=True)	
 
-	manufacturer = Column(String(64), nullable=True)
-	frame_model = Column(String(64), nullable=True)
+	# Secondary attributes
+	title = Column(String(50), nullable=True) 	# e.g."2014 Jamis Aurora (black)"
+	frame_model = Column(String(50), nullable=True)
 	year = Column(Integer, nullable=True)
-	
-	frame_colors = Column(String(64), nullable=True)
 	paint_description = Column(String(64), nullable=True)
-	
-	rear_tire_narrow = Column(String(10), nullable=True) # How to make this a boolean?
-	front_tire_narrow = Column(String(10), nullable=True) # How to make this a boolean?
-	
-	title = Column(String(64), nullable=True) # Looks like "2014 Jamis Aurora (black)"
-	
-	rear_wheel_size = Column(String(10), nullable=True) #object
-	front_wheel_size = Column(String(10), nullable=True) #object
-	handlebar_type = Column(String(20), nullable=True)	#object
-	frame_material = Column(String(20), nullable=True) 	#object
-	front_gear_type = Column(String(5), nullable=True)	#object
-	rear_gear_type = Column(String(5), nullable=True)	#object
+	front_tire_narrow = Column(Boolean, nullable=True) 
+	frame_material = Column(String(30), nullable=True) 	
+	front_wheel_size = Column(String(10), nullable=True) 
+	front_wheel_size_iso_bsd = Column(Integer, nullable=True)
+	front_gear_type = Column(String(10), nullable=True)	
+	rear_gear_type = Column(String(10), nullable=True)	
 
-	type_of_cycle = Column(String(20), nullable=False) # subclasses for Bike??
-	stolen = Column(String(10), nullable=False)	# What would happen if bike WERE stolen?!
-
-	user = relationship("User", backref=backref("bikes", order_by=id))
+	# Bike also has listings attribute
 
 class User(Base):
 	__tablename__ = "users"
 
-	id = Column(Integer, primary_key = True)	# Will this autogenerate?
-	# Get from FB: name, email, city, profile pic, etc
+	id = Column(Integer, primary_key = True)	
+	# Get user info from FB: name, email, city, profile pic, etc
 
-	# Also has listings attribute (backref)
-	# Also has bikes attribute (backref)
+	# User also has listings
 
 class Listing(Base):
 	__tablename__ = "listings"
@@ -64,10 +65,13 @@ class Listing(Base):
 	user_id = Column(Integer, ForeignKey('users.id'))
 	bike_id = Column(Integer, ForeignKey('bikes.id'))
 
-	user = relationship("User", backref=backref("listings", order_by=id))
+	user = relationship("User", backref=backref("listings"))
+	bike = relationship("Bike", backref=backref("listings"))
 
 	# post_date
 	# last_modified
+	# post_expiration
+	# post_status 			# status code to allow for incomplete/inactive listings
 	# asking_price
 	# location
 	# additional_text

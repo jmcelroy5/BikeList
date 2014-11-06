@@ -1,0 +1,42 @@
+Potential Names: Velove, BikeList
+
+Require that sellers register their bikes on BikeIndex before creating a listing. Then all I need to ask for is their bike’s serial number (so I can request the bike info via the API) plus a few pieces of listing-specific information (asking price, location, etc.). 
+
+Today:
+	- Build out Bike table in database
+	- Make JSON file to populate database (maybe 10ish bikes)
+
+MVP:
+
+Seller-side:
+* Easy sign up - Facebook OAuth
+* Link to their Bike Index registration via id or bike serial number - Bike index API
+* Listing form: contact info, asking price, location - Leaflet.js
+* Listing management: delete/modify listings, add new listing
+
+Buyer-side:
+* search for bikes by location first (zip code?)
+* see listings on a map and in list form (map and list views side by side)
+* filter search by bike attributes
+* see bike details + the seller’s Facebook profile photo
+* Sign in (with Facebook) to see the seller’s contact info
+* listing pagination (order by most recent) - or ajax request to load new ones as they scroll down (ala twitter feed)
+
+Nice-to-haves:
+
+Seller-side:
+- Suggest an asking price (will look for a data source for bike resell values)
+- Be able to save an (inactive/incomplete) listing for later
+- Listing expiration date —> notify seller via email when their listing is about to expire
+- Somehow link their listing the bike’s stock photo / specs page on bikebook.io (the bike catalogue, which I found to be lacking - only goes back a few years for most manufacturers, so it’s useless for older bikes)
+- When they delete a listing:
+	1) Ask how much they sold it for
+	2) Prompt them to change ownership on bikeindex
+
+Buyer-side:
+- detect IP address and automatically center map on user’s location
+- Save favorite bike listings
+
+Transactions:
+- Users can publicly comment on bike listings and ask the seller questions (use Disqus for this!?)
+- private messaging between buyers/sellers (this would be awesome but probably a ton of work)
