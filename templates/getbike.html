@@ -7,16 +7,19 @@
 		</title>
 
 	<style>
+	body{
+		font-family: "Open Sans",sans-serif;
+		font-weight: 300;
+	}
 	.attr-title{
 		display: inline-block;
 		margin-right: .4em;
-
+		font-weight: bold;
 	}
 	.attr-list{
 		list-style-type: none;
-		margin: 0;
 		padding: 0;
-		position: relative;
+		display: in-line;
 	}
 	.attr-list li:nth-of-type(2n-1){
 		background: #ecf0f1;
@@ -28,6 +31,15 @@
 	#bike-info{
 		display: None;
 	}
+	#bike-info > img{
+		width: 500px;
+		float: left;
+		margin: 10px;
+	}
+	h1, h2, h3, h4{
+		font-family: "Klinic",sans-serif;
+		font-weight: 400;
+		line-height: 1.2em;
 	}
 
 	</style>
@@ -44,17 +56,27 @@
 		</form>
 	
 			<div id="bike-info">
-				<h1>Is this your bike?</h1>
 				<img id="bike-pic"><br><br>
+				<h1></h1>
+				<ul class="attr-list">
+					<li id="serial"><span class="attr-title">Serial</span></li>
+					<li id="manufacturer"><span class="attr-title">Manufacturer</span></li>
+					<li id="model"><span class="attr-title">Model</span></li>
+					<li id="year"><span class="attr-title">Year</span></li>
+					<li id="material"><span class="attr-title">Frame Material</span></li>
+					<li id="handlebar"><span class="attr-title">Handlebar type</span></li>
+					<li id="wheel"><span class="attr-title">Wheel diameter</span></li>
+					<li id="color"><span class="attr-title">Primary colors</span></li>
+				</ul><br>
 				<div id='confirm'>
 					<form>
+						<h2> Is this your bike? </h2>
 						<button id="Yes">Yes</button>
 						<button id="No">No</button>
 					</form>	
 				</div>
-				<ul class="attr-list"></ul>
+
 			</div>
-		
 		<!-- jQuery v1.11.0 -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 
@@ -79,18 +101,30 @@
 				}
 
 				if (bike){
-					// display bike photo and form for verification
+					// display bike photo and specs for verification
 					$("#bike-info").show();
-					var photo = bike["thumb"];
-					$("#bike-pic").attr('src', photo);
-					// add click listener to Yes/No buttons
+					$("#bike-pic").attr('src', bike["photo"]);
+
+					$("#bike-info > h1").text(bike["title"]);
+					$("#serial").append(bike["serial"]);
+					$("#manufacturer").append(bike["manufacturer_name"]);
+					$("#model").append(bike["frame_model"]);
+					$("#year").append(bike["year"]);
+					$("#material").append(bike["frame_material"]["name"]);
+					$("#handlebar").append(bike["handlebar_type"]["name"]);
+					$("#wheel").append(bike["rear_wheel_size"]["name"]);
+					$("#color").append(bike["frame_colors"][0]);
+
+					// add click listeners to confirmation buttons
 					$("#Yes").on("click",function(e){
 						e.preventDefault();
-						postBike(bike); 		// Why isn't this working?
+						postBike(bike); 		
+						$("#bike-info").hide();
 					});
 					$("#No").on("click", function(e){
 						e.preventDefault();
-						alert("Oh, bummer!");
+						alert("Oh, bummer! Check to make sure you entered your serial number correctly.");
+						$("#bike-info").hide();
 					});
 				}
 			});
