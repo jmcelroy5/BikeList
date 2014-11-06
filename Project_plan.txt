@@ -20,7 +20,8 @@ Buyer-side:
 * filter search by bike attributes
 * see bike details + the seller’s Facebook profile photo
 * Sign in (with Facebook) to see the seller’s contact info
-* listing pagination (order by most recent) - or ajax request to load new ones as they scroll down (ala twitter feed)
+* listing pagination (order by most recent) - or ajax request to load new ones as they scroll down (a la twitter feed)
+
 
 Nice-to-haves:
 
@@ -38,5 +39,5 @@ Buyer-side:
 - Save favorite bike listings
 
 Transactions:
-- Users can publicly comment on bike listings and ask the seller questions (use Disqus for this!?)
+- Users can publicly comment on bike listings and ask the seller questions (use Disqus for this?)
 - private messaging between buyers/sellers (this would be awesome but probably a ton of work)
