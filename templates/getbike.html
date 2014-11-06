@@ -89,6 +89,7 @@
 						postBike(bike); 		// Why isn't this working?
 					});
 					$("#No").on("click", function(e){
+						e.preventDefault();
 						alert("Oh, bummer!");
 					});
 				}
