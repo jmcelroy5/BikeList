@@ -6,42 +6,8 @@
 			Sell your bike
 		</title>
 
-	<style>
-	body{
-		font-family: "Open Sans",sans-serif;
-		font-weight: 300;
-	}
-	.attr-title{
-		display: inline-block;
-		margin-right: .4em;
-		font-weight: bold;
-	}
-	.attr-list{
-		list-style-type: none;
-		padding: 0;
-		display: in-line;
-	}
-	.attr-list li:nth-of-type(2n-1){
-		background: #ecf0f1;
-	}
-	li{
-		display: list-item;
-		text-align: -webkit-match-parent;
-	}
-	#bike-info{
-		display: None;
-	}
-	#bike-info > img{
-		width: 500px;
-		float: left;
-		margin: 10px;
-	}
-	h1, h2, h3, h4{
-		font-family: "Klinic",sans-serif;
-		font-weight: 400;
-		line-height: 1.2em;
-	}
-	</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/styles.css') }}">
 
 	</head>
 
@@ -75,77 +41,7 @@
 					</form>	
 				</div>
 			</div>
-		<!-- jQuery v1.11.0 -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-
-		<script>
-
-		$("#target").submit(function(e){
-			e.preventDefault();
-			var serial = $("#bike_serial").val();
-			getBike(serial);
-		});
-
-		function getBike(serial) {
-
-			$.get("https://bikeindex.org/api/v1/bikes?serial=" + serial, function(data){
-
-				// check to make sure we got one bike back
-				if (data["bikes"].length === 1){
-					var bike = data["bikes"][0];
-				}
-				else {
-					alert("No bike with that serial number found.");
-				}
-
-				if (bike){
-					// display bike photo and specs for verification
-					$("#bike-info").show();
-					$("#bike-pic").attr('src', bike["photo"]);
-
-					$("#bike-info > h1").text(bike["title"]);
-					$("#serial").append(bike["serial"]);
-					$("#manufacturer").append(bike["manufacturer_name"]);
-					$("#model").append(bike["frame_model"]);
-					$("#year").append(bike["year"]);
-					$("#color").append(bike["frame_colors"][0]);
-					if (bike["frame_material"]){
-						$("#material").append(bike["frame_material"]["name"]);
-					}
-					if (bike["handlebar_type"]){
-						$("#handlebar").append(bike["handlebar_type"]["name"]);
-					}
-					if (bike["rear_wheel_size"]){
-						$("#wheel").append(bike["rear_wheel_size"]["name"]);	
-					}
-					
-					// add click listeners to confirmation buttons
-					$("#Yes").on("click",function(e){
-						e.preventDefault();
-						postBike(bike); 		
-						$("#bike-info").hide();
-					});
-					$("#No").on("click", function(e){
-						e.preventDefault();
-						alert("Oh, bummer! Check to make sure you entered your serial number correctly.");
-						$("#bike-info").hide();
-					});
-				}
-			});
-		}
-
-		function postBike(bike){
-			// Turn bike object into JSON string to pass to python
-			var bikedata = JSON.stringify(bike);	
-
-			$.post("/addbike", {bike: bikedata}, function(){
-				alert("Bike added to database!");	// or flash message in flask
-			});
-		}
-
-		</script>
-
+		<script src="static/js/script.js"></script>
 	</body>
-
 
 </html>

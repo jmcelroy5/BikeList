@@ -1,6 +1,6 @@
 import json
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import model
 
 app = Flask(__name__)
@@ -17,13 +17,6 @@ def add_bike():
 
 	bike_JSON= request.form.get("bike")	# Get JSON bike object from ajax ({bike: bikedata})
 	bike = json.loads(bike_JSON)	# JSON string --> Python dictionary
-
-	# Pick the bike object out of the list
-	# bike = bike_dict['bikes'][0]
-
-	# Verify that stolen = false before storing in database
-	stolen = bike['stolen'] 
-	# But what do we do if stolen = True?
 
 	# Create new bike instance for bike table
 	new_bike = model.Bike()
@@ -68,12 +61,14 @@ def add_bike():
 		new_bike.rear_gear_type = bike["rear_gear_type"].get("name", None) 
 
 	# Add bike to session and commit changes
-	model.session.add(new_bike)
-	model.session.commit() 
+	# model.session.add(new_bike)
+	# model.session.commit() 
 
-	print bike_JSON, "added to database. Go see if it's there."
+	return "Added bike to database"
 
-	return "hello"
+@app.route("/listing")
+def listing():
+	return render_template("listing_form.html")
 
 if __name__== "__main__":
 	app.run(debug = True)
