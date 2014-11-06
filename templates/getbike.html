@@ -41,7 +41,6 @@
 		font-weight: 400;
 		line-height: 1.2em;
 	}
-
 	</style>
 
 	</head>
@@ -67,7 +66,7 @@
 					<li id="handlebar"><span class="attr-title">Handlebar type</span></li>
 					<li id="wheel"><span class="attr-title">Wheel diameter</span></li>
 					<li id="color"><span class="attr-title">Primary colors</span></li>
-				</ul><br>
+				</ul>
 				<div id='confirm'>
 					<form>
 						<h2> Is this your bike? </h2>
@@ -75,7 +74,6 @@
 						<button id="No">No</button>
 					</form>	
 				</div>
-
 			</div>
 		<!-- jQuery v1.11.0 -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -110,11 +108,17 @@
 					$("#manufacturer").append(bike["manufacturer_name"]);
 					$("#model").append(bike["frame_model"]);
 					$("#year").append(bike["year"]);
-					$("#material").append(bike["frame_material"]["name"]);
-					$("#handlebar").append(bike["handlebar_type"]["name"]);
-					$("#wheel").append(bike["rear_wheel_size"]["name"]);
 					$("#color").append(bike["frame_colors"][0]);
-
+					if (bike["frame_material"]){
+						$("#material").append(bike["frame_material"]["name"]);
+					}
+					if (bike["handlebar_type"]){
+						$("#handlebar").append(bike["handlebar_type"]["name"]);
+					}
+					if (bike["rear_wheel_size"]){
+						$("#wheel").append(bike["rear_wheel_size"]["name"]);	
+					}
+					
 					// add click listeners to confirmation buttons
 					$("#Yes").on("click",function(e){
 						e.preventDefault();

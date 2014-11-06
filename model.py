@@ -20,15 +20,15 @@ class Bike(Base):
 	
 	# Required attributes to add a bike to BikeIndex (according to API docs)
 	serial = Column(String(20), nullable=False)
-	manufacturer = Column(String(64), nullable=False)
-	frame_colors = Column(String(64), nullable=False)
-	rear_tire_narrow = Column(Boolean, nullable=False)
-	rear_wheel_size = Column(String(10), nullable=False) 
-	rear_wheel_size_iso_bsd = Column(Integer, nullable=False)
+	manufacturer = Column(String(64), nullable=True)
+	frame_colors = Column(String(64), nullable=True)
+	rear_tire_narrow = Column(Boolean, nullable=True)
+	rear_wheel_size = Column(String(10), nullable=True) 
+	rear_wheel_size_iso_bsd = Column(Integer, nullable=True)
 
 	# Pretty certain these are inherently required
-	type_of_cycle = Column(String(20), nullable=False) # subclasses for Bike?? 
-	bikeindex_url = Column(String(64), nullable=False)
+	type_of_cycle = Column(String(20), nullable=True) # subclasses for Bike?? 
+	bikeindex_url = Column(String(64), nullable=True)
 	# stolen = Column(Integer, nullable=False)		# Not including this - all bikes should be vetted
 
 	# Attributes I might want to require for valid listing
