@@ -1,7 +1,9 @@
 import json
 
 from flask import Flask, render_template, request, redirect, url_for
+from flask import session as flask_session
 import model
+import datetime
 
 app = Flask(__name__)
 
@@ -58,17 +60,42 @@ def add_bike():
 		new_bike.front_gear_type = bike["front_gear_type"].get("name", None)
 	
 	if bike["rear_gear_type"] != None:
-		new_bike.rear_gear_type = bike["rear_gear_type"].get("name", None) 
+		new_bike.rear_gear_type = bike["rear_gear_type"].get("name", None)
 
 	# Add bike to session and commit changes
 	# model.session.add(new_bike)
 	# model.session.commit() 
 
+	# Store bike id in flask session (to remember it for listing)
+	flask_session["bike"] = bike["id"]
+
 	return "Added bike to database"
 
 @app.route("/listing")
-def listing():
+def listing_form():
 	return render_template("listing_form.html")
+
+@app.route("/addlisting", methods=['POST'])
+def add_listing():
+	new_listing = model.Listing()
+
+	new_listing.bike_id = flask_session["bike"]	# get bike id from flask session
+	new_listing.post_date = datetime.datetime.now()
+	new_listing.post_expiration = datetime.datetime.now() + datetime.timedelta(30) # Post expires 30 days from now
+	new_listing.post_status = "active"
+	new_listing.asking_price = request.form["price"] # FORM
+	new_listing.zipcode = request.form["zipcode"] # FORM
+	new_listing.additional_text = request.form["comments"] # FORM
+	# also need to tie the listing to the logged-in user
+
+	model.session.add(new_listing)
+	model.session.commit()
+
+	return redirect(url_for("listing_success"))	# later this will flash message and route to live listing or user account
+
+@app.route("/listingsuccess") 
+def listing_success():
+	return render_template("listing_success.html")
 
 if __name__== "__main__":
 	app.run(debug = True)

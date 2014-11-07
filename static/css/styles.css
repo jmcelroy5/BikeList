@@ -1,0 +1,40 @@
+body{
+	font-family: "Open Sans",sans-serif;
+	font-weight: 300;
+}
+
+.attr-title{
+	display: inline-block;
+	margin-right: .4em;
+	font-weight: bold;
+}
+
+.attr-list{
+	list-style-type: none;
+	padding: 0;
+	display: in-line;
+}
+
+.attr-list li:nth-of-type(2n-1){
+	background: #ecf0f1;
+}
+
+li{
+	display: list-item;
+	text-align: -webkit-match-parent;
+}
+
+#bike-info{
+	display: None;
+}
+
+#bike-info > img{
+	width: 500px;
+	float: left;
+	margin: 10px;
+}
+h1, h2, h3, h4{
+	font-family: "Klinic",sans-serif;
+	font-weight: 400;
+	line-height: 1.2em;
+}

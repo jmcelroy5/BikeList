@@ -1,7 +1,8 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine, ForeignKey
+from sqlalchemy import create_engine, ForeignKey, UniqueConstraint
 from sqlalchemy import Column, Integer, String, DateTime, update, Boolean
 from sqlalchemy.orm import sessionmaker, relationship, backref, scoped_session 
+import datetime
 
 ENGINE = create_engine("sqlite:///bikelist.db", echo=False) 
 session = scoped_session(sessionmaker(bind=ENGINE, autocommit = False, autoflush = False))
@@ -62,19 +63,18 @@ class Listing(Base):
 	__tablename__ = "listings"
 
 	id = Column(Integer, primary_key = True)	# Will this autogenerate?
-	user_id = Column(Integer, ForeignKey('users.id'))
-	bike_id = Column(Integer, ForeignKey('bikes.id'))
+	# user_id = Column(Integer, ForeignKey('users.id'))
+	bike_id = Column(Integer, ForeignKey('bikes.id'), unique=True, nullable=False)
 
-	user = relationship("User", backref=backref("listings"))
+	# user = relationship("User", backref=backref("listings"))
 	bike = relationship("Bike", backref=backref("listings"))
 
-	# post_date
-	# last_modified
-	# post_expiration
-	# post_status 			# status code to allow for incomplete/inactive listings
-	# asking_price
-	# location
-	# additional_text
+	post_date = Column(DateTime, nullable=False)
+	post_expiration = Column(DateTime, nullable=True)
+	post_status = Column(String(15), nullable=True)		# status code to allow for incomplete/inactive listings
+	asking_price = Column(Integer, nullable=True)
+	zipcode = Column(Integer, nullable=True)
+	additional_text = Column(String(500),nullable=True)
 
 def create_tables():
     engine = create_engine("sqlite:///bikelist.db", echo=True)
