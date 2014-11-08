@@ -11,3 +11,23 @@ API RESPONSE FOR NOT STOLEN BIKE
 https://bikeindex.org/api/v1/bikes?serial=19012387006
 
 {"bikes":[{"id":33874,"serial":"19012387006","registration_created_at":"2014-10-25T19:18:13-05:00","registration_updated_at":"2014-11-05T17:11:17-06:00","url":"https://bikeindex.org/bikes/33874","api_url":"https://bikeindex.org/api/v1/bikes/33874","manufacturer_name":"Cannondale","manufacturer_id":62,"frame_colors":["Silver or Gray"],"paint_description":null,"stolen":false,"name":"Mid-1980s  Cannondale Touring Machine, Gunmetal Gray","year":1985,"frame_model":"ST500","description":"Bought this refurbished bike from Refried Cycles in the Mission for $500","rear_tire_narrow":true,"front_tire_narrow":true,"photo":"https://bikeindex.s3.amazonaws.com/uploads/Pu/15506/large_Photo_Oct_25__2_23_07_PM.jpg","thumb":"https://bikeindex.s3.amazonaws.com/uploads/Pu/15506/small_Photo_Oct_25__2_23_07_PM.jpg","title":"1985 Cannondale ST500 (silver or gray)","type_of_cycle":"Bike","rear_wheel_size":{"iso_bsd":622,"name":"700 C","description":"700 C, 29in mountain bikes (Standard size)"},"front_wheel_size":{"iso_bsd":622,"name":"700 C","description":"700 C, 29in mountain bikes (Standard size)"},"handlebar_type":{"name":"Drop","slug":"drop"},"frame_material":{"name":"Aluminum","slug":"aluminum"},"front_gear_type":{"name":"3"},"rear_gear_type":{"name":"6"},"stolen_record":null}]}
+
+GOOGLE MAPS GEOCODING API RESPONSE
+
+results[]: {
+ types[]: string,
+ formatted_address: string,
+ address_components[]: {
+   short_name: string,
+   long_name: string,
+   postcode_localities[]: string,
+   types[]: string
+ },
+ partial_match: boolean,
+ geometry: {
+   location: LatLng,
+   location_type: GeocoderLocationType
+   viewport: LatLngBounds,
+   bounds: LatLngBounds
+ }
+}

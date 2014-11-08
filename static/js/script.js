@@ -4,6 +4,7 @@ $("#target").on("click",function(e){
 	getBike(serial);
 });
 
+
 function getBike(serial) {
 
 	$.get("https://bikeindex.org/api/v1/bikes?serial=" + serial, function(data){

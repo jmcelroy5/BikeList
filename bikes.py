@@ -1,9 +1,9 @@
-import json
-
 from flask import Flask, render_template, request, redirect, url_for
 from flask import session as flask_session
-import model
 import datetime
+import json
+import model
+import os,sys
 
 app = Flask(__name__)
 
@@ -78,6 +78,9 @@ def listing_form():
 @app.route("/addlisting", methods=['POST'])
 def add_listing():
 	new_listing = model.Listing()
+
+	geocode_api_key = os.environ.get("GOOGLE_GEOCODING_API_KEY")
+	# make request to google...?
 
 	new_listing.bike_id = flask_session["bike"]	# get bike id from flask session
 	new_listing.post_date = datetime.datetime.now()
