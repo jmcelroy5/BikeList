@@ -16,14 +16,14 @@
 	</head>
 
 	<body>
-		<form id="listing-form" action="/addlisting" method='POST'>
+		<form id="listing-form" action="#" method='POST'>
 			<h1> List your bike </h1>
 			asking price
-			$ <input type="text" name="price"></input><br><br>  <!--Numbers only-->
-			your general location
+			$ <input id="price"type="text" name="price"></input><br><br>  <!--Numbers only-->
+			your address or cross streets
 			<input id="location" type="text" name="zipcode"></input><br><br>
 			anything else you want to say?<br><br>
-			<textarea rows="4" cols="50" name="comments" placeholder="What do you love about this bike?"></textarea><br><br>
+			<textarea id="comments" rows="4" cols="50" name="comments" placeholder="What do you love about this bike?"></textarea><br><br>
 			<input type="submit" value="Finish Listing"></input>
 		</form>
 		<div id="mapbox">
@@ -47,25 +47,46 @@
 
    	google.maps.event.addDomListener(window, 'load', initialize);
 
-
     $("#location").on("blur",function(e){
    		var location = document.getElementById("location").value;
    		placeMarker(location);
-   		$('#location').addClass('disabled').attr('disabled',true);
     });
 
+    $("#listing-form").on("submit", function(e){
+    	// Doing form submit via AJAX bc I want to send marker coordinates for location instead of what's in the form field
+    	e.preventDefault();
+    	var price = document.getElementById("price").value;
+    	var comments = document.getElementById("comments").value;
+		var latitude = marker.position["k"];
+		var longitude = marker.position["B"];
+
+     	$.post("/addlisting", {
+     		price: price,
+     		comments: comments,
+     		latitude: latitude,
+     		longitude: longitude
+     	}, function(data){
+     		window.location.replace("/listingsuccess");
+     	});
+    });
+
+    var marker;
+
   	function placeMarker(location){
-  		geocoder.geocode( {'address': location }, function(results){
+  		geocoder.geocode( {address: location}, function(results){
       		latLong = results[0].geometry.location;
       		map.setCenter(latLong);
-  		
-  			var marker = new google.maps.Marker({
+
+  			// If there is already a marker, delete it
+  			if (marker){
+  				marker.setMap(null);
+  				marker = null;
+  			}
+  			// create new marker
+  			marker = new google.maps.Marker({
 				position: latLong,
 				map: map,
-				draggable: true,
-				title:"Hello world!"
 			});
-			$('#mapbox').prepend("<p>Drag the marker to edit your location.</p>");
   		});
       }
 

@@ -79,22 +79,20 @@ def listing_form():
 def add_listing():
 	new_listing = model.Listing()
 
-	geocode_api_key = os.environ.get("GOOGLE_GEOCODING_API_KEY")
-	# make request to google...?
-
 	new_listing.bike_id = flask_session["bike"]	# get bike id from flask session
 	new_listing.post_date = datetime.datetime.now()
 	new_listing.post_expiration = datetime.datetime.now() + datetime.timedelta(30) # Post expires 30 days from now
 	new_listing.post_status = "active"
 	new_listing.asking_price = request.form["price"] # FORM
-	new_listing.zipcode = request.form["zipcode"] # FORM
+	new_listing.latitude = request.form["latitude"] # FORM
+	new_listing.longitude = request.form["longitude"] # FORM
 	new_listing.additional_text = request.form["comments"] # FORM
 	# also need to tie the listing to the logged-in user
 
 	model.session.add(new_listing)
 	model.session.commit()
 
-	return redirect(url_for("listing_success"))	# later this will flash message and route to live listing or user account
+	return "Listing added" # later this will flash message or something
 
 @app.route("/listingsuccess") 
 def listing_success():

@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, ForeignKey, UniqueConstraint
-from sqlalchemy import Column, Integer, String, DateTime, update, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, update, Boolean, Float
 from sqlalchemy.orm import sessionmaker, relationship, backref, scoped_session 
 import datetime
 
@@ -73,7 +73,8 @@ class Listing(Base):
 	post_expiration = Column(DateTime, nullable=True)
 	post_status = Column(String(15), nullable=True)		# status code to allow for incomplete/inactive listings
 	asking_price = Column(Integer, nullable=True)
-	zipcode = Column(Integer, nullable=True)
+	latitude = Column(Float, nullable=True)
+	longitude = Column(Float, nullable=True)
 	additional_text = Column(String(500),nullable=True)
 
 def create_tables():
