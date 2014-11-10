@@ -31,11 +31,11 @@ li{
 	background: #ecf0f1;
 }
 
-#bike-info{
+#verify-bike{
 	display: None;
 }
 
-#bike-info > img{
+.bike-info > img{
 	width: 500px;
 	float: left;
 	margin: 10px;
