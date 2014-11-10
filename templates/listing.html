@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	
+	<div class="bike-info">	
+		<h1> {{ bike.title }}</h1>
+		<img src={{ bike.photo }}><br><br>
+		<ul class="attr-list">
+			<li id="serial"><span class="attr-title">Serial</span>{{ bike.serial }}</li>
+			<li id="manufacturer"><span class="attr-title">Manufacturer</span>{{ bike.manufacturer }}</li>
+			<li id="model"><span class="attr-title">Model</span> {{ bike.frame_model }} </li>
+			<li id="year"><span class="attr-title">Year</span> {{ bike.year }} </li>
+			<li id="material"><span class="attr-title">Frame Material</span> {{ bike.frame_material }}</li>
+			<li id="handlebar"><span class="attr-title">Handlebar type</span> {{ bike.handlebar_type }}</li>
+			<li id="wheel"><span class="attr-title">Wheel diameter</span> {{ bike.rear_wheel_size }}</li>
+			<li id="color"><span class="attr-title">Primary colors</span>{{ bike.frame_colors }}</li>
+		</ul>
+	</div>
+
++ detailed specs
+
+{% endblock %}

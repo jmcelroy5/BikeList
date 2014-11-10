@@ -1,13 +1,10 @@
 Potential Names: Velove, BikeList
 
 Require that sellers register their bikes on BikeIndex before creating a listing. Then all I need to ask for is their bike’s serial number (so I can request the bike info via the API) plus a few pieces of listing-specific information (asking price, location, etc.). 
-
 Current task:
-	- Make public listing template to replace "listing success" page
-
-Next tasks:
 	- Make JSON file and script to populate database (20ish bikes)
-	- Make base html template that gets flashed messages
+		
+Next tasks:
 	- Page that displays all listings in a list
 	- Display all listings on a map
 

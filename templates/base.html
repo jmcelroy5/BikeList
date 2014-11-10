@@ -1,0 +1,43 @@
+<html>
+    <head>
+          <meta charset="utf-8">
+          <meta http-equiv="X-UA-Compatible" content="IE=edge">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <meta name="description" content="">
+          <meta name="author" content="">
+
+          <title> {% block title %} {% endblock %} BikeList</title>
+
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+            <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+
+            <link rel="stylesheet" href="{{ url_for('static',filename='css/styles.css') }}">
+    </head>
+
+    <body>
+
+      <div class="container">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+              <ul class="flashes">
+                  <li>{{message}}</li>
+               </ul>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+      </div>
+
+      <div id="content">
+        {% block content %} 
+        <!-- Child template will be inserted here -->
+        {% endblock %}
+      </div>
+
+      <div id="footer">
+        {% block footer %}
+         <!-- Fancy footer here -->
+        {% endblock %}
+
+    </body>
+</html>
