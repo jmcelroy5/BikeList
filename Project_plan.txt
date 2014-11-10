@@ -15,6 +15,7 @@ Error cases that need to be handled:
 	- bike is stolen
 	- bike serial number not found 
 	- OR user clicks "no" (we got the wrong bike)
+	- If a listing already exists for that bike
 	- listing form verification: all fields are filled out and in proper data format
 
 MVP features:

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify, g, flash, Response
 from flask import session as flask_session
 import datetime
 import json
@@ -9,7 +9,23 @@ app = Flask(__name__)
 
 app.secret_key = 'abc123321cba'
 
+# Runs on browser refresh. Checks for current user and bike
+@app.before_request
+def check_login():
+    # user_data = flask_session.get('user', None) 
+    # if user_data and len(user_data) > 1:
+    #     g.user_id = user_data[0]
+    #     g.user_email = user_data[1]
+    bike_id = flask_session.get('bike', None)
+    if bike_id:
+    	g.bike_id = bike_id
+
 @app.route("/")
+def home_page():
+	# Need to create this page
+	return "Heyo, this is the home page!"
+
+@app.route("/sell")
 def index():
 	return render_template("getbike.html")
 
@@ -63,20 +79,21 @@ def add_bike():
 		new_bike.rear_gear_type = bike["rear_gear_type"].get("name", None)
 
 	# Add bike to session and commit changes
-	model.session.add(new_bike)
-	model.session.commit() 
+	# model.session.add(new_bike)
+	# model.session.commit() 
 
 	# Store bike id in flask session (to remember it for listing)
 	flask_session["bike"] = bike["id"]
 
 	return "Added bike to database"
 
-@app.route("/listing")
+@app.route("/list")
 def listing_form():
 	return render_template("listing_form.html")
 
 @app.route("/addlisting", methods=['POST'])
 def add_listing():
+
 	new_listing = model.Listing()
 
 	new_listing.bike_id = flask_session["bike"]	# get bike id from flask session
@@ -89,14 +106,20 @@ def add_listing():
 	new_listing.additional_text = request.form["comments"] # FORM
 	# also need to tie the listing to the logged-in user
 
-	model.session.add(new_listing)
-	model.session.commit()
+	# model.session.add(new_listing)
+	# model.session.commit()
+	flash("Your listing has been created.") 
 
-	return "Listing added" # later this will flash message or something
+	return str(new_listing.bike_id)
 
-@app.route("/listingsuccess") 
-def listing_success():
-	return render_template("listing_success.html")
+@app.route("/listing/<int:id>") 
+def listing_success(id):
+	bike = model.session.query(model.Bike).filter_by(id=id).one()
+	return render_template("listing.html", bike=bike)
+
+@app.route("/_get_current_user")
+def get_current_user():
+	return jsonify(bike_id = g.bike_id)
 
 if __name__== "__main__":
 	app.run(debug = True)

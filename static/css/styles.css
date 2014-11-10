@@ -4,6 +4,17 @@ body{
 	padding: 30px;
 }
 
+h1, h2, h3, h4{
+	font-family: "Klinic",sans-serif;
+	font-weight: 400;
+	line-height: 1.2em;
+}
+
+li{
+	display: list-item;
+	text-align: -webkit-match-parent;
+}
+
 .attr-title{
 	display: inline-block;
 	margin-right: .4em;
@@ -20,11 +31,6 @@ body{
 	background: #ecf0f1;
 }
 
-li{
-	display: list-item;
-	text-align: -webkit-match-parent;
-}
-
 #bike-info{
 	display: None;
 }
@@ -33,11 +39,6 @@ li{
 	width: 500px;
 	float: left;
 	margin: 10px;
-}
-h1, h2, h3, h4{
-	font-family: "Klinic",sans-serif;
-	font-weight: 400;
-	line-height: 1.2em;
 }
 
 #listing-form {

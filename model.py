@@ -64,7 +64,7 @@ class Listing(Base):
 
 	id = Column(Integer, primary_key = True)	# Will this autogenerate?
 	# user_id = Column(Integer, ForeignKey('users.id'))
-	bike_id = Column(Integer, ForeignKey('bikes.id'), unique=True, nullable=False)
+	bike_id = Column(Integer, ForeignKey('bikes.id'), nullable=False) # unique = true ?
 
 	# user = relationship("User", backref=backref("listings"))
 	bike = relationship("Bike", backref=backref("listings"))

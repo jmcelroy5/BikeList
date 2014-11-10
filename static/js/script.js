@@ -17,7 +17,6 @@ function getBike(serial) {
 			alert("No bike with that serial number found.");
 		}
 
-		// check that bike["stolen"] === false!
 		var stolen = bike["stolen"];
 		if (stolen===true){
 			alert("Uh oh. Looks like we have a stolen bike on our hands.");
