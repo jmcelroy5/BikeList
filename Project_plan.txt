@@ -1,14 +1,20 @@
 Potential Names: Velove, BikeList
 
-Require that sellers register their bikes on BikeIndex before creating a listing. Then all I need to ask for is their bike’s serial number (so I can request the bike info via the API) plus a few pieces of listing-specific information (asking price, location, etc.). 
-Current task:
-	- Make JSON file and script to populate database (20ish bikes)
-		
-Next tasks:
-	- Page that displays all listings in a list
-	- Display all listings on a map
+Require that sellers register their bikes on BikeIndex before creating a listing. App asks user for bike serial number from user then gets bike info via BikeIndex API. User provides a few pieces of listing-specific information (asking price, location, etc.)
 
-Error cases that need to be handled:
+To-do list for this week:
+	- Add field for bike frame size (model.py and bikes.py)
+	- Display all listings in a list
+	- Display all listings on a map
+	- Facebook OAuth
+	- Index listings for search
+	- Search filters
+
+Questions for mentors:
+	- unit testing
+	- hiding app keys
+
+Error cases that will need to be handled:
 	- bike is stolen
 	- bike serial number not found 
 	- OR user clicks "no" (we got the wrong bike)
@@ -24,7 +30,7 @@ Seller-side:
 * Listing management: delete/modify listings, add new listing
 
 Buyer-side:
-* search for bikes by location first (zip code?)
+* search for bikes by location 
 * see listings on a map and in list form (map and list views side by side)
 * filter search by bike attributes
 * order by price
