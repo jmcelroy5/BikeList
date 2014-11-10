@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, ForeignKey, UniqueConstraint
-from sqlalchemy import Column, Integer, String, DateTime, update, Boolean, Float
+from sqlalchemy import Column, Integer, String, DateTime, update, Boolean, Float, func
 from sqlalchemy.orm import sessionmaker, relationship, backref, scoped_session 
 import datetime
 

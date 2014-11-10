@@ -1,16 +1,41 @@
+import datetime
 import model
+from random import uniform, randrange
 import requests
 
-# Will write an add_listings function next
-
-
 def clear_bike_table():
-	bike_list = model.session.query(model.Bike).delete()
+	model.session.query(model.Bike).delete()
 	model.session.commit()
 	return "Bike table cleared!"
 
-# input is a list of bike serial numbers
-def add_bikes(*serials):
+def clear_listings_table():
+	model.session.query(model.Listing).delete()
+	model.session.commit()
+	return "Listings table cleared!"
+
+def populate_listings():
+	bike_list = model.session.query(model.Bike.id)
+	for bike_id in bike_list:
+		listing = model.Listing()
+
+		listing.bike_id = bike_id[0]
+		listing.post_date = datetime.datetime.now()
+		listing.post_expiration = datetime.datetime.now() + datetime.timedelta(30) # Post expires 30 days from now
+		listing.post_status = "Active"
+		listing.asking_price = randrange(100,1500)
+		listing.latitude = uniform(37.34,38.108) 	# Random lat between San Jose & Novato
+		listing.longitude = uniform(-122.509,-122.226) 	# Random long between Ocean Beach and Berkeley Hills
+		listing.additonal_text = "This is a test bike. Isn't it beautiful?"
+		model.session.add(listing)
+
+	model.session.commit()
+
+	rows = model.session.query(model.Bike).count()
+
+	return rows, "listings generated successfuly!"
+
+# input a list of bike serial numbers
+def populate_bikes(*serials):
 
 	for serial in serials:
 		# Create new bike instance for bike table
@@ -68,10 +93,10 @@ def add_bikes(*serials):
 
 		# Add bike to session and commit changes
 		model.session.add(new_bike)
-		model.session.commit() 
-
+	
+	model.session.commit() 
 	return "Bikes added to database successfully"
 
 if __name__ == "__main__":
-	add_bikes(19012387006, "ABC123", "U79U19069", "U8YU51125", "U110U03441", "A1285895", "LX395331J", "M11060582", "C54D4515", "M130609389", "M12035406", "M11125025", "M11010768", "M13065C55", "U76P21332", "V1100S186")
+	# add_bikes(19012387006, "ABC123", "U79U19069", "U8YU51125", "U110U03441", "A1285895", "LX395331J", "M11060582", "C54D4515", "M130609389", "M12035406", "M11125025", "M11010768", "M13065C55", "U76P21332", "V1100S186")
 	pass
