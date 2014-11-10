@@ -1,4 +1,4 @@
-$("#target").on("click",function(e){
+$("#target").on("submit",function(e){
 	e.preventDefault();
 	var serial = $("#bike_serial").val();
 	getBike(serial);

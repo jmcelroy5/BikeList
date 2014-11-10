@@ -10,8 +10,6 @@
 
     	</style>
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/styles.css') }}">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 
 	</head>
 
@@ -29,70 +27,72 @@
 		<div id="mapbox">
 			<div id="map-canvas"></div>
 		<div>
-		
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 	<script>
-	
-	var map; 
-	var geocoder;
+	  // IIFE, Immediately Invoked Function Expression
+	  (function() {
+		var map; 
+		var geocoder;
 
-    function initialize() {
-    	geocoder = new google.maps.Geocoder();
-    	var startCenter = new google.maps.LatLng(37.77343, -122.442565);
-    	var mapOptions = {
-    		zoom: 12,
-    		center: startCenter
-		};
-    	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-	}
+	    function initialize() {
+	    	geocoder = new google.maps.Geocoder();
+	    	var startCenter = new google.maps.LatLng(37.77343, -122.442565);
+	    	var mapOptions = {
+	    		zoom: 12,
+	    		center: startCenter
+			};
+	    	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		}
 
-   	google.maps.event.addDomListener(window, 'load', initialize);
+	   	google.maps.event.addDomListener(window, 'load', initialize);
 
-    $("#location").on("blur",function(e){
-   		var location = document.getElementById("location").value;
-   		placeMarker(location);
-    });
+	    $("#location").on("blur",function(e){
+	   		var location = document.getElementById("location").value;
+	   		placeMarker(location);
+	    });
 
-    $("#listing-form").on("submit", function(e){
-    	// Doing form submit via AJAX bc I want to send marker coordinates for location instead of what's in the form field
-    	e.preventDefault();
-    	var price = document.getElementById("price").value;
-    	var comments = document.getElementById("comments").value;
-		var latitude = marker.position["k"];
-		var longitude = marker.position["B"];
+	    $("#listing-form").on("submit", function(e){
+	    	// Doing form submit via AJAX bc I want to send marker coordinates for location instead of what's in the form field
+	    	e.preventDefault();
+	    	var price = document.getElementById("price").value;
+	    	var comments = document.getElementById("comments").value;
+			var latitude = marker.position["k"];
+			var longitude = marker.position["B"];
 
-     	$.post("/addlisting", {
-     		price: price,
-     		comments: comments,
-     		latitude: latitude,
-     		longitude: longitude
-     	}, function(data){
-     		window.location.replace("/listingsuccess");
-     	});
-    });
+	     	$.post("/addlisting", {
+	     		price: price,
+	     		comments: comments,
+	     		latitude: latitude,
+	     		longitude: longitude
+	     	}, function(data){
+	     		window.location.replace("/listingsuccess");
+	     	});
+	    });
 
-    var marker;
+	    var marker;
 
-  	function placeMarker(location){
-  		geocoder.geocode( {address: location}, function(results){
-      		latLong = results[0].geometry.location;
-      		map.setCenter(latLong);
+	  	function placeMarker(location){
+	  		geocoder.geocode( {address: location}, function(results){
+	      		latLong = results[0].geometry.location;
+	      		map.setCenter(latLong);
 
-  			// If there is already a marker, delete it
-  			if (marker){
-  				marker.setMap(null);
-  				marker = null;
-  			}
-  			// create new marker
-  			marker = new google.maps.Marker({
-				position: latLong,
-				map: map,
-			});
-  		});
-      }
+	  			// If there is already a marker, delete it
+	  			if (marker){
+	  				marker.setMap(null);
+	  				marker = null;
+	  			}
+	  			// create new marker
+	  			marker = new google.maps.Marker({
+					position: latLong,
+					map: map,
+				});
+	  		});
+	      }
 
+	  })();
 	</script>
-
-
 
 	</body>
 </html>

@@ -63,8 +63,8 @@ def add_bike():
 		new_bike.rear_gear_type = bike["rear_gear_type"].get("name", None)
 
 	# Add bike to session and commit changes
-	# model.session.add(new_bike)
-	# model.session.commit() 
+	model.session.add(new_bike)
+	model.session.commit() 
 
 	# Store bike id in flask session (to remember it for listing)
 	flask_session["bike"] = bike["id"]
