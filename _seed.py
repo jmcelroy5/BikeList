@@ -58,7 +58,8 @@ def populate_bikes(filename):
 		bike = bike_json["bikes"][0] 
 
 		# Populate bike attributes
-		new_bike.id = bike["id"]	
+		new_bike.id = bike["id"]
+		new_bike.size = bike["frame_size"]	
 		new_bike.serial = bike["serial"]	
 		new_bike.manufacturer = bike["manufacturer_name"]
 		new_bike.rear_tire_narrow = bike["rear_tire_narrow"] 
@@ -105,6 +106,5 @@ def populate_bikes(filename):
 
 	return rows, "bikes added to database successfully"
 
-if __name__ == "__main__":
-	# populate_bikes(19012387006, "ABC123", "U79U19069", "U8YU51125", "U110U03441", "A1285895", "LX395331J", "M11060582", "C54D4515", "M130609389", "M12035406", "M11125025", "M11010768", "M13065C55", "U76P21332", "V1100S186")
-	pass
+
+

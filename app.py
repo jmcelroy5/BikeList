@@ -30,14 +30,6 @@ def get_all_bikes():
 	# Get all active listings from db
 	all_listings = model.session.query(model.Listing).filter_by(post_status="Active").all()
 
-	# final response will look like this: 	[	{	
-										# 		bike:{key:data,key:data}, 
-										# 		listing:{key:data,key:data} 
-										# 	}, 
-										# 	{
-										# 		bike:{key:data,key:data}, 
-										# 		listing: {} 
-										# 	} ]
 	response = []
 
 	# Building final response object
@@ -51,16 +43,7 @@ def get_all_bikes():
 								listing.bike.frame_model + 
 								" ($" + str(listing.asking_price) + ")"})
 
-	print jsonify(response=response[0])
 	return jsonify(response=response)
-		
-		# location_list = []
-		# for item in listing_coordinates:
-		# 	location_list.append({"id": item[0],
-		# 						"lat": item[1],
-		# 						"long": item[2]})
-
-		# return jsonify(locations=location_list)
 		
 @app.route("/sell")
 def index():
@@ -79,7 +62,7 @@ def add_bike():
 	# Populate bike attributes
 	new_bike.id = bike["id"]	# primary key
 	new_bike.serial = bike["serial"]	
-	new_bike.size = bike["size"]
+	new_bike.size = bike["frame_size"]
 	new_bike.manufacturer = bike["manufacturer_name"]
 	new_bike.rear_tire_narrow = bike["rear_tire_narrow"] 
 	new_bike.type_of_cycle = bike["type_of_cycle"]
