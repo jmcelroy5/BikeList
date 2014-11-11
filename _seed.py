@@ -23,8 +23,8 @@ def populate_listings():
 		listing.post_expiration = datetime.datetime.now() + datetime.timedelta(30) # Post expires 30 days from now
 		listing.post_status = "Active"
 		listing.asking_price = randrange(100,1500)
-		listing.latitude = 	uniform(37.7, 37.75) 				# Random lat in SF
-		listing.longitude = uniform(-122.477,-122.392)  		# Random long in SF
+		listing.latitude = 	uniform(37.75, 37.8) 			# Random lat in SF
+		listing.longitude = uniform(-122.478,-122.4)  		# Random long in SF
 		listing.additional_text = "This is a test bike. Isn't it beautiful?"
 		model.session.add(listing)
 

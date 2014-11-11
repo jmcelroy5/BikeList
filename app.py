@@ -22,32 +22,46 @@ def check_login():
 @app.route("/")
 def home_page():
 	bikes = model.session.query(model.Bike).limit(20).all()
+
 	return render_template("index.html", bikes=bikes)
 
-@app.route("/_all_bike_locations")
-def all_bike_locations():
-		listing_coordinates = model.session.query(model.Listing.id, model.Listing.latitude, model.Listing.longitude).all()
-		# Each item is (id,lat,long)
-		location_list = []
-		for item in listing_coordinates:
-			location_list.append({"listing_id": item[0],
-								"lat": item[1],
-								"long": item[2]})
+@app.route("/get_all_bikes")
+def get_all_bikes():
+	# Get all active listings from db
+	all_listings = model.session.query(model.Listing).filter_by(post_status="Active").all()
 
-		print "listing loc objects: ", location_list
+	# final response will look like this: 	[	{	
+										# 		bike:{key:data,key:data}, 
+										# 		listing:{key:data,key:data} 
+										# 	}, 
+										# 	{
+										# 		bike:{key:data,key:data}, 
+										# 		listing: {} 
+										# 	} ]
+	response = []
 
-		# Example of dict to jsonify -->
-		# ideas = {
-		# 	'status' : 'OK',
-		# 	'ideas' : public_ideas
-		# }
+	# Building final response object
+	for listing in all_listings:
+		response.append({'url': "/listing/" + str(listing.bike_id),
+						'latitude': listing.latitude, 
+						'longitude': listing.longitude,
+						'photo': listing.bike.photo,
+						'price': listing.asking_price,
+						'title': listing.bike.manufacturer + " " + 
+								listing.bike.frame_model + 
+								" ($" + str(listing.asking_price) + ")"})
 
-		# Do I need to JSONify it first?
-
-		return jsonify(locations=location_list)
-
+	print jsonify(response=response[0])
+	return jsonify(response=response)
 		
- 
+		# location_list = []
+		# for item in listing_coordinates:
+		# 	location_list.append({"id": item[0],
+		# 						"lat": item[1],
+		# 						"long": item[2]})
+
+		# return jsonify(locations=location_list)
+		
 @app.route("/sell")
 def index():
 	return render_template("getbike.html")
