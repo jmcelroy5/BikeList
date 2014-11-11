@@ -21,9 +21,9 @@ def check_login():
 
 @app.route("/")
 def home_page():
-	# Need to create this page
-	listings = model.session.query(model.Listing).limit(10)
-	return render_template("index.html", listings = listings)
+	bikes = model.session.query(model.Bike).limit(20).all()
+	print "blahblahblah", bikes
+	return render_template("index.html", bikes=bikes)
 
 @app.route("/sell")
 def index():

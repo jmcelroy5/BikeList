@@ -1,14 +1,33 @@
 {% extends 'base.html' %}
 
 {% block content %}
-		
-<div>
-	List of listing links	
-</div>
+<style>
+#search-results{
+	list-style-type: none
+}
+
+#search-results img{
+	width: 200px;
+}
+</style>
 
 <div>
-	listings as markers on map
+	<ul id="search-results">
+
+		{% for bike in bikes %}
+		<li>
+			<a href="/listing/{{ bike.id }}"> <h3> {{ bike.title }} </h3> </a>
+			<p> ${{ bike.listings[0].asking_price }}</p>
+			<img src="{{ bike.photo }}"> 
+		</li><br>
+		{% endfor %}
+</ul>
 </div>
 
-		
+<br>
+
+<div>
+	<p> map with listing markers will go here <p>
+</div>
+
 {% endblock %} 
