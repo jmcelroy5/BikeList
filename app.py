@@ -79,6 +79,7 @@ def add_bike():
 	# Populate bike attributes
 	new_bike.id = bike["id"]	# primary key
 	new_bike.serial = bike["serial"]	
+	new_bike.size = bike["size"]
 	new_bike.manufacturer = bike["manufacturer_name"]
 	new_bike.rear_tire_narrow = bike["rear_tire_narrow"] 
 	new_bike.type_of_cycle = bike["type_of_cycle"]

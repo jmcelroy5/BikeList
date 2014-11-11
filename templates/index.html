@@ -62,7 +62,7 @@
 
 			var newLayer = L.mapbox.featureLayer().addTo(map);
 
-			// Generating geoJSON object for marker
+			// Creating geoJSON object for marker
 			var geoJson = [{
 					type: 'Feature',
 					"geometry": { 
@@ -85,10 +85,8 @@
 				var marker = e.layer;
 				var photo = marker.feature.properties.image;
 				var url = marker.feature.properties.url;
-				// var price = marker.feature.properties.price;
 
 				var popupContent = '<a href="' + url + '">' + listing.title + '</a><br>' +
-									// "$" + price +
 									'<img src="' + photo + '">';
 				
 				marker.bindPopup(popupContent,{
@@ -98,22 +96,6 @@
 			});
 
 			newLayer.setGeoJSON(geoJson);
-
-			// Add marker with photo and listing data 
-			// L.mapbox.featureLayer({
-	  //   		type: 'Feature', 
-	  //   		geometry: {
-	  //       		type: 'Point',
-		 //        	coordinates: [listing.longitude, listing.latitude]
-		 //    	},
-		 //    	properties: {
-			//         title: listing.title,
-			//         description: '<img src="' + listing.photo + '" width="260px">',
-			//         'marker-size': 'large',
-			//         'marker-color': '#FF6699',
-			//         'marker-symbol': 'bicycle'
-		 //   		}
-			// }).addTo(map);
 		}
 	});
 

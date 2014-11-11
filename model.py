@@ -33,6 +33,7 @@ class Bike(Base):
 	# stolen = Column(Integer, nullable=False)		# Not including this - all bikes should be vetted
 
 	# Attributes I might want to require for valid listing
+	size = Column(String(5), nullable=True)
 	photo = Column(String(64), nullable=True)
 	thumb = Column(String(64), nullable=True)
 	handlebar_type = Column(String(20), nullable=True)	

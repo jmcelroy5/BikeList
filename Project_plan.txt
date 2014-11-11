@@ -2,12 +2,23 @@ Potential Names: Velove, BikeList
 
 Require that sellers register their bikes on BikeIndex before creating a listing. App asks user for bike serial number from user then gets bike info via BikeIndex API. User provides a few pieces of listing-specific information (asking price, location, etc.)
 
-To-do list for this week:
-	- Display all listings in a list
-	- Display all listings on a map
+To-do list:
+	- Display all listings in a list - DONE
+	- Display all listings on a map - DONE
+	- Index listings for search?
+	- Search filters 
+		- size
+		- make
+		- model
+		- 
+	- Airbnbify the css - this weekend
 	- Facebook OAuth
-	- Index listings for search
-	- Search filters
+	- add a navbar
+	- user account management page (delete listings and such)
+	- flesh out individual bike listing page (include map, components, seller photos)
+	- listing form verificiation!!!!
+	- redo the listim form map (google - mapbox)
+	- allower user to add favorite bikes!
 
 Issues to address
 	- Add database field for bike frame size (model.py and bikes.py)

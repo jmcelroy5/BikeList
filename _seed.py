@@ -35,7 +35,12 @@ def populate_listings():
 	print rows, "listings generated successfuly!"
 
 # input a list of bike serial numbers
-def populate_bikes(*serials):
+def populate_bikes(filename):
+
+	f = open(filename, "r")
+
+	serials = f.readlines()
+	f.close()
 
 	for serial in serials:
 		# Create new bike instance for bike table
@@ -97,8 +102,9 @@ def populate_bikes(*serials):
 	model.session.commit() 
 
 	rows = model.session.query(model.Bike).count()
+
 	return rows, "bikes added to database successfully"
 
 if __name__ == "__main__":
-	# add_bikes(19012387006, "ABC123", "U79U19069", "U8YU51125", "U110U03441", "A1285895", "LX395331J", "M11060582", "C54D4515", "M130609389", "M12035406", "M11125025", "M11010768", "M13065C55", "U76P21332", "V1100S186")
+	# populate_bikes(19012387006, "ABC123", "U79U19069", "U8YU51125", "U110U03441", "A1285895", "LX395331J", "M11060582", "C54D4515", "M130609389", "M12035406", "M11125025", "M11010768", "M13065C55", "U76P21332", "V1100S186")
 	pass
