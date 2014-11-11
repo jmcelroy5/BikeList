@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<!-- Extend head / custom styles block? -->
+<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
+
 <style>
 #search-results{
 	list-style-type: none
@@ -9,25 +13,61 @@
 #search-results img{
 	width: 200px;
 }
+
+#map-panel{
+	background-color: #69A0CB;
+	height: 100%;
+}
 </style>
 
-<div>
-	<ul id="search-results">
+<div class="row">
+	<div class="col-md-4">
+		<ul id="search-results">
+			{% for bike in bikes %}
+			<li>
+				<a href="/listing/{{ bike.id }}"> <h4> {{ bike.title }} </h4> </a>
+				<p> ${{ bike.listings[0].asking_price }}</p>
+				<img src="{{ bike.photo }}"> 
+			</li><br>
+			{% endfor %}
+		</ul>
+	</div>
+	<div id="map-panel" class="col-md-8">
 
-		{% for bike in bikes %}
-		<li>
-			<a href="/listing/{{ bike.id }}"> <h3> {{ bike.title }} </h3> </a>
-			<p> ${{ bike.listings[0].asking_price }}</p>
-			<img src="{{ bike.photo }}"> 
-		</li><br>
-		{% endfor %}
-</ul>
+	</div>
 </div>
 
-<br>
+<script>
+	L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
+	var map = L.mapbox.map('map-panel', 'examples.map-i86nkdio');
+	map.setView([37.79, -122.41], 14);
 
-<div>
-	<p> map with listing markers will go here <p>
-</div>
+	$.get('/_all_bike_locations', function(results){
+		for ( i = 0; i < results.locations.length; i++){
+
+			listing = results.locations[i];
+
+			L.mapbox.featureLayer({
+		    	type: 'Feature',
+		    	geometry: {
+		        	type: 'Point',
+		        	// coordinates here are in longitude, latitude order because
+		        	// x, y is the standard for GeoJSON and many formats
+			        coordinates: [listing.long, listing.lat]
+			    },
+			    properties: {
+			        title: 'Bike Listing',
+			        description: listing.id,
+			        // one can customize markers by adding simplestyle properties
+			        // https://www.mapbox.com/foundations/an-open-platform/#simplestyle
+			        'marker-size': 'medium',
+			        'marker-color': '#FF6699',
+			        // 'marker-symbol': 'cafe'
+			    }
+			}).addTo(map);
+		}
+	});
+
+</script>
 
 {% endblock %} 

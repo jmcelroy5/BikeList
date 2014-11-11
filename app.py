@@ -22,9 +22,32 @@ def check_login():
 @app.route("/")
 def home_page():
 	bikes = model.session.query(model.Bike).limit(20).all()
-	print "blahblahblah", bikes
 	return render_template("index.html", bikes=bikes)
 
+@app.route("/_all_bike_locations")
+def all_bike_locations():
+		listing_coordinates = model.session.query(model.Listing.id, model.Listing.latitude, model.Listing.longitude).all()
+		# Each item is (id,lat,long)
+		location_list = []
+		for item in listing_coordinates:
+			location_list.append({"listing_id": item[0],
+								"lat": item[1],
+								"long": item[2]})
+
+		print "listing loc objects: ", location_list
+
+		# Example of dict to jsonify -->
+		# ideas = {
+		# 	'status' : 'OK',
+		# 	'ideas' : public_ideas
+		# }
+
+		# Do I need to JSONify it first?
+
+		return jsonify(locations=location_list)
+
+		
+ 
 @app.route("/sell")
 def index():
 	return render_template("getbike.html")
