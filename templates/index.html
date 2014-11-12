@@ -14,6 +14,10 @@
 	width: 200px;
 }
 
+#search-results li{
+	margin: 30px;
+}
+
 #map-panel{
 	background-color: #69A0CB;
 	height: 100%;
@@ -28,18 +32,31 @@
   	text-align: center;
   }
 
+ #search-filters{
+ 	background-color: #e4e4e4;
+ 	height: 125px;
+ 	padding: 20px;
+ 	margin: 10px;
+ 	width: 100%;
+ }
+
 </style>
+
+<div class="row" id="search-filters">
+	<strong>Frame Material</strong><br>
+	<form action= "/">
+	<input name="Titanium" type="checkbox">Titanium</input>
+	<input name="Carbon or composite" type="checkbox">Carbon Fiber</input>
+	<input name="Aluminum" type="checkbox">Aluminum</input>
+	<input name="Steel" type="checkbox">Steel</input><br><br>
+	<input type="submit" id="filter-submit" value="Apply Filters"></button>
+</form>
+</div>
 
 <div class="row">
 	<div class="col-md-4">
 		<ul id="search-results">
-			{% for bike in bikes %}
-			<li>
-				<a href="/listing/{{ bike.id }}"> <h4> {{ bike.title }} </h4> </a>
-				<p> ${{ bike.listings[0].asking_price }}</p>
-				<img src="{{ bike.photo }}"> 
-			</li><br>
-			{% endfor %}
+		<!-- Search results will go here -->
 		</ul>
 	</div>
 	<div id="map-panel" class="col-md-8">
@@ -47,7 +64,20 @@
 	</div>
 </div>
 
-<script>
+<script>	
+	// $(document).ready(function(){
+	// 	$('#filter-submit').click(function(){
+	// 		var materials = [];
+	// 		$('#search-filters input:checked').each(function(){
+	// 			materials.push(this.materials);
+	// 		});
+
+	// 		// filters = json.stringify(materials)
+
+	// 		// redo home url with materials
+	// 		$.get("/", {material: filters} ???????????? );
+	// 	});
+
 	L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
 
 	var map = L.mapbox.map('map-panel', 'examples.map-i86nkdio');
@@ -56,13 +86,33 @@
 	$.get('/get_all_bikes', function(data){
 
 		for (var i = 0; i < data['response'].length; i++){
-
 			// Current listing
 			var listing = data['response'][i];
 
+			// Create JQuery object for listing title/link
+			var $listingLink = $("<a />",{
+				href: listing.url,
+				text: listing.title 
+			});
+			
+			// Create JQuery object for bike photo	
+			var $bikePhoto = $("<img>")
+			$bikePhoto.attr('src', listing.photo)
+
+			// Wrap them in a list item and append to search results list
+			$("#search-results").append("<li>");
+			$listingLink.appendTo("#search-results");
+			$("#search-results").append("<br>");
+			$bikePhoto.appendTo("#search-results"); 
+			$("#search-results").append("</li>");
+
+			// Append it to the search results panel
+			$bikePhoto.appendTo('#search-results');
+
+			// Add listing to map
 			var newLayer = L.mapbox.featureLayer().addTo(map);
 
-			// Creating geoJSON object for marker
+			// Create geoJSON object for marker
 			var geoJson = [{
 					type: 'Feature',
 					"geometry": { 
@@ -73,7 +123,6 @@
 						"title": listing.title,
 						"image": listing.photo,
 						"url": listing.url,
-						"price": listing.price,
 						'marker-size': 'large',
 			        	'marker-color': '#FF6699',
 			        	'marker-symbol': 'bicycle'

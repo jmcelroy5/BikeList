@@ -1,6 +1,6 @@
 import datetime
 import model
-from random import uniform, randrange
+from random import uniform, randrange, choice
 import requests
 
 def clear_bike_table():
@@ -72,6 +72,11 @@ def populate_bikes(filename):
 		new_bike.year = bike["year"]
 		new_bike.paint_description = bike["paint_description"] 
 		new_bike.front_tire_narrow = bike["front_tire_narrow"]
+
+		# Fudging frame material data to fill in gaps
+		materials = ['Titanium','Carbon or composite','Aluminum']
+		if new_bike.frame_material == None:
+			new_bike.frame_material = choice(materials)
 
 		new_bike.frame_colors = "" 			# breaking frame colors out of list format
 		for color in bike["frame_colors"]:
