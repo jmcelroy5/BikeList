@@ -44,7 +44,7 @@
 
 <div class="row" id="search-filters">
 	<strong>Frame Material</strong><br>
-	<form action= "/">
+	<form action= "#">
 	<input name="Titanium" type="checkbox">Titanium</input>
 	<input name="Carbon or composite" type="checkbox">Carbon Fiber</input>
 	<input name="Aluminum" type="checkbox">Aluminum</input>
@@ -64,27 +64,20 @@
 	</div>
 </div>
 
-<script>	
-	// $(document).ready(function(){
-	// 	$('#filter-submit').click(function(){
-	// 		var materials = [];
-	// 		$('#search-filters input:checked').each(function(){
-	// 			materials.push(this.materials);
-	// 		});
+<script>
 
-	// 		// filters = json.stringify(materials)
+	var displaySearchResults = function(data) {
+		var resultsDiv = $("#search-results");
 
-	// 		// redo home url with materials
-	// 		$.get("/", {material: filters} ???????????? );
-	// 	});
+		resultsDiv.empty();
 
-	L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
+		// Clear any markers that are on map and initialize new marker list
+		if (typeof markerLayer !== 'undefined'){
+			markerLayer.clearLayers()
+		} 
+		markerList = [];
 
-	var map = L.mapbox.map('map-panel', 'examples.map-i86nkdio');
-	map.setView([37.79, -122.41], 14);
-
-	$.get('/get_all_bikes', function(data){
-
+		// Loop through response object
 		for (var i = 0; i < data['response'].length; i++){
 			// Current listing
 			var listing = data['response'][i];
@@ -100,19 +93,35 @@
 			$bikePhoto.attr('src', listing.photo)
 
 			// Wrap them in a list item and append to search results list
-			$("#search-results").append("<li>");
+			resultsDiv.append("<li>");
 			$listingLink.appendTo("#search-results");
-			$("#search-results").append("<br>");
+			resultsDiv.append("<br>");
 			$bikePhoto.appendTo("#search-results"); 
-			$("#search-results").append("</li>");
+			resultsDiv.append("</li>");
 
 			// Append it to the search results panel
 			$bikePhoto.appendTo('#search-results');
 
-			// Add listing to map
-			var newLayer = L.mapbox.featureLayer().addTo(map);
+			// Add layer for markers ?
+			newMarker = L.mapbox.featureLayer(); // .addTo(map);
 
-			// Create geoJSON object for marker
+			// Defining custom HTML for popup
+			newMarker.on('layeradd', function(e){
+				var marker = e.layer;
+				var photo = marker.feature.properties.image;
+				var url = marker.feature.properties.url;
+
+				var popupContent = '<a href="' + url + '">' + 
+									marker.feature.properties.title + '</a><br>' +
+									'<img src="' + photo + '">';
+				
+				marker.bindPopup(popupContent,{
+					closeButton: false,
+					// minWidth: 280
+				});
+			});
+
+			// Create geoJSON for new marker
 			var geoJson = [{
 					type: 'Feature',
 					"geometry": { 
@@ -129,24 +138,52 @@
 					}
 			}];
 
-			// Adding custom HTML popup to marker
-			newLayer.on('layeradd', function(e){
-				var marker = e.layer;
-				var photo = marker.feature.properties.image;
-				var url = marker.feature.properties.url;
+			newMarker.setGeoJSON(geoJson);
 
-				var popupContent = '<a href="' + url + '">' + listing.title + '</a><br>' +
-									'<img src="' + photo + '">';
-				
-				marker.bindPopup(popupContent,{
-        			closeButton: false,
-        			// minWidth: 280
-    			});
-			});
-
-			newLayer.setGeoJSON(geoJson);
+			markerList.push(newMarker);
 		}
+		markerLayer = L.layerGroup(markerList)
+		markerLayer.addTo(map);
+	}
+
+	function loadSearchResults(filters){
+		console.log(filters);
+		$.get('/get_all_bikes',{searchCriteria:filters}, displaySearchResults)
+	}
+
+	function initializeMap(){
+		//Connect to MapBox API
+		L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
+
+		// Initiate map and set view
+		map = L.mapbox.map('map-panel', 'examples.map-i86nkdio');
+		map.setView([37.79, -122.41], 14);
+
+	}
+
+	function addEventListeners(){
+		$('#filter-submit').click(function(e){
+			e.preventDefault();
+			var materials = [];
+				$('#search-filters input:checked').each(function(i,material){
+		 			materials.push($(material).attr('name'));
+				});
+			console.log(materials);
+
+			loadSearchResults(materials)
+		});
+	}
+
+	$(document).ready(function(){
+
+		initializeMap();
+
+		loadSearchResults([]);
+
+		addEventListeners();
+
 	});
+	
 
 </script>
 

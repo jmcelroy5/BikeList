@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, String, DateTime, update, Boolean, Float
 from sqlalchemy.orm import sessionmaker, relationship, backref, scoped_session 
 import datetime
 
-ENGINE = create_engine("sqlite:///bikelist.db", echo=False) 
+ENGINE = create_engine("sqlite:///bikelist.db", echo=True) 
 session = scoped_session(sessionmaker(bind=ENGINE, autocommit = False, autoflush = False))
 
 Base = declarative_base()
