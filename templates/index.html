@@ -43,6 +43,13 @@
 #material-filters{
 	display:inline-block;
 	float: left;
+	margin-right:20px;
+}
+
+#handlebar-filters{
+	display:inline-block;
+	margin-left: 20px;
+	margin-right:20px;
 }
 
 #price-filters{
@@ -64,7 +71,17 @@ input[type=number]{
 			<input name="Titanium" type="checkbox">Titanium</input>
 			<input name="Carbon or composite" type="checkbox">Carbon Fiber</input>
 			<input name="Aluminum" type="checkbox">Aluminum</input>
-			<input name="Steel" type="checkbox">Steel</input><br><br>
+			<input name="Steel" type="checkbox">Steel</input>
+			<!-- <input name="Wood or organic material" type="checkbox">Wood/Bamboo</input>  -->
+		</div>
+		<div id="handlebar-filters">
+			<strong>Handlebars</strong><br>
+			<input name="Drop" type="checkbox">Drop</input>
+			<input name="Flat" type="checkbox">Flat</input>
+<!-- 		<input name="Forward facing" type="checkbox">Forward-facing</input>
+			<input name="Rear facing" type="checkbox">Rear-facing</input>
+			<input name="Not handlebars" type="checkbox">Not handlebars</input>
+			<input name="BMX style" type="checkbox">BMX-style</input> -->
 		</div>
 		<div id="price-filters">
 			<strong>Price</strong><br>
@@ -172,10 +189,11 @@ input[type=number]{
 		markerLayer.addTo(map);
 	}
 
-	function loadSearchResults(materials, min_price, max_price){
+	function loadSearchResults(materials, min_price, max_price, handlebars){
 		$.get('/get_all_bikes', {	materials: materials, 
 									min_price: min_price, 
-									max_price: max_price }, displaySearchResults);
+									max_price: max_price,
+									handlebars: handlebars }, displaySearchResults);
 	}
 
 	function initializeMap(){
@@ -195,7 +213,7 @@ input[type=number]{
 			e.preventDefault();
 
 			var materials = [];
-			$('#search-filters input:checked').each(function(i,material){
+			$('#material-filters input:checked').each(function(i,material){
 		 		materials.push($(material).attr('name'));
 			});
 
@@ -215,7 +233,12 @@ input[type=number]{
 				var max_price = "";
 			}
 
-			loadSearchResults(materials, min_price, max_price);
+			var handlebars = [];
+			$('#handlebar-filters input:checked').each(function(i,handlebar){
+		 		handlebars.push($(handlebar).attr('name'));
+			});
+
+			loadSearchResults(materials, min_price, max_price, handlebars);
 		});
 	}
 

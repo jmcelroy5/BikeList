@@ -32,6 +32,8 @@ def get_all_bikes():
 	materials = request.args.getlist('materials[]') 		# returns list of names of checkboxes that are checked when form submits
 	print "MATERIALS=========", materials
 	# materials looks like: [u'Carbon or composite', u'Aluminum']
+	handlebars = request.args.getlist('handlebars[]') 		# returns list of names of checkboxes that are checked when form submits
+	print "HANDLEBARS=========", handlebars
 	min_price = request.args.get('min_price')
 	print "MIN_PRICE=========", min_price
 	max_price = request.args.get('max_price')
@@ -43,6 +45,8 @@ def get_all_bikes():
 	# Filters
 	if materials:	# Filter bikes by specified materials
 		query = query.filter(Bike.frame_material.in_(materials))
+	if handlebars:
+		query = query.filter(Bike.handlebar_type.in_(handlebars))
 	if min_price:
 		query = query.filter(Listing.asking_price >= min_price)
 	if max_price:
