@@ -29,26 +29,34 @@ def home_page():
 def get_all_bikes():
 	""" get search results """
 
-	materials = request.args.getlist('searchCriteria[]') 		# returns list of names of checkboxes that are checked when form submits
-	print "THIS IS WHAT WE'RE GETTING FOR MATERIALS", materials
-	# filters looks like: [u'Carbon or composite', u'Aluminum']
+	materials = request.args.getlist('materials[]') 		# returns list of names of checkboxes that are checked when form submits
+	print "MATERIALS=========", materials
+	# materials looks like: [u'Carbon or composite', u'Aluminum']
+	min_price = request.args.get('min_price')
+	print "MIN_PRICE=========", min_price
+	max_price = request.args.get('max_price')
+	print "MAX_PRICE=========", max_price
 
 	# Base query for active listings
 	query = session.query(Listing, Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active") # Base query
 
 	# Filters
-	if materials:
-		query = query.filter(Bike.frame_material.in_(materials))	# Filter bikes by specified materials
+	if materials:	# Filter bikes by specified materials
+		query = query.filter(Bike.frame_material.in_(materials))
+	if min_price:
+		query = query.filter(Listing.asking_price >= min_price)
+	if max_price:
+		query = query.filter(Listing.asking_price <= max_price)
+
 	# Filters I'll add later... 
 	# if size:
 	# 	query = query.filter_by(things = foo)
-	# if price:
-	#	query = query.filter_by(things = foo)
 	# if handlebar:
 	#	query = query.filter_by(things = foo)
 
 	all_listings = query.all()	# Finish the query
 
+	# Python Debugger
 	# import pdb; pdb.set_trace()
 
 	response = []
@@ -64,7 +72,6 @@ def get_all_bikes():
 						'title': bike.manufacturer + " " + 
 								 bike.frame_model + 
 								" ($" + str(listing.asking_price) + ")"})
-		print bike.title, bike.frame_material
 
 	return jsonify(response=response)
 		
