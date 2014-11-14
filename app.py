@@ -1,42 +1,73 @@
-from flask import Flask, Blueprint, render_template, request, jsonify, g, flash
+from flask import Flask, Blueprint, render_template, request, jsonify, g, redirect, flash, url_for
 from flask import session as flask_session
+from model import Bike, Listing, User, session
+from flask_oauth import OAuth
+import os
 import datetime
 import json
 import model
-from model import Bike, Listing, User, session
 import requests
 
 
 app = Flask(__name__)
-app.secret_key = 'abc123321cba'
+app.secret_key = 'A0Zr98j/32345(679R~XHH!jmN]LWX/,?RT'
 
+FACEBOOK_APP_SECRET = os.environ.get('FACEBOOK_APP_SECRET')
+FACEBOOK_APP_ID = os.environ.get('FACEBOOK_APP_ID')
 
-# Enable Python Social Auth...
+oauth = OAuth()
 
-# app.config.update(
-#     DEBUG=True,
-#     SECRET_KEY='abc123321cba',
-#     SOCIAL_AUTH_FACEBOOK_KEY = '1529002184008663',
-# 	SOCIAL_AUTH_FACEBOOK_SECRET = '9f424672d92888f9f70aa619643c3d48',
-# 	SOCIAL_AUTH_FACEBOOK_SCOPE = ['email'],
-#     SOCIAL_AUTH_AUTHENTICATION_BACKENDS = 'social.backends.facebook.FacebookOAuth2',
-#     SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/',
-#     SOCIAL_AUTH_LOGIN_ERROR_URL = '/',
-#     SOCIAL_AUTH_LOGIN_URL = '/',
-#     SOCIAL_AUTH_USER_MODEL = 'model.User',
-#     SOCIAL_AUTH_UUID_LENGTH = 16,
-#     SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True,
-#     SOCIAL_AUTH_SLUGIFY_USERNAMES = False,
-#     SOCIAL_AUTH_CLEAN_USERNAMES = True,
-# )
+facebook = oauth.remote_app('facebook',
+    base_url='https://graph.facebook.com/',
+    request_token_url=None,
+    access_token_url='/oauth/access_token',
+    authorize_url='https://www.facebook.com/dialog/oauth',
+    consumer_key=FACEBOOK_APP_ID,
+    consumer_secret=FACEBOOK_APP_SECRET,
+    request_token_params={'scope': ('email, ')})
 
-# from social.apps.flask_app.routes import social_auth
-# app.register_blueprint(social_auth)
+@facebook.tokengetter
+def get_facebook_token():
+    return flask_session.get('facebook_token')
 
-# from social.apps.flask_app.default.models import init_social
-# init_social(app, model.ENGINE) # ?????
+def pop_login_session():
+    flask_session.pop('logged_in', None)
+    flask_session.pop('facebook_token', None)
 
+@app.route("/facebook_login")
+def facebook_login():
+    return facebook.authorize(callback=url_for('facebook_authorized',
+        next=request.args.get('next'), _external=True))
 
+@app.route("/facebook_authorized")
+@facebook.authorized_handler
+def facebook_authorized(resp):
+    next_url = request.args.get('next') or url_for('index') # Looking for
+    flash("You are logged in.")
+    if resp is None or 'access_token' not in resp:
+    	flash("Facebook authentication error.")
+        return redirect(next_url)	# Redirect to log-in page.
+
+    flask_session['logged_in'] = True
+    flask_session['facebook_token'] = (resp['access_token'], '')
+
+    return redirect(next_url)
+
+# login view
+@app.route("/login")
+def login():
+	return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+    pop_login_session()
+    return redirect(url_for('index'))
+
+@app.route("/getuser")
+def get_user():
+	data = facebook.get('/me').data
+	user_photo = facebook.get('/me/picture?redirect=false').data
+	return jsonify(data)
 
 # # Flask-Login stuff
 
@@ -57,23 +88,12 @@ app.secret_key = 'abc123321cba'
 # 	except (TypeError, ValueError):
 # 		pass
 
-
-# login view
-@app.route("/login")
-def login():
-	return render_template("login.html",user=g.user)
-
-
 # Runs on browser refresh. Checks for current user and bike
 @app.before_request
 def get_current_user():
     current_user = flask_session.get('user', None) 
     if current_user:
 	 	g.user = current_user
-
-    bike_id = flask_session.get('bike', None)
-    if bike_id:
-    	g.bike_id = bike_id
 
 # Make current user available on templates
 @app.context_processor
@@ -82,13 +102,6 @@ def inject_user():
         return {'user': g.user}
     except AttributeError:
         return {'user': None}
-
-
-
-
-
-
-
 
 @app.route("/")
 def home_page():
@@ -113,7 +126,7 @@ def get_all_bikes():
 	query = session.query(Listing, Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active") # Base query
 
 	# Filters
-	if materials:	# Filter bikes by specified materials
+	if materials:	
 		query = query.filter(Bike.frame_material.in_(materials))
 	if handlebars:
 		query = query.filter(Bike.handlebar_type.in_(handlebars))
@@ -122,9 +135,10 @@ def get_all_bikes():
 	if max_price:
 		query = query.filter(Listing.asking_price <= max_price)
 
-	# Filters I'll add later... 
+	# Need to add size filter...
 	# if size:
 	# 	query = query.filter_by(things = foo)
+
 	all_listings = query.all()	# Finish the query
 
 	response = []

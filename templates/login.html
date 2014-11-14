@@ -1,20 +1,11 @@
 {%extends 'base.html'%}
 {%block content%}
 
-    <h1>Login demo app with Python Social Auth</h1>
-    
-    {%if user.is_authenticated%}
-        <h1>Hello {{user.username}}</h1>
-        <small>This is your profile picture</small>
-        <img src="{{user.get_profile.photo}}" width=20% class="img-account" >
-        <a href="/logout">Exit</a>
+  {% if not session.logged_in %}
+    <li><a href="/facebook_login">Login or Signup</a></li>
+    {% else %}
+    <li><a href="/logout">Logout</a></li>
+    {% endif %}
 
-    {%else%}
-        <h3>Select login option:</h3>
-        {% load staticfiles %}
-        <a href="{% url 'social:begin' 'facebook' %}">
-            <img src="{% static "facebook-icon.png" %}">
-        </a>
 
-    {%endif%}
 {%endblock%}
