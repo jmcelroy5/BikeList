@@ -103,30 +103,33 @@ def bikeindex_authorized(resp):
     return "You are logged in"
 
     flask_session['bikeindex_logged_in'] = True
-    flask_session['bikeindex_token'] = (resp['access_token'], '')
+    flask_session['bikeindex_token'] = request.args.get('code')
+    print "bikeindex_token being stored to the flask session ======", flask_session['bikeindex_token']
+    # flask_session['bikeindex_token'] = (resp['access_token'], '')
 
-    return redirect(next_url)
+    return redirect("/")
 
 @app.route("/getuser_bi")
 def get_user_bi():
 	data = bikeindex.get('/me').data #???
 	return jsonify(data)
 
-@app.route("/getuserinfo_bi")
+
 def get_user_info():
-	user_data(flask_session['bikeindex_token'])
+	user_data('9158398012f25ef671d6c7805b53e581cfeb23e52aa464fbab945e9ec6a74bd1')
 
-def user_data(self, access_token):
+@app.route("/getuserinfo_bi")
+def user_data():
     """Grab user profile information from Bike Index."""
-    response = requests.get('https://bikeindex.org/api/v2/users/current',
-                             params={'access_token': access_token})
-    if 'bike_ids' in response:
-        response = {
-            'bike_id': response['bike_ids']
-        }
-    return response
-
-
+    access_token = os.environ.get
+    user_data = requests.get('https://bikeindex.org/api/v2/users/current?access_token=' + access_token)
+    # if 'bike_ids' in response:
+    #     response = {
+    #         'bike_id': response['bike_ids']
+    #     }
+    user_data_json = user_data.json()	 
+    print "USER DATA JSON IS", user_data_json
+    return "yay!"
 
 
 # # Flask-Login stuff
