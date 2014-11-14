@@ -1,24 +1,94 @@
-from flask import Flask, render_template, request, jsonify, g, flash
+from flask import Flask, Blueprint, render_template, request, jsonify, g, flash
 from flask import session as flask_session
 import datetime
 import json
 import model
-from model import Bike, Listing, session
+from model import Bike, Listing, User, session
+import requests
+
 
 app = Flask(__name__)
-
 app.secret_key = 'abc123321cba'
+
+
+# Enable Python Social Auth...
+
+# app.config.update(
+#     DEBUG=True,
+#     SECRET_KEY='abc123321cba',
+#     SOCIAL_AUTH_FACEBOOK_KEY = '1529002184008663',
+# 	SOCIAL_AUTH_FACEBOOK_SECRET = '9f424672d92888f9f70aa619643c3d48',
+# 	SOCIAL_AUTH_FACEBOOK_SCOPE = ['email'],
+#     SOCIAL_AUTH_AUTHENTICATION_BACKENDS = 'social.backends.facebook.FacebookOAuth2',
+#     SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/',
+#     SOCIAL_AUTH_LOGIN_ERROR_URL = '/',
+#     SOCIAL_AUTH_LOGIN_URL = '/',
+#     SOCIAL_AUTH_USER_MODEL = 'model.User',
+#     SOCIAL_AUTH_UUID_LENGTH = 16,
+#     SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True,
+#     SOCIAL_AUTH_SLUGIFY_USERNAMES = False,
+#     SOCIAL_AUTH_CLEAN_USERNAMES = True,
+# )
+
+# from social.apps.flask_app.routes import social_auth
+# app.register_blueprint(social_auth)
+
+# from social.apps.flask_app.default.models import init_social
+# init_social(app, model.ENGINE) # ?????
+
+
+
+# # Flask-Login stuff
+
+# import os
+# from flask.ext.login import LoginManager
+
+# app.config.from_object('config')
+
+# # from app import views     (if i had my views separated)
+
+# login_manager = LoginManager()
+# login_manager.init_app(app) 
+
+# @login_manager.user_loader
+# def load_user(id):
+# 	try:
+# 		return session.query(User).get(int(id))
+# 	except (TypeError, ValueError):
+# 		pass
+
+
+# login view
+@app.route("/login")
+def login():
+	return render_template("login.html",user=g.user)
+
 
 # Runs on browser refresh. Checks for current user and bike
 @app.before_request
-def check_login():
-    # user_data = flask_session.get('user', None) 
-    # if user_data and len(user_data) > 1:
-    #     g.user_id = user_data[0]
-    #     g.user_email = user_data[1]
+def get_current_user():
+    current_user = flask_session.get('user', None) 
+    if current_user:
+	 	g.user = current_user
+
     bike_id = flask_session.get('bike', None)
     if bike_id:
     	g.bike_id = bike_id
+
+# Make current user available on templates
+@app.context_processor
+def inject_user():
+    try:
+        return {'user': g.user}
+    except AttributeError:
+        return {'user': None}
+
+
+
+
+
+
+
 
 @app.route("/")
 def home_page():
@@ -55,13 +125,7 @@ def get_all_bikes():
 	# Filters I'll add later... 
 	# if size:
 	# 	query = query.filter_by(things = foo)
-	# if handlebar:
-	#	query = query.filter_by(things = foo)
-
 	all_listings = query.all()	# Finish the query
-
-	# Python Debugger
-	# import pdb; pdb.set_trace()
 
 	response = []
 

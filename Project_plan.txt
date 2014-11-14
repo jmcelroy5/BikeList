@@ -6,27 +6,24 @@ To-do list:
 	- Display all listings in a list - DONE
 	- Display all listings on a map - DONE
 	- Search filters 
-		- material
-		- price
-		- size
-		- handlebar type
+		- material - done
+		- price - done (but could make into a slider)
+		- size - done
+		- handlebar type - done
 		- # of gears
 		- search by make/model
-	- Index listings for search?
-	- Airbnbify the css - this weekend
-	- Facebook OAuth
-	- add a navigation bar
+	- DB optimization stuff: Index listings for search?
+	- Airbnbify the design/css, make a navbar
+	*** Facebook OAuth for user sign-in
 	- user account management page (delete listings and such)
 	- flesh out individual bike listing page (include map, components, seller photos)
 	- listing form verificiation!!!!
 	- redo the listing form map (google - mapbox)
 	- allow user to add favorite bikes!
+	- users can ask seller questions about the bike
+	- edit listings / post back to BikeIndex?!
 
-Issues to address
-	- Add database field for bike frame size (model.py and bikes.py)
-	- Should there only be one listing per bike? (so bike has a listing id instead of listings backref) --> affects index.html
-
-Questions for mentors:
+Questions:
 	- unit testing
 	- hiding app keys
 

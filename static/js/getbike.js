@@ -1,16 +1,16 @@
 (function() {
 
-	$("#target").on("submit",function(e){
+	$("#target").on("click",function(e){
 		e.preventDefault();
-		var serial = $("#bike_serial").val();
+		var serial = $("#bike-serial").val();
+		console.log(serial);
 		getBike(serial);
 	});
 
 
 	function getBike(serial) {
-
 		$.get("https://bikeindex.org/api/v1/bikes?serial=" + serial, function(data){
-
+			
 			// check to make sure we got one bike back
 			if (data["bikes"].length === 1){
 				var bike = data["bikes"][0];

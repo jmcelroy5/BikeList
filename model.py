@@ -55,10 +55,34 @@ class Bike(Base):
 class User(Base):
 	__tablename__ = "users"
 
-	id = Column(Integer, primary_key = True)	
-	# Get user info from FB: name, email, city, profile pic, etc
+	id = Column(Integer, primary_key = True)
+	first_name = Column(String(64))
+	last_name = Column(String(64))
+	email = Column(String(120), unique=True)
+	password = Column(String(64)) # encrypt or something???
+	avatar = Column(String(120))	# profile photo
+	# Get user info from FB?
 
-	# User also has listings
+	def is_authenticated(self):
+		return True
+
+	def is_active(self):
+		return True
+
+	def is_anonymous(self):
+		return False
+
+	def get_id(self):	# Try/except?
+		try:
+			return unicode(self.id)
+		except NameError:
+			return str(self.id)
+
+	def __repr__(self):
+		return '<User %r>' % self.first_name
+
+
+	# User also has listings 
 
 class Listing(Base):
 	__tablename__ = "listings"

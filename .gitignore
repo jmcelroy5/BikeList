@@ -1,0 +1,4 @@
+*.pyc
+env/
+API_keys.txt
+keys.sh

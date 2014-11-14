@@ -78,9 +78,38 @@ def populate_bikes(filename):
 		if new_bike.frame_material == None:
 			new_bike.frame_material = choice(materials)
 
-		new_bike.frame_colors = "" 			# breaking frame colors out of list format
+		# Fudging handlebar type to fill in gaps
+		if new_bike.handlebar_type == None:
+			new_bike.handlebar_type = "Flat"
+
+		# Fudging size data to fill in gaps
+		sizes = ['xs','s','m','l','xl']
+		if new_bike.size == None:
+			new_bike.size = choice(sizes)
+
+		if new_bike.size.endswith('in'):
+			# converting inches to centimeters
+			new_bike.size = float(new_bike.size[:-2]) * 2.54
+		elif new_bike.size.endswith('cm'):
+			# integerizing the centimeters
+			new_bike.size = float(new_bike.size[:-2])
+
+		# put sizes into buckets (need to add this process to app.py)
+		if new_bike.size <= 50:
+			new_bike.size = "xs"
+		elif new_bike.size > 50 and new_bike.size <= 53:
+			new_bike.size = "s"
+		elif new_bike.size > 53 and new_bike.size <= 56:
+			new_bike.size = "m"
+		elif new_bike.size > 56 and new_bike.size <= 59:
+			new_bike.size = "l"
+		elif new_bike.size > 59:
+			new_bike.size = "xl"
+
+		# breaking frame colors out of list format
+		new_bike.frame_colors = "" 			
 		for color in bike["frame_colors"]:
-			new_bike.frame_colors += color
+			new_bike.frame_colors += " " + color
 
 		if bike["handlebar_type"] != None:
 			new_bike.handlebar_type = bike["handlebar_type"].get("name", None)
