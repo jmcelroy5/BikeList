@@ -53,11 +53,14 @@ def facebook_authorized(resp):
 @app.route("/getuser_fb")
 def get_user():
 	data = facebook.get('/me').data
-	print str(data)
-	# store name, email, photo, etc in User table
-	# user_photo = facebook.get('/me/picture?redirect=false').data
-	# return jsonify(data)
-	return "hey"
+	user_photo = facebook.get('/me/picture?redirect=false').data
+	return jsonify(data)
+	# data = facebook.get('/me').data
+	# print str(data)
+	# # store name, email, photo, etc in User table
+	# # user_photo = facebook.get('/me/picture?redirect=false').data
+	# # return jsonify(data)
+	# return "hey"
 
 
 
