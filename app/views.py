@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify, g, redirect, flash, url_for
 from flask import session as flask_session
 from model import Bike, Listing, User
+import model
 from flask_oauth import OAuth
 from flask.ext.login import LoginManager
 from app import app, db
@@ -41,32 +42,44 @@ def facebook_login():
 @facebook.authorized_handler
 def facebook_authorized(resp):
     if resp is None or 'access_token' not in resp:
-    	flash("You denied access.") # Is this accurate?
-        return redirect(url_for(login))	# Redirect to log-in page.
+    	flash("Facebook authentication error.")
+        return redirect('/login')
     else:
-    	print "\n \n THIS IS THE RESPONSE FROM FACEBOOK \n \n", resp, "\n \n"
-    	flash("You are logged in.")
     	flask_session['logged_in'] = True
-    	flask_session['facebook_token'] = resp['access_token']
-    	return redirect(url_for('index'))
+    	flask_session['facebook_token'] = (resp['access_token'], '')
 
-@app.route("/getuser_fb")
-def get_user():
-	data = facebook.get('/me').data
-	user_photo = facebook.get('/me/picture?redirect=false').data
-	return jsonify(data)
-	# data = facebook.get('/me').data
-	# print str(data)
-	# # store name, email, photo, etc in User table
-	# # user_photo = facebook.get('/me/picture?redirect=false').data
-	# # return jsonify(data)
-	# return "hey"
+    	user = add_new_user()
+
+    	flask_session['user'] = user # Store the whole user object?
+
+    	flash("You are logged in.")
+    	return redirect(url_for('index')) # How to detect which page they were headed for?
+
+    # call get_user to get id/email/whatever from fb
+    # check if user already exists on our end (query db)
+    # if not, call function to add new User
 
 
-
-
-
-
+def add_new_user():
+	""" Uses FB id to check for exisiting user in db. If none, adds new user."""
+	fb_user = facebook.get('/me').data
+	existing_user = db.session.query(User).filter_by(User.facebook_id == fb_user['id']).first()
+	if existing_user is None:
+		new_user = model.User()
+		new_user.facebook_id = fb_user['id']
+		new_user.first_name = fb_user['first_name']
+		new_user.last_name = fb_user['last_name']
+		new_user.email = fb_user['email']
+		new_user.facebook_url = fb_user['link']
+		new_user.avatar = facebook.get('/me/picture?redirect=false').data
+		# commit new user to database
+		db.session.add(new_user)
+		db.session.commit()
+		# Go get that new user
+		new_user = db.session.query(User).filter_by(User.facebook_id == fb_user['id']).first()
+		return new_user
+	else:
+		return existing_user
 
 # login view
 @app.route("/login")
@@ -76,7 +89,13 @@ def login():
 @app.route("/logout")
 def logout():
     pop_login_session()
+    flash("You are logged out.")
     return redirect(url_for('index'))
+
+@app.route("/account")
+def account():
+	return "Individual account page will be here. Edit/delete listings, add new bikes, etc."
+	# return render_template("account.html")
 
 @app.route('/clearsession')
 def clear_session():
@@ -88,16 +107,18 @@ def clear_session():
 
 @app.route('/getsession')
 def get_session():
-	print flask_session['logged_in']
-	print flask_session['facebook_token']
-	print flask_session['BI_authorized'] 
-	print flask_session['bikeindex_token']
-	return "check the console."
+	print "\nLogged in:", flask_session.get('logged_in', 'Not set')
+	print "\n Facebook token:", flask_session.get('facebook_token','Not set')
+	print "\n BikeIndex authorized:", flask_session.get('BI_authorized', 'Not set')
+	print "\n BikeIndex token:", flask_session.get('bikeindex_token', 'Not set')
+	print "\n Current user:", flask_session.get("user", "Not set")
+	return "Check the console."
 
-@app.route("/_get_current_user")
+@app.route("/get_current_user")
 def get_current_user():
 	""" Get current user from session """
-	pass
+
+	return g.user
 
 
 
@@ -130,15 +151,13 @@ def bikeindex_login():
 @app.route("/bikeindex_authorized", methods=['GET','POST']) # ???
 @bikeindex.authorized_handler
 def bikeindex_authorized(resp):
-	""" This is where you exchange temporary code (i.e.unauthorized request token) for a longer-lived, user-specific access token."""
-	print "\n \n \n \n \n THIS IS THE RESPONSE FROM BIKEINDEX", resp
-	print "\n \n \n \n \n OR MAYBE THIS IS THE RESPONSE!?!?", request.form['authenticity_token']
-	return "heyo"
+	""" Running into error here (Flask Oauth exception: Invalid response from BikeIndex)"""
 	# flask_session['BI_authorized'] = True
 	# flask_session['bikeindex_token'] = resp['authenticity_token']
 	# return resp
+	pass
 
-@app.route("/getuser_bikeindex") # This works, at least (access token hardcoded)
+@app.route("/getuser_bikeindex") # This works 
 def user_data():
     """Grab user profile information from Bike Index."""
     access_token = os.environ.get('BIKEINDEX_ACCESS_TOKEN')
@@ -146,13 +165,9 @@ def user_data():
     BI_user = BI_request.json()	 
     bikeindex_userdata = {
          	'bikeindex_user_id': BI_user['id'],
-             'bike_ids': BI_user['bike_ids'],
-             'name': BI_user['user']['name'],
-             'email': BI_user['user']['email'],
-             'avatar': BI_user['user']['image'],
-             'username': BI_user['user']['username']
+            'bike_ids': BI_user['bike_ids']
          }
-    # Store user in database
+    # Will put something here that stores user's bike ids in database
     return jsonify(bikeindex_userdata)
 
 def add_user_bikes(user):
@@ -163,7 +178,7 @@ def add_user_bikes(user):
 
 
 
-# # Flask-Login stuff
+# # Flask-Login session manager stuff
 
 # app.config.from_object('config')
 
@@ -176,9 +191,6 @@ login_manager.init_app(app)
 # 		return session.query(User).get(int(id))
 # 	except (TypeError, ValueError):
 # 		pass
-
-
-
 
 
 # Runs on browser refresh. Checks for current user and bike
@@ -341,7 +353,6 @@ def add_listing():
 
 @app.route("/listing/<int:id>") 
 def listing_success(id):
-	# bike = db.session.query(Bike).filter_by(id=id).one()
-	bike = Bike.query.get(id)
+	bike = db.session.query(Bike).get(id)
 	return render_template("listing.html", bike=bike)
 

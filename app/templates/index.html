@@ -1,87 +1,30 @@
 {% extends 'base.html' %}
 
+{% block scripts %}
+	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
+{% endblock %}
+
 {% block content %}
-<!-- Extend head / custom styles block? -->
-<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
-<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
-
-<style>
-#search-results{
-	list-style-type: none
-}
-
-#search-results img{
-	width: 200px;
-}
-
-#search-results li{
-	margin: 30px;
-}
-
-#map-panel{
-	background-color: #69A0CB;
-	height: 100%;
-}
-
-.leaflet-popup-content img {
-  	width: 240px;
-  }
-
-.leaflet-popup-content {
-  	font-size: 18px;
-  	text-align: center;
-  }
-
- #search-filters{
- 	background-color: #e4e4e4;
- 	height: 100px;
- 	padding: 20px;
- 	margin: 10px;
- 	width: 100%;
- }
-
-#material-filters{
-	display:inline-block;
-	float: left;
-	margin-right:20px;
-}
-
-#handlebar-filters{
-	display:inline-block;
-	margin-left: 20px;
-	margin-right:20px;
-}
-
-#price-filters{
- 	display:inline-block;
-	margin-left: 20px;
-	margin-right: 20px;
- }
-
-input[type=number]{
-    width: 60px;
-} 
-
-</style>
 
 <div class="row" id="search-filters">
-		<form  action= "#">
+	<form  action= "#">
 		<div id="material-filters">
 			<strong>Frame Material</strong><br>
-			<input name="Titanium" type="checkbox">Titanium</input>
-			<input name="Carbon or composite" type="checkbox">Carbon Fiber</input>
-			<input name="Aluminum" type="checkbox">Aluminum</input>
-			<input name="Steel" type="checkbox">Steel</input>
+			<input name="Titanium" type="checkbox">  Titanium</input>
+			<input name="Carbon or composite" type="checkbox">  Carbon Fiber</input>
+			<input name="Aluminum" type="checkbox">  Aluminum</input>
+			<input name="Steel" type="checkbox">  Steel</input>
 			<!-- <input name="Wood or organic material" type="checkbox">Wood/Bamboo</input>  -->
 		</div>
 		<div id="handlebar-filters">
-			<strong>Handlebars</strong><br>
-			<input name="Drop" type="checkbox">Drop</input>
-			<input name="Flat" type="checkbox">Flat</input>
-<!-- 			<input name="Forward facing" type="checkbox">Forward-facing</input>
-			<input name="Rear facing" type="checkbox">Rear-facing</input>
-			<input name="Not handlebars" type="checkbox">Not handlebars</input>
-			<input name="BMX style" type="checkbox">BMX-style</input> -->
+			<strong>Handlebar Type</strong><br>
+			<input name="Drop" type="checkbox">  Drop</input>
+			<input name="Flat" type="checkbox">  Flat</input>
+			<input name="Forward facing" type="checkbox">  Forward-facing</input>
+			<input name="Rear facing" type="checkbox">  Rear-facing</input>
+			<!-- <input name="Not handlebars" type="checkbox">Not handlebars</input>
+		<input name="BMX style" type="checkbox">BMX-style</input> -->
 		</div>
 		<div id="price-filters">
 			<strong>Price</strong><br>
@@ -91,22 +34,39 @@ input[type=number]{
 		<input type="submit" id="filter-submit" value="Apply Filters"></button>
 	</form>
 </div>
+<div>
+	<div id="map-panel" class="col-md-6">
+		<!-- class="col-md-8" -->
+	</div>
 
-<div class="row">
-	<div class="col-md-4">
-		<ul id="search-results">
-		<!-- Search results will go here -->
+	<div id="search-results" class="col-md-6">
+
+			<!-- Search results will go here -->
+
+	</div>
+<!-- 	<nav>
+		<ul class="pagination">
+			<li><a href="#"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
+			<li><a href="#">1</a></li>
+			<li><a href="#">2</a></li>
+			<li><a href="#">3</a></li>
+			<li><a href="#">4</a></li>
+			<li><a href="#">5</a></li>
+			<li><a href="#"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
 		</ul>
-	</div>
-	<div id="map-panel" class="col-md-8">
-
-	</div>
+	</nav> -->
 </div>
+
 
 <script>
 
 	var displaySearchResults = function(data) {
 
+		// List of listings
+		var listings = data['response']
+		console.log(listings);
+
+		// Empty search results div
 		var resultsDiv = $("#search-results");
 		resultsDiv.empty();
 
@@ -114,12 +74,29 @@ input[type=number]{
 		if (typeof markerLayer !== 'undefined'){
 			markerLayer.clearLayers();
 		} 
+
+		// Clear marker list
 		markerList = [];
 
+		// Place new markers
+		placeMarkers(listings);
+
+		// Load search results table 
+		searchResultsTable(listings);
+	}
+
+	var searchResultsTable = function(listings){
+
+		// Initializing 2-column search result table
+		var numCols = 2;
+		var $table = $('<table><tbody><tr>');
+		$table.addClass("table");
+
 		// Loop through response object
-		for (var i = 0; i < data['response'].length; i++){
+		for (var i = 0; i < listings.length; i++){
+
 			// Current listing
-			var listing = data['response'][i];
+			var listing = listings[i]
 
 			// Create JQuery object for listing title/link
 			var $listingLink = $("<a />",{
@@ -131,15 +108,25 @@ input[type=number]{
 			var $bikePhoto = $("<img>")
 			$bikePhoto.attr('src', listing.photo)
 
-			// Wrap them in a list item and append to search results list
-			resultsDiv.append("<li>");
-			$listingLink.appendTo("#search-results");
-			resultsDiv.append("<br>");
-			$bikePhoto.appendTo("#search-results"); 
-			resultsDiv.append("</li>");
+			// Add to search results table
+			var tr = $table.find(">tbody>tr:last");
+			if (!tr.length || tr.find(">td").length == numCols){
+				var tr = $("<tr>");
+				$table.append("<tr>");
+			}
+			tr.append("<td>").append($listingLink).append("<br>").append($bikePhoto);  
 
-			// Append it to the search results panel
-			$bikePhoto.appendTo('#search-results');
+		}
+		$('#search-results').append($table);
+
+	}
+
+	function placeMarkers(listings){
+
+		for (var i = 0; i < listings.length; i++){
+
+			//Current listing
+			var listing = listings[i]
 
 			// create new marker/layer
 			newMarker = L.mapbox.featureLayer(); 
@@ -154,7 +141,7 @@ input[type=number]{
 									marker.feature.properties.title + '</a><br>' +
 									'<img src="' + photo + '">';
 				
-				marker.bindPopup(popupContent,{
+				marker.bindPopup(popupContent, {
 					closeButton: false,
 					// minWidth: 280
 				});
@@ -162,19 +149,19 @@ input[type=number]{
 
 			// Define geoJSON for new marker
 			var geoJson = [{
-					type: 'Feature',
-					"geometry": { 
-						"type": "Point", 
-						"coordinates": [listing.longitude, listing.latitude]
-					},
-					"properties": {
-						"title": listing.title,
-						"image": listing.photo,
-						"url": listing.url,
-						'marker-size': 'large',
-			        	'marker-color': '#FF6699',
-			        	'marker-symbol': 'bicycle'
-					}
+				type: 'Feature',
+				"geometry": { 
+					"type": "Point", 
+					"coordinates": [listing.longitude, listing.latitude]
+				},
+				"properties": {
+					"title": listing.title,
+					"image": listing.photo,
+					"url": listing.url,
+					'marker-size': 'large',
+		        	'marker-color': '#FF6699',
+		        	'marker-symbol': 'bicycle'
+				}
 			}];
 
 			// Set geoJSON
@@ -182,7 +169,8 @@ input[type=number]{
 
 			// Add marker to the list
 			markerList.push(newMarker);
-		}
+		}	
+
 		// Create a group for all the markers
 		markerLayer = L.layerGroup(markerList)
 		// And add them all to the map at once

@@ -1,24 +1,34 @@
 import datetime
-import model
+from app import db, model
 from random import uniform, randrange, choice
 import requests
 
 def clear_bike_table():
-	model.session.query(model.Bike).delete()
-	model.session.commit()
+	model.Bike.query.delete()
+	db.session.commit()
 	return "Bike table cleared!"
 
 def clear_listings_table():
-	model.session.query(model.Listing).delete()
-	model.session.commit()
+	model.Listing.query.delete()
+	db.session.commit()
 	return "Listings table cleared!"
 
+def clear_users_table():
+	model.User.query.delete()
+	db.session.commit()
+	return "Users table cleared!"
+
+def get_all_bikes():
+	bikes = model.Bike.query.all()
+	for bike in bikes:
+		print (bike.id, bike.title)
+
 def populate_listings():
-	bike_list = model.session.query(model.Bike.id)
-	for bike_id in bike_list:
+	bike_list = model.Bike.query.all()
+	for bike in bike_list:
 		listing = model.Listing()
 
-		listing.bike_id = bike_id[0]
+		listing.bike_id = bike.id
 		listing.post_date = datetime.datetime.now()
 		listing.post_expiration = datetime.datetime.now() + datetime.timedelta(30) # Post expires 30 days from now
 		listing.post_status = "Active"
@@ -26,13 +36,29 @@ def populate_listings():
 		listing.latitude = 	uniform(37.75, 37.8) 			# Random lat in SF
 		listing.longitude = uniform(-122.478,-122.4)  		# Random long in SF
 		listing.additional_text = "This is a test bike. Isn't it beautiful?"
-		model.session.add(listing)
+		db.session.add(listing)
 
-	model.session.commit()
+	db.session.commit()
 
-	rows = model.session.query(model.Bike).count()
-
+	rows = model.Listing.query.count()
 	print rows, "listings generated successfuly!"
+
+def create_user():
+	me = model.User()
+
+	me.facebook_id = "2335427115026"
+	me.first_name = "Jessica"
+	me.last_name = "McElroy"
+	me.email = "mcelroyjessica@gmail.com"
+	me.avatar = "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpa1/v/t1.0-1/c32.0.50.50/p50x50/10169369_2128045370612_4824974463606072307_n.jpg?oh=84abbe14a17716d2e6b66d07a88f11f8&oe=54D23BF6&__gda__=1423797041_941578f05e56238a7887592bb802e207"
+	me.facebook_url = "https://www.facebook.com/app_scoped_user_id/2335427115026/"
+
+	db.session.add(me)
+	db.session.commit()
+
+	user = model.User.query.get(1)
+	name = user.first_name
+	print name, "added to database!"
 
 # input a list of bike serial numbers
 def populate_bikes(filename):
@@ -48,17 +74,19 @@ def populate_bikes(filename):
 
 		# Request bike from BikeIndex API
 		bike_request = requests.get("https://bikeindex.org/api/v1/bikes?serial=" + str(serial))
+
 		# Decode JSON 
 		bike_json = bike_request.json()	 
+
 		# Extract first bike from list
 		if len(bike_json["bikes"]) == 0:
 			print "No bike with serial number ", serial, " found"
 			continue # go back to top of for-loop
-
 		bike = bike_json["bikes"][0] 
 
 		# Populate bike attributes
 		new_bike.id = bike["id"]
+		new_bike.user_id = 1 				# all bikes are belong to me 
 		new_bike.size = bike["frame_size"]	
 		new_bike.serial = bike["serial"]	
 		new_bike.manufacturer = bike["manufacturer_name"]
@@ -132,12 +160,10 @@ def populate_bikes(filename):
 			new_bike.rear_gear_type = bike["rear_gear_type"].get("name", None)
 
 		# Add bike to session and commit changes
-		model.session.add(new_bike)
+		db.session.add(new_bike)
 	
-	model.session.commit() 
-
-	rows = model.session.query(model.Bike).count()
-
+	db.session.commit() 
+	rows = model.Bike.query.count()
 	return rows, "bikes added to database successfully"
 
 

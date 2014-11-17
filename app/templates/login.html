@@ -1,11 +1,15 @@
 {%extends 'base.html'%}
-{%block content%}
-
-  {% if not session.logged_in %}
-    <li><a href="/facebook_login">Login or Signup</a></li>
-    {% else %}
-    <li><a href="/logout">Logout</a></li>
-    {% endif %}
+	{%block content%}
+	<div class="container">
+		{% if not session.logged_in %}
+		<br><br><br>
+		Sign in with Facebook! It's quick and easy.
+	    	<a href="/facebook_login">Login or Signup</a>
+	    {% else %}
+	    <br><br><br>
+	    	<a href="/logout">Logout</a>
+	    {% endif %}
+	</div>
 
 
 {%endblock%}

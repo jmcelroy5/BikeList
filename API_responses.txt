@@ -35,3 +35,21 @@ results[]: {
 BIKEINDEX USER API RESPONSE
 
 USER DATA JSON IS {u'access_token': {u'application': u'BikeList Dev', u'scope': [u'read_user', u'read_bikes']}, u'bike_ids': [33520, 33874], u'id': u'9303', u'user': {u'username': u'jmcelroy', u'twitter': u'twopanniers', u'name': u'Jessica McElroy', u'image': u'https://bikeindex.s3.amazonaws.com/uploads/Us/9303/P1011193.JPG', u'email': u'mcelroyjessica@gmail.com'}}
+
+
+
+FACEBOOK USER API RESPONSE
+
+{
+  "email": "mcelroyjessica@gmail.com", 
+  "first_name": "Jessica", 
+  "gender": "female", 
+  "id": "2335427115026", 
+  "last_name": "McElroy", 
+  "link": "https://www.facebook.com/app_scoped_user_id/2335427115026/", 
+  "locale": "en_US", 
+  "name": "Jessica McElroy", 
+  "timezone": -8, 
+  "updated_time": "2014-10-19T23:33:27+0000", 
+  "verified": true
+}

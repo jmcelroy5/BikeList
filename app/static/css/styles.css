@@ -2,11 +2,11 @@ body{
 	font-family: "Open Sans",sans-serif;
 	font-weight: 300;
 	padding: 30px;
-	margin: 0;
+	margin: 20px;
 }
 
 h1, h2, h3, h4{
-	font-family: "Klinic",sans-serif;
+	font-family: 'Concert One', cursive;
 	font-weight: 400;
 	line-height: 1.2em;
 }
@@ -48,9 +48,67 @@ li{
 }
 
 #map-canvas {
-	float:left;
 	height:250px; 
 	width:250px; 
-	margin-right: 40px; 
+	/*margin-right: 40px; */
 	padding: 0;
 }
+
+#content{
+	margin-top: 75px;
+}
+
+#search-results{
+	list-style-type: none
+}
+
+#search-results img{
+	width: 200px;
+}
+
+#search-results li{
+	margin: 30px;
+}
+
+#map-panel{
+	background-color: #69A0CB;
+	height: 100%;
+}
+
+.leaflet-popup-content img {
+  	width: 240px;
+  }
+
+.leaflet-popup-content {
+  	font-size: 18px;
+  	text-align: center;
+  }
+
+ #search-filters{
+ 	height: 100px;
+ 	padding: 20px;
+ 	margin: 10px;
+ 	width: 100%;
+ }
+
+#material-filters{
+	display:inline-block;
+	margin-right:20px;
+	padding: 5px;
+}
+
+#handlebar-filters{
+	display:inline-block;
+	margin-left: 20px;
+	margin-right:20px;
+}
+
+#price-filters{
+ 	display:inline-block;
+	margin-left: 20px;
+	margin-right: 20px;
+ }
+
+input[type=number]{
+    width: 60px;
+} 

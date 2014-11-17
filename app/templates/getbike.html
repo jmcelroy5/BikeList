@@ -1,15 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
+	<br><br><br>
+	<div class="container">
 		<form id="target">
-			<input id="bike-serial" type="text" name="bike-index-id" placeholder="Bike Serial Number"></input>
+			<h3> List your bike </h3>
+			Enter the serial number of the bike you want to sell. Remember, your bike has to be registered at BikeIndex.org before you can make a listing for it.<br><br>
+			<input id="bike-serial" type="text" name="bike-index-id" placeholder="Bike Serial Number"></input><br><br>
 		
 			<button type="submit"> Find your bike </button><br><br>
 		</form>
 
-		<form action="/bikeindex_login">
+<!-- 		<form action="/bikeindex_login">
 			<button type="submit"> Connect to your BikeIndex account </button>
-		</form>
+		</form> -->
 	
 		<div id="verify-bike" class="bike-info">
 			<img id="bike-pic"><br><br>
@@ -26,13 +30,96 @@
 			</ul>
 			<div id='confirm'>
 				<form>
-					<h2> Is this the bike you want to sell?</h2>
-					<button id="Yes">Yes</button>
-					<button id="No">No</button>
+					<!-- <h2> Is this the bike you want to sell?</h2> -->
+					<button id="Yes">Sell this bike</button>
+					<button id="No">That's not my bike</button>
 				</form>	
 			</div>
 		</div>
 
-		<script src="static/js/getbike.js"></script>	
+	</div>
+	<script>
+	(function() {
+
+	$("#target").on("click",function(e){
+		e.preventDefault();
+		var serial = $("#bike-serial").val();
+		console.log(serial);
+		getBike(serial);
+	});
+
+
+	function getBike(serial) {
+		$.get("https://bikeindex.org/api/v1/bikes?serial=" + serial, function(data){
+			
+			// check to make sure we got one bike back
+			if (data["bikes"].length === 1){
+				var bike = data["bikes"][0];
+			}
+			else {
+				alert("No bike with that serial number found.");
+			}
+
+			// check if bike is stolen
+			var stolen = bike["stolen"];
+			if (stolen===true){
+				alert("Uh oh. Looks like we have a stolen bike on our hands.");
+				// Go to a stolen bike page.
+			}
+
+			// if bike is not stolen
+			if (bike && stolen===false){
+				// display bike photo and specs for verification
+				$("#bike-info").show();
+				$("#bike-pic").attr('src', bike["photo"]);
+
+				// How to make sure these don't append more than once?
+				// Deactivate "find your bike" button?
+				$("#bike-info > h1").text(bike["title"]);
+				$("#serial").append(bike["serial"]);
+				$("#manufacturer").append(bike["manufacturer_name"]);
+				$("#model").append(bike["frame_model"]);
+				$("#year").append(bike["year"]);
+				$("#color").append(bike["frame_colors"][0]);
+
+				if (bike["frame_material"]){
+					$("#material").append(bike["frame_material"]["name"]);
+				}
+				if (bike["handlebar_type"]){
+					$("#handlebar").append(bike["handlebar_type"]["name"]);
+				}
+				if (bike["rear_wheel_size"]){
+					$("#wheel").append(bike["rear_wheel_size"]["name"]);	
+				}
+
+				// add click listeners to confirmation buttons
+				$("#Yes").on("click",function(e){
+					e.preventDefault();
+					postBike(bike);
+				});
+
+				$("#No").on("click", function(e){
+					e.preventDefault();
+					alert("Oh, bummer! Check to make sure you entered your serial number correctly.");
+					$("#bike-info").hide();
+				});
+			}
+		});
+	}
+
+	function postBike(bike){
+		// Turn bike object into JSON string to pass to python
+		var bikedata = JSON.stringify(bike);
+
+		$.post("/addbike", {bike: bikedata}, function(){
+			alert("Bike added to database!");	// or flash message in flask
+
+			window.location.replace("/list");
+		});
+	}
+
+	})();
+
+	</script>
 		
 {% endblock %} 
