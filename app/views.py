@@ -50,7 +50,7 @@ def facebook_authorized(resp):
 
     	user = add_new_user()
 
-    	flask_session['user'] = user # Store the whole user object?
+    	flask_session['user'] = user.id # Store just the user id?
 
     	flash("You are logged in.")
     	return redirect(url_for('index')) # How to detect which page they were headed for?
@@ -63,7 +63,7 @@ def facebook_authorized(resp):
 def add_new_user():
 	""" Uses FB id to check for exisiting user in db. If none, adds new user."""
 	fb_user = facebook.get('/me').data
-	existing_user = db.session.query(User).filter_by(User.facebook_id == fb_user['id']).first()
+	existing_user = db.session.query(User).filter(User.facebook_id == fb_user['id']).first()
 	if existing_user is None:
 		new_user = model.User()
 		new_user.facebook_id = fb_user['id']
@@ -76,7 +76,7 @@ def add_new_user():
 		db.session.add(new_user)
 		db.session.commit()
 		# Go get that new user
-		new_user = db.session.query(User).filter_by(User.facebook_id == fb_user['id']).first()
+		new_user = db.session.query(User).filter(User.facebook_id == fb_user['id']).first()
 		return new_user
 	else:
 		return existing_user
@@ -114,11 +114,10 @@ def get_session():
 	print "\n Current user:", flask_session.get("user", "Not set")
 	return "Check the console."
 
-@app.route("/get_current_user")
-def get_current_user():
-	""" Get current user from session """
-
-	return g.user
+# @app.route("/_get_current_user")
+# def get_current_user():
+# 	""" Get current user from session """
+# 	return g.user
 
 
 
@@ -176,8 +175,6 @@ def add_user_bikes(user):
 
 
 
-
-
 # # Flask-Login session manager stuff
 
 # app.config.from_object('config')
@@ -196,9 +193,12 @@ login_manager.init_app(app)
 # Runs on browser refresh. Checks for current user and bike
 @app.before_request
 def get_current_user():
-    current_user = flask_session.get('user', None) 
-    if current_user:
-	 	g.user = current_user
+    user_id = flask_session.get('user', None)
+    if user_id:
+    	user = db.session.query(User).filter_by(id=user_id).one()
+    	g.user = user.id
+    	g.avatar = user.avatar
+    	g.name = user.first_name
 
 # Make current user available on templates
 @app.context_processor
@@ -266,6 +266,15 @@ def get_all_bikes():
 @app.route("/sell")
 def index():
 	return render_template("getbike.html")
+
+@app.route("/fetchbike", methods=["GET","POST"])
+def fetch_bike():
+	serial_JSON = request.form.get("serial")
+	print 'serial_JSON is... ', serial_JSON
+	serial = json.loads(serial_JSON)
+	BI_request = requests.get("https://bikeindex.org/api/v1/bikes?serial=" + serial)
+	BI_bike = BI_request.json()	 
+	return jsonify(BI_bike)
 
 @app.route("/addbike", methods=['POST'])
 def add_bike():

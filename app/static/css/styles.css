@@ -1,7 +1,7 @@
 body{
 	font-family: "Open Sans",sans-serif;
 	font-weight: 300;
-	padding: 30px;
+	padding: 37px;
 	margin: 20px;
 }
 
@@ -47,32 +47,8 @@ li{
 	float:left;
 }
 
-#map-canvas {
-	height:250px; 
-	width:250px; 
-	/*margin-right: 40px; */
-	padding: 0;
-}
-
 #content{
 	margin-top: 75px;
-}
-
-#search-results{
-	list-style-type: none
-}
-
-#search-results img{
-	width: 200px;
-}
-
-#search-results li{
-	margin: 30px;
-}
-
-#map-panel{
-	background-color: #69A0CB;
-	height: 100%;
 }
 
 .leaflet-popup-content img {

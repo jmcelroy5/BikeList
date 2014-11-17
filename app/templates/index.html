@@ -6,40 +6,56 @@
 {% endblock %}
 
 {% block content %}
+<style>
+body{
+	margin-left:-53px;
+}
+#map-panel{
+	height: 100%;
+	width:570px;
+}
 
-<div class="row" id="search-filters">
-	<form  action= "#">
-		<div id="material-filters">
-			<strong>Frame Material</strong><br>
-			<input name="Titanium" type="checkbox">  Titanium</input>
-			<input name="Carbon or composite" type="checkbox">  Carbon Fiber</input>
-			<input name="Aluminum" type="checkbox">  Aluminum</input>
-			<input name="Steel" type="checkbox">  Steel</input>
-			<!-- <input name="Wood or organic material" type="checkbox">Wood/Bamboo</input>  -->
-		</div>
-		<div id="handlebar-filters">
-			<strong>Handlebar Type</strong><br>
-			<input name="Drop" type="checkbox">  Drop</input>
-			<input name="Flat" type="checkbox">  Flat</input>
-			<input name="Forward facing" type="checkbox">  Forward-facing</input>
-			<input name="Rear facing" type="checkbox">  Rear-facing</input>
-			<!-- <input name="Not handlebars" type="checkbox">Not handlebars</input>
-		<input name="BMX style" type="checkbox">BMX-style</input> -->
-		</div>
-		<div id="price-filters">
-			<strong>Price</strong><br>
-			Min: $ <input name="min_price" type="number"></input>
-			Max: $ <input name="max_price" type="number"></input>
-		</div>
-		<input type="submit" id="filter-submit" value="Apply Filters"></button>
-	</form>
-</div>
+#map-panel.affix-top {
+    position: absolute;
+    margin-top:0px;
+    width:570px;
+  }
+
+ #map-panel.affix-bottom {
+    position: absolute;
+    margin-bottom:0px;
+    width:570px;
+  }
+
+ #map-panel.affix {
+    position: fixed;
+    top:133px;
+    width:570px;
+  }
+
+#search-results{
+	float:right;
+}
+
+#search-results td {
+	width: 200px;
+}
+
+#search-results img{
+	width: 200px;
+	margin-bottom: 25px;
+}
+
+
+</style>
+
+
 <div>
-	<div id="map-panel" class="col-md-6">
+	<div id="map-panel" data-spy="affix" >
 		<!-- class="col-md-8" -->
 	</div>
 
-	<div id="search-results" class="col-md-6">
+	<div id="search-results">
 
 			<!-- Search results will go here -->
 
@@ -60,11 +76,12 @@
 
 <script>
 
+	$("#map-panel").affix();
+
 	var displaySearchResults = function(data) {
 
 		// List of listings
 		var listings = data['response']
-		console.log(listings);
 
 		// Empty search results div
 		var resultsDiv = $("#search-results");
@@ -114,10 +131,18 @@
 				var tr = $("<tr>");
 				$table.append("<tr>");
 			}
-			tr.append("<td>").append($listingLink).append("<br>").append($bikePhoto);  
+			var td = $("<td>");
+			td.append($listingLink).append("<br>").append($bikePhoto);
+			tr.append(td)
+			
+
 
 		}
+
 		$('#search-results').append($table);
+		// $('#search-results').find('td').each( function(){
+		// 	$(this).css("height","50px");
+		// });      
 
 	}
 

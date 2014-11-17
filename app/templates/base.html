@@ -8,7 +8,8 @@
 
           <title> {% block title %} {% endblock %} BikeList</title>
 
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
             {% block scripts %} 
             <!-- Page-specific scripts will be added here -->
@@ -34,8 +35,12 @@
       }
       #header-avatar{
         border-radius:10px;
-        width: 30px;
+        width: 50px;
+        margin-right:50px;
+        margin-left: 5px;
       }
+
+
     </style>
 
 
@@ -43,7 +48,7 @@
 
     <body>
       <!-- Navigation -->
-      <nav class=" containernav navbar-fixed-top" id="bikelist-header">
+      <nav class="nav navbar-fixed-top" id="bikelist-header">
               <div>
                   <a class="navbar-brand" href="/"><h2>BikeList</h2></a>
                   <input type="text" id="header-search" placeholder="Find bikes near you"></input>
@@ -51,19 +56,15 @@
               <!-- Collect the nav links, forms, and other content for toggling -->
               <div>
                   <ul class="nav navbar-right">
-                      <li class="hidden">
-                          <a href="#page-top"></a>
-                      </li>
                       {% if not session.logged_in %}
-                      <li class="page-scroll">
-                          <a href="/login">Login</a>
+                      <li>
+                        <a href="/login">Login</a>
                       </li>
                       {% else %}
-                      <li class="page-scroll">
-                          <a href="/logout">Logout</a>
-                      </li>                      
+                      <li>
+                        <span class="caret"></span> {{ g.name }} <img id="header-avatar" src="{{ g.avatar }}" > 
+                      </li>            
                       {% endif %}
-                      
                   </ul>
               </div>
               <!-- /.navbar-collapse -->
