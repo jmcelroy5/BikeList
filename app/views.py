@@ -267,14 +267,13 @@ def get_all_bikes():
 def index():
 	return render_template("getbike.html")
 
-@app.route("/fetchbike", methods=["GET","POST"])
+@app.route("/fetchbike")
 def fetch_bike():
-	serial_JSON = request.form.get("serial")
-	print 'serial_JSON is... ', serial_JSON
-	serial = json.loads(serial_JSON)
-	BI_request = requests.get("https://bikeindex.org/api/v1/bikes?serial=" + serial)
-	BI_bike = BI_request.json()	 
-	return jsonify(BI_bike)
+	serial = request.args.get("serial")
+	params = {"serial":serial}
+	r = requests.get("https://bikeindex.org/api/v1/bikes", params=params)
+	bike = r.json()
+	return jsonify(response=bike)
 
 @app.route("/addbike", methods=['POST'])
 def add_bike():

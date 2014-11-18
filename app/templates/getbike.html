@@ -1,12 +1,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	<br><br><br>
+	<style>
+		.attr-title{
+			display: inline-block;
+			margin-right: .4em;
+			font-weight: bold;
+		}
+
+		.attr-list{
+			list-style-type: none;
+			padding: 0;
+			display: in-line;
+		}
+
+		.attr-list li:nth-of-type(2n-1){
+			background: #ecf0f1;
+		}
+
+		#verify-bike{
+			display: None;
+		}
+
+
+	</style>
+
 	<div class="container">
 		<form id="target">
 			<h3> List your bike </h3>
 			Enter the serial number of the bike you want to sell. Remember, your bike has to be registered at BikeIndex.org before you can make a listing for it.<br><br>
-			<input id="bike-serial" type="text" name="bike-index-id" placeholder="Bike Serial Number"></input><br><br>
+			<input id="bike-serial" type="text" name="serial" placeholder="Bike Serial Number"></input><br><br>
 		
 			<button type="submit"> Find your bike </button><br><br>
 		</form>
@@ -47,16 +70,14 @@
 		getBike(serial);
 	});
 
-
 	function getBike(serial) {
 
-		var serialNum = JSON.stringify(serial);
-
-		$.post("/fetchbike", {serial: serialNum}, function(data){
-			
+		$.get("/fetchbike", {serial: serial}, function(data){
+		
 			// check to make sure we got one bike back
-			if (data["bikes"].length === 1){
-				var bike = data["bikes"][0];
+			if (data["response"]["bikes"].length === 1){
+				var bike = data["response"]["bikes"][0];
+				console.log("bike:",bike)
 			}
 			else {
 				alert("No bike with that serial number found.");
@@ -71,8 +92,9 @@
 
 			// if bike is not stolen
 			if (bike && stolen===false){
+				console.log("are we getting here??")
 				// display bike photo and specs for verification
-				$("#bike-info").show();
+				$("#verify-bike").show();
 				$("#bike-pic").attr('src', bike["photo"]);
 
 				// How to make sure these don't append more than once?

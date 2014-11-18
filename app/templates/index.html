@@ -13,53 +13,126 @@ body{
 #map-panel{
 	height: 100%;
 	width:570px;
+	float:left;
+	left:0;
+	bottom:0;
+	position:absolute;
 }
 
 #map-panel.affix-top {
     position: absolute;
     margin-top:0px;
     width:570px;
+    left:0;
+    bottom:0;
   }
 
  #map-panel.affix-bottom {
     position: absolute;
     margin-bottom:0px;
     width:570px;
+    left:0;
+    bottom:0;
   }
 
  #map-panel.affix {
     position: fixed;
     top:133px;
     width:570px;
+    left:0;
+    bottom:0;
   }
 
-#search-results{
+#search-panel{
 	float:right;
+	width: 500px;
+	/*width:50%;*/
 }
 
-#search-results td {
+#search-results{
+	width:490px;
+	/*width:100%;*/
+	margin-left:10px;
+}
+
+#search-panel td {
 	width: 200px;
 }
 
-#search-results img{
+#search-panel img{
 	width: 200px;
 	margin-bottom: 25px;
+}
+
+#search-filters{
+ 	height: 300px;
+ 	width: 100%;
+ 	top:0;
+ }
+
+.filter-group{
+	display:inline-block;
+	margin-bottom:20px;
+	padding: 10px;
+	border-bottom:1px dotted;
+}
+
+input[type=number]{
+    width: 60px;
+} 
+
+#content{
+    width: 1100px;
+	margin-top: 75px;
 }
 
 
 </style>
 
+<div id="content">
 
-<div>
 	<div id="map-panel" data-spy="affix" >
 		<!-- class="col-md-8" -->
 	</div>
 
-	<div id="search-results">
+	<div id="search-panel">
+		
+		<div id="search-filters">
+				<form action= "#">
+					<div id="materials-filters" class="filter-group">
+						<strong>Frame Material</strong><br>
+						<input name="Titanium" type="checkbox">  Titanium</input>
+						<input name="Carbon or composite" type="checkbox">  Carbon Fiber</input>
+						<input name="Aluminum" type="checkbox">  Aluminum</input>
+						<input name="Steel" type="checkbox">  Steel</input>
+						<!-- <input name="Wood or organic material" type="checkbox">Wood/Bamboo</input>  -->
+					</div>
+					<div id="handlebar-filters" class="filter-group">
+						<strong>Handlebar Type</strong><br>
+						<input name="Drop" type="checkbox">  Drop</input>
+						<input name="Flat" type="checkbox">  Flat</input>
+						<input name="Forward facing" type="checkbox">  Forward-facing</input>
+						<input name="Rear facing" type="checkbox">  Rear-facing</input>
+						<!-- <input name="Not handlebars" type="checkbox">Not handlebars</input>
+					<input name="BMX style" type="checkbox">BMX-style</input> -->
+					</div>
+					<div id="price-filters" class="filter-group">
+						<strong>Price</strong><br>
+						Min: $ <input name="min_price" type="number"></input>
+						Max: $ <input name="max_price" type="number"></input>
+					</div><br>
+					<input type="submit" id="filter-submit" value="Apply Filters"></button>
+				</form>
+		</div>
 
-			<!-- Search results will go here -->
+		<table id="search-results" class="table">
+			<!-- Listings populate here -->
+		</table>
 
 	</div>
+</div>
+			
+
 <!-- 	<nav>
 		<ul class="pagination">
 			<li><a href="#"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
@@ -70,8 +143,8 @@ body{
 			<li><a href="#">5</a></li>
 			<li><a href="#"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
 		</ul>
-	</nav> -->
-</div>
+	</nav>
+<!-- </div> -->
 
 
 <script>
@@ -106,8 +179,10 @@ body{
 
 		// Initializing 2-column search result table
 		var numCols = 2;
-		var $table = $('<table><tbody><tr>');
-		$table.addClass("table");
+
+		$table = $('#search-results');
+		// var $table = $('<table><tbody><tr>');
+		// $table.addClass("table");
 
 		// Loop through response object
 		for (var i = 0; i < listings.length; i++){
@@ -134,15 +209,10 @@ body{
 			var td = $("<td>");
 			td.append($listingLink).append("<br>").append($bikePhoto);
 			tr.append(td)
-			
-
 
 		}
 
-		$('#search-results').append($table);
-		// $('#search-results').find('td').each( function(){
-		// 	$(this).css("height","50px");
-		// });      
+		$('#search-panel').append($table);
 
 	}
 
@@ -226,7 +296,7 @@ body{
 			e.preventDefault();
 
 			var materials = [];
-			$('#material-filters input:checked').each(function(i,material){
+			$('#materials-filters input:checked').each(function(i,material){
 		 		materials.push($(material).attr('name'));
 			});
 

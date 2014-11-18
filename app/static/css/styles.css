@@ -60,31 +60,3 @@ li{
   	text-align: center;
   }
 
- #search-filters{
- 	height: 100px;
- 	padding: 20px;
- 	margin: 10px;
- 	width: 100%;
- }
-
-#material-filters{
-	display:inline-block;
-	margin-right:20px;
-	padding: 5px;
-}
-
-#handlebar-filters{
-	display:inline-block;
-	margin-left: 20px;
-	margin-right:20px;
-}
-
-#price-filters{
- 	display:inline-block;
-	margin-left: 20px;
-	margin-right: 20px;
- }
-
-input[type=number]{
-    width: 60px;
-} 

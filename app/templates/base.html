@@ -40,6 +40,9 @@
         margin-left: 5px;
       }
 
+      #maindiv{
+        margin-top:75px;
+      }
 
     </style>
 
@@ -72,7 +75,7 @@
           <!-- /.container-fluid -->
       </nav>
 
-      <div class="container-fluid" id="content">
+      <div id="maindiv" class="container-fluid">
           {% with messages = get_flashed_messages() %}
           {% if messages %}
           {% for message in messages %}

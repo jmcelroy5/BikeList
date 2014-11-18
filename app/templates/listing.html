@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	
+<style>
+	.bike-info > img{
+		width: 500px;
+		float: left;
+		margin: 10px;
+	}
+</style>
 	<div class="bike-info">	
 		<h1> {{ bike.title }}</h1>
 		<img src={{ bike.photo }}><br><br>
