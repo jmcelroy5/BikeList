@@ -351,7 +351,7 @@ def add_listing():
 	new_listing.latitude = request.form["latitude"] # FORM
 	new_listing.longitude = request.form["longitude"] # FORM
 	new_listing.additional_text = request.form["comments"] # FORM
-	# also need to tie the listing to the logged-in user
+	new_listing.user_id = g.user
 
 	# model.session.add(new_listing)
 	# model.session.commit()

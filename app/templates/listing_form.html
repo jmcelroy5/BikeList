@@ -1,15 +1,23 @@
 {% extends 'base.html' %}
 
-{% block scripts_head %}
+{% block scripts %}
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
 <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
 <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
 {% endblock %}
 
 {% block content %}
+<style>
+
+	#mapbox{
+		height:300px;
+	}
+
+</style>
+
 
 		<form id="listing-form" action="#" method='POST'>
-			<h1> List your bike </h1>
+			<h1> Complete Your Listing </h1>
 			asking price
 			$ <input id="price"type="text" name="price"></input><br><br>  <!--Numbers only-->
 			your address or cross streets
@@ -18,31 +26,46 @@
 			<textarea id="comments" rows="4" cols="50" name="comments" placeholder="What do you love about this bike?"></textarea><br><br>
 			<input type="submit" value="Finish Listing"></input>
 		</form>
+
 		<div id="mapbox">
-			<div id="map-canvas"></div>
-		<div>
+			<!-- <div id="map-canvas"></div> -->
+		</div>
 
 	<script>
 	// IIFE, Immediately Invoked Function Expression
-	(function() {
-		var map; 
-		var geocoder;
+	// (function() {
+		// var map; 
+		// var geocoder;
 
-		function initialize() {
-			geocoder = new google.maps.Geocoder();
-			var startCenter = new google.maps.LatLng(37.77343, -122.442565);
-			var mapOptions = {
-				zoom: 12,
-				center: startCenter
-			};
-			map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		// function initialize() {
+		// 	geocoder = new google.maps.Geocoder();
+		// 	var startCenter = new google.maps.LatLng(37.77343, -122.442565);
+		// 	var mapOptions = {
+		// 		zoom: 12,
+		// 		center: startCenter
+		// 	};
+		// 	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		// }
+
+		// google.maps.event.addDomListener(window, 'load', initialize);
+
+		var initializeMap = function(){
+			//Connect to MapBox API
+			L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
+			// Initiate map and set view
+			map = L.mapbox.map('mapbox', 'examples.map-i86nkdio');
+			// set starting view/zoom(SF)
+			map.setView([37.79, -122.41], 14);
 		}
 
-		google.maps.event.addDomListener(window, 'load', initialize);
+		$(document).ready(function(){
+			initializeMap();
+			geocoder = new google.maps.Geocoder();
+		});
 
-		$("#location").on("blur",function(e){
-				var location = document.getElementById("location").value;
-				placeMarker(location);
+		$("#location").blur(function(e){
+			var value = $(this).val();
+			placeMarker(value);
 		});
 
 		$("#listing-form").on("submit", function(e){
@@ -50,8 +73,6 @@
 			e.preventDefault();
 			var price = document.getElementById("price").value;
 			var comments = document.getElementById("comments").value;
-			var latitude = marker.position["k"];
-			var longitude = marker.position["B"];
 
 			// AJAX post to add listing to database
 			$.post("/addlisting", {
@@ -65,27 +86,52 @@
 				});
 			});
 
-		var marker;
+		markerList = [];
 
-		function placeMarker(location){
-			geocoder.geocode( {address: location}, function(results){
-				latLong = results[0].geometry.location;
-				map.setCenter(latLong);
+		var placeMarker = function(location) {
+			geocoder.geocode({address:location}, function(results){
+			latitude = results[0].geometry.location["k"];
+			longitude = results[0].geometry.location["B"]
 
-				// If there is already a marker, delete it
-				if (marker){
-					marker.setMap(null);
-					marker = null;
+			map.setView([latitude, longitude], 14);
+
+			// If there is already a marker, delete it
+			if (typeof markerLayer !== 'undefined'){
+				markerLayer.clearLayers();
+			} 
+
+			markerList = [];
+
+			// Create new marker/layer
+			newMarker = L.mapbox.featureLayer(); 
+
+			// Marker location and properties
+			var geoJson = [{
+			type: 'Feature',
+				"geometry": { 
+					"type": "Point", 
+					"coordinates": [longitude, latitude]
+				},
+				"properties": {
+					'marker-size': 'large',
+		        	'marker-color':  '#00529f',
+		        	'marker-symbol': 'bicycle'
 				}
+			}];
 
-				// create new marker
-				marker = new google.maps.Marker({
-					position: latLong,
-					map: map,
-				});
+			// Set geoJSON
+			newMarker.setGeoJSON(geoJson);
+
+			// Add marker to the list 
+			markerList.push(newMarker);
+			// so we can clear layer if user needs to place a new marker
+			markerLayer = L.layerGroup(markerList);
+			// and finally, add it to the map
+			markerLayer.addTo(map);
 			});
 		}
-	})();
+
+	// })();
 
 	</script>
 {% endblock %}

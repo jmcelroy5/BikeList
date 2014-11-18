@@ -36,6 +36,7 @@ Error cases that will need to be handled:
 	- OR user clicks "no" (we got the wrong bike)
 	- If a listing already exists for that bike
 	- listing form verification: all fields are filled out and in proper data format
+	- if google geocoder returns empty response on listing form
 
 MVP features:
 
