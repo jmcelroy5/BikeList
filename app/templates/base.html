@@ -32,6 +32,7 @@
         background: #e4e4e4;
         border-bottom: 1px solid;
         font-color: white;
+        height:50px;
       }
       #header-avatar{
         border-radius:10px;
@@ -41,7 +42,15 @@
       }
 
       #maindiv{
-        margin-top:75px;
+        margin-top:40px;
+      }
+
+      .navbar-header{
+        margin-top:10px;
+      }
+
+      .navbar-brand, .navbar{
+        
       }
 
     </style>
@@ -50,38 +59,47 @@
     </head>
 
     <body>
-      <!-- Navigation -->
-      <nav class="nav navbar-fixed-top" id="bikelist-header">
-              <div>
-                  <a class="navbar-brand" href="/"><h2>BikeList</h2></a>
-                  <input type="text" id="header-search" placeholder="Find bikes near you"></input>
-              </div>
-              <!-- Collect the nav links, forms, and other content for toggling -->
-              <div>
-                  <ul class="nav navbar-right">
-                      {% if not session.logged_in %}
-                      <li>
-                        <a href="/login">Login</a>
-                      </li>
-                      {% else %}
-                      <li>
-                        <span class="caret"></span> {{ g.name }} <img id="header-avatar" src="{{ g.avatar }}" > 
-                      </li>            
-                      {% endif %}
-                  </ul>
-              </div>
-              <!-- /.navbar-collapse -->
+
+      <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="/">
+              <strong>BikeList</strong></span>
+              <!-- <img alt="brand" src="..." > -->
+            </a>
           </div>
-          <!-- /.container-fluid -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="caret"></span>  {{g.name}} </a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="#">My Listings</a></li>
+                  <li class="divider"></li>
+                  <li><a href="#">My Favorite Bikes</a></li>
+                  <li class="divider"></li>
+                  <li><a href="#">Logout</a></li>
+                  <li class="divider"></li>
+                </ul>
+              </li>
+              <li>
+                <form class="navbar-form navbar-right" action="/sell">
+                    <button type="submit" class="btn btn-default">List Your Bike</button>
+                  </form>
+              </li>
+            </ul>
+          </div>
+        </div>
       </nav>
 
       <div id="maindiv" class="container-fluid">
-          {% with messages = get_flashed_messages() %}
-          {% if messages %}
-          {% for message in messages %}
-            <ul class="flashes">
-                <li>{{message}}</li>
-             </ul>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+
+            <!-- class="flashes"--> 
+            {{message}}
+
           {% endfor %}
           {% endif %}
           {% endwith %}

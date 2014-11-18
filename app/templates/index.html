@@ -3,6 +3,7 @@
 {% block scripts %}
 	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
+	<script src="js/stickySidebar.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -10,43 +11,30 @@
 body{
 	margin-left:-53px;
 }
-#map-panel{
+
+#map-panel, 
+#map-panel.affix-top, 
+#map-panel.affix {
+	position:fixed;
 	height: 100%;
-	width:570px;
+	width: 570px;
 	float:left;
+	top:60px;
 	left:0;
 	bottom:0;
-	position:absolute;
-}
-
-#map-panel.affix-top {
-    position: absolute;
-    margin-top:0px;
-    width:570px;
-    left:0;
-    bottom:0;
-  }
-
- #map-panel.affix-bottom {
-    position: absolute;
+    position: fixed;
     margin-bottom:0px;
     width:570px;
-    left:0;
-    bottom:0;
   }
 
- #map-panel.affix {
-    position: fixed;
-    top:133px;
-    width:570px;
-    left:0;
-    bottom:0;
-  }
+ #map-panel.affix-bottom{
+ 	position: absolute;
+ }
 
 #search-panel{
 	float:right;
 	width: 500px;
-	/*width:50%;*/
+	/*width:50%;**/
 }
 
 #search-results{
@@ -61,12 +49,13 @@ body{
 
 #search-panel img{
 	width: 200px;
-	margin-bottom: 25px;
+	margin-bottom: 15px;
 }
 
 #search-filters{
  	height: 300px;
  	width: 100%;
+ 	margin-top:-130px;
  	top:0;
  }
 
@@ -75,6 +64,10 @@ body{
 	margin-bottom:20px;
 	padding: 10px;
 	border-bottom:1px dotted;
+}
+
+#filter-submit:hover{
+	border:2px;
 }
 
 input[type=number]{
@@ -121,11 +114,11 @@ input[type=number]{
 						Min: $ <input name="min_price" type="number"></input>
 						Max: $ <input name="max_price" type="number"></input>
 					</div><br>
-					<input type="submit" id="filter-submit" value="Apply Filters"></button>
+					<button type="submit" id="filter-submit">Apply Filters</button>
 				</form>
 		</div>
 
-		<table id="search-results" class="table">
+		<table id="search-results">
 			<!-- Listings populate here -->
 		</table>
 
@@ -148,6 +141,7 @@ input[type=number]{
 
 
 <script>
+
 
 	$("#map-panel").affix();
 
@@ -181,8 +175,6 @@ input[type=number]{
 		var numCols = 2;
 
 		$table = $('#search-results');
-		// var $table = $('<table><tbody><tr>');
-		// $table.addClass("table");
 
 		// Loop through response object
 		for (var i = 0; i < listings.length; i++){
@@ -200,16 +192,17 @@ input[type=number]{
 			var $bikePhoto = $("<img>")
 			$bikePhoto.attr('src', listing.photo)
 
-			// Add to search results table
+			// Add to end of search results table
 			var tr = $table.find(">tbody>tr:last");
 			if (!tr.length || tr.find(">td").length == numCols){
 				var tr = $("<tr>");
 				$table.append("<tr>");
 			}
+
+			// Create table cell and append content
 			var td = $("<td>");
 			td.append($listingLink).append("<br>").append($bikePhoto);
 			tr.append(td)
-
 		}
 
 		$('#search-panel').append($table);
@@ -285,6 +278,9 @@ input[type=number]{
 
 		// Initiate map and set view
 		map = L.mapbox.map('map-panel', 'examples.map-i86nkdio');
+		// add geocoder bar
+		map.addControl(L.mapbox.geocoderControl('mapbox.places-v1'));
+		// set starting view/zoom(SF)
 		map.setView([37.79, -122.41], 14);
 
 	}

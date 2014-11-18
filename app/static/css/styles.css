@@ -2,6 +2,7 @@ body{
 	font-family: "Open Sans",sans-serif;
 	font-weight: 300;
 	padding: 37px;
+	padding-top: 70px;
 	margin: 20px;
 }
 
@@ -15,6 +16,20 @@ li{
 	display: list-item;
 	text-align: -webkit-match-parent;
 }
+
+#listing-form {
+	width:50%;
+	float:left;
+}
+
+.leaflet-popup-content img {
+  	width: 240px;
+  }
+
+.leaflet-popup-content {
+  	font-size: 18px;
+  	text-align: center;
+  }
 
 .attr-title{
 	display: inline-block;
@@ -36,27 +51,6 @@ li{
 	display: None;
 }
 
-.bike-info > img{
-	width: 500px;
-	float: left;
-	margin: 10px;
+#bike-pic{
+	width:500px;
 }
-
-#listing-form {
-	width:50%;
-	float:left;
-}
-
-#content{
-	margin-top: 75px;
-}
-
-.leaflet-popup-content img {
-  	width: 240px;
-  }
-
-.leaflet-popup-content {
-  	font-size: 18px;
-  	text-align: center;
-  }
-

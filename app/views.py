@@ -90,7 +90,7 @@ def login():
 def logout():
     pop_login_session()
     flash("You are logged out.")
-    return redirect(url_for('index'))
+    return redirect('/')
 
 @app.route("/account")
 def account():

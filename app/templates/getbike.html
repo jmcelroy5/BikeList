@@ -1,29 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	<style>
-		.attr-title{
-			display: inline-block;
-			margin-right: .4em;
-			font-weight: bold;
-		}
 
-		.attr-list{
-			list-style-type: none;
-			padding: 0;
-			display: in-line;
-		}
-
-		.attr-list li:nth-of-type(2n-1){
-			background: #ecf0f1;
-		}
-
-		#verify-bike{
-			display: None;
-		}
-
-
-	</style>
+<style>
+#sticky {
+    padding: 0.5ex;
+    width: 600px;
+    background-color: #333;
+    color: #fff;
+    font-size: 2em;
+    border-radius: 0.5ex;
+}
+#sticky.stick {
+    position: fixed;
+    top: 0;
+    z-index: 10000;
+    border-radius: 0 0 0.5em 0.5em;
+}
+</style>
 
 	<div class="container">
 		<form id="target">
@@ -37,7 +31,6 @@
 <!-- 		<form action="/bikeindex_login">
 			<button type="submit"> Connect to your BikeIndex account </button>
 		</form> -->
-	
 		<div id="verify-bike" class="bike-info">
 			<img id="bike-pic"><br><br>
 			<h1></h1>
@@ -79,9 +72,9 @@
 				var bike = data["response"]["bikes"][0];
 				console.log("bike:",bike)
 			}
-			else {
-				alert("No bike with that serial number found.");
-			}
+			// else {
+			// 	alert("No bike with that serial number found.");
+			// }
 
 			// check if bike is stolen
 			var stolen = bike["stolen"];
