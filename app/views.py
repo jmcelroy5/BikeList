@@ -2,28 +2,12 @@ from flask import Blueprint, render_template, request, jsonify, g, redirect, fla
 from flask import session as flask_session
 from model import Bike, Listing, User
 import model
-from flask_oauth import OAuth
 from flask.ext.login import LoginManager
-from app import app, db
-import os
+from app import app, db, facebook, bikeindex
 import datetime
 import json
 import requests
-
-
-FACEBOOK_APP_SECRET = os.environ.get('FACEBOOK_APP_SECRET')
-FACEBOOK_APP_ID = os.environ.get('FACEBOOK_APP_ID')
-
-oauth = OAuth()
-
-facebook = oauth.remote_app('facebook',
-    base_url='https://graph.facebook.com/',
-    request_token_url=None,
-    access_token_url='/oauth/access_token',
-    authorize_url='https://www.facebook.com/dialog/oauth',
-    consumer_key=FACEBOOK_APP_ID,
-    consumer_secret=FACEBOOK_APP_SECRET,
-    request_token_params={'scope': ('email, ')})
+import re
 
 @facebook.tokengetter
 def get_facebook_token():
@@ -127,17 +111,6 @@ def get_user_photo():
 
 # Bike Index OAuth Stuff:
 
-oauth2 = OAuth()
-
-bikeindex = oauth2.remote_app('bikeindex',
-    base_url='https://bikeindex.org',
-    request_token_url=None,
-    access_token_url='/oauth/authorize',
-    authorize_url='/oauth/authorize',
-    consumer_key='b000781446a184b14193ae041dae1b08b89da22e36523e44d68ab8e878a54d58',
-    consumer_secret='486ca32cfa6accc24493031b44ef95b1064214def4550581411e400aa3b7c1d5',
-    request_token_params={'scope': ('public'), 'response_type': 'code'})
-
 @bikeindex.tokengetter # ???
 def get_bikeindex_token():
 	access_token = os.environ.get('BIKEINDEX_ACCESS_TOKEN')
@@ -201,7 +174,6 @@ def get_current_user():
     	g.avatar = user.avatar
     	g.name = user.first_name
     	g.logged_in = True
-    pass
 
 # Make current user available on templates
 @app.context_processor
@@ -260,9 +232,7 @@ def get_all_bikes():
 						'photo': bike.photo,
 						'price': listing.asking_price,
 						'material': bike.frame_material,
-						'title': bike.manufacturer + " " + 
-								 bike.frame_model + 
-								" ($" + str(listing.asking_price) + ")"})
+						'title': bike.title + " ($" + str(listing.asking_price) + ")"})
 
 	return jsonify(response=response)
 		
@@ -303,13 +273,13 @@ def add_bike():
 	new_bike.bikeindex_url = bike["url"]
 	new_bike.photo = bike["photo"]
 	new_bike.thumb = bike["thumb"]
-	new_bike.title = bike["title"]
+	new_bike.title = bike.manufacturer + " " + bike.frame_model 
 	new_bike.frame_model = bike["frame_model"]
 	new_bike.year = bike["year"]
 	new_bike.paint_description = bike["paint_description"] # None
 	new_bike.front_tire_narrow = bike["front_tire_narrow"]
 
-	# list of valid size categories for comparison
+	# list of valid size categories 
 	valid_sizes = ['xs','s','m','l','xl']
 
 	# normalizing frame size measurements (inches to cm)

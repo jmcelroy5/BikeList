@@ -94,8 +94,8 @@ def populate_bikes(filename):
 		new_bike.type_of_cycle = bike["type_of_cycle"]
 		new_bike.bikeindex_url = bike["url"]
 		new_bike.photo = bike["photo"]
+		new_bike.title = bike["manufacturer_name"] + " " + bike["frame_model"] 	# instead of API's bike title (bc they include colors)
 		new_bike.thumb = bike["thumb"]
-		new_bike.title = bike["title"]
 		new_bike.frame_model = bike["frame_model"]
 		new_bike.year = bike["year"]
 		new_bike.paint_description = bike["paint_description"] 
