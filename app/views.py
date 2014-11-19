@@ -206,7 +206,6 @@ def get_current_user():
     	g.avatar = user.avatar
     	g.name = user.first_name
     	g.logged_in = True
-    pass
 
 # Make current user available on templates
 @app.context_processor
@@ -273,7 +272,11 @@ def get_all_bikes():
 		
 @app.route("/sell")
 def index():
-	return render_template("getbike.html")
+	if flask_session.get("logged_in", None) == True:
+		return render_template("getbike.html")
+	else:
+		flash("Sign up to sell a bike on BikeList!")
+		return redirect("/login")
 
 @app.route("/fetchbike")
 def fetch_bike():
