@@ -19,22 +19,31 @@
 		width: 200px;
 	}
 
-	#user-contact img {
-		display:inline;
-		float:left;
+	.seller-contact img {
+/*		display:inline;
+		float:left;*/
 		margin-right:10px;
 		width:115px;
 	}
-	#user-contact{
-
+	#listing-info{
+		display: block;
+		/*margin-top:px;*/
+	}
+	#seller-text{
+		margin-bottom:15px;
+	}
+	#price{
+		color: #3887be;
+		/*margin-bottom:10px;*/
 	}
 
 </style>
 	<div class="bike-info">	
 		<h1> {{ bike.title }}</h1>
+		<span id="price"><h3>${{ listing.asking_price }}.00</h3></span><br>
 		<img src={{ bike.photo }}><br><br>
 		<ul class="attr-list">
-			<li id="price"><span class="attr-title">Price</span>${{ listing.asking_price }}.00</li>
+			<li><span class="attr-title">Price</span>${{ listing.asking_price }}.00</li>
 			<li id="serial"><span class="attr-title">Serial</span>{{ bike.serial }}</li>
 			<li id="size"><span class="attr-title">Size</span>{{ bike.size }}</li>
 			<li id="manufacturer"><span class="attr-title">Manufacturer</span>{{ bike.manufacturer }}</li>
@@ -48,25 +57,43 @@
 		+ detailed specs<br><br><br><br><br>
 	</div>
 	<br>
-	<div class="listing-info">
-		<h3>A few more words</h3>
-		<p> {{ listing.additional_text }}</p>
-		<a href="{{bike.bikeindex_url}}">See it on BikeIndex</a>
-		<br><br>
-		<h3>Where is this bike?</h3>
-		<div id="bikeLocation">
+	<div id="listing-info" class"container-fluid">
+		<div class="row">
+			<div class="col-md-3">
+				<h3>A few more words</h3>
+			</div>
 		</div>
-		<br><br>
-		<h3>Contact seller</h3>
-		{% if g.logged_in %}
-		<div id="user-contact">
-			<a href="{{ user.facebook_url }}"><img src="{{user.avatar}}"></a>
-			<h4> {{ user.first_name }} </h4>
-			{{ user.email }}
+		<div class="row" id="seller-text">
+			<div class="col-md-3">
+				<p> {{ listing.additional_text }}</p>
+				<a href="{{bike.bikeindex_url}}">See it on BikeIndex</a>
+			</div>
 		</div>
-		{% else %}
-		<p> You must be <a href="/login">logged in</a> to see seller's contact information.</p>
-		{% endif %}
+
+		<div class="row">
+			<div class="col-md-3">
+				<h3>Location</h3>
+			</div>
+			<div class="col-md-3">
+				<h3>Contact seller</h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-3">
+				<div id="bikeLocation">
+					<!-- Map will go here -->
+				</div>
+			</div>
+			<div class="col-md-3 seller-contact">
+				{% if g.logged_in %}
+					<a href="{{ user.facebook_url }}"><img src="{{user.avatar}}"></a>
+					<h4> {{ user.first_name }} </h4>
+					<p>{{ user.email }}</p>
+				{% else %}
+					<p> You must be <a href="/login">logged in</a> to see seller's contact information.</p>
+				{% endif %}
+			</div>
+		</div>
 	</div>
 
 
