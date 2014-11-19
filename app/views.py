@@ -29,10 +29,6 @@ facebook = oauth.remote_app('facebook',
 def get_facebook_token():
     return flask_session.get('facebook_token')
 
-def pop_login_session():
-    flask_session.pop('logged_in', None)
-    flask_session.pop('facebook_token', None)
-
 @app.route("/facebook_login")
 def facebook_login():
     return facebook.authorize(callback=url_for('facebook_authorized',
@@ -71,7 +67,7 @@ def add_new_user():
 		new_user.last_name = fb_user['last_name']
 		new_user.email = fb_user['email']
 		new_user.facebook_url = fb_user['link']
-		new_user.avatar = facebook.get('/me/picture?redirect=false').data
+		new_user.avatar = get_user_photo()
 		# commit new user to database
 		db.session.add(new_user)
 		db.session.commit()
@@ -86,10 +82,17 @@ def add_new_user():
 def login():
 	return render_template("login.html")
 
+# def pop_login_session():
+#     flask_session.pop('logged_in', None)
+#     flask_session.pop('facebook_token', None)
+#     flask_session.pop('user', None)
+
 @app.route("/logout")
 def logout():
-    pop_login_session()
+    # pop_login_session()
+    clear_session()
     flash("You are logged out.")
+
     return redirect('/')
 
 @app.route("/account")
@@ -103,6 +106,7 @@ def clear_session():
 	flask_session['facebook_token'] = None
 	flask_session['BI_authorized'] = None
 	flask_session['bikeindex_token'] = None
+	flask_session['user'] = None
 	return "Session cleared!"
 
 @app.route('/getsession')
@@ -119,10 +123,12 @@ def get_session():
 # 	""" Get current user from session """
 # 	return g.user
 
-
-
-
-
+@app.route("/_get_user_photo")
+def get_user_photo():
+	photo = facebook.get('/me/picture?redirect=0&height=1000&type=normal&width=1000').data
+	photo_url = photo['data']['url']
+	print "\n\n\nTHIS IS THE PHOTO URL", photo_url
+	return photo_url
 
 # Bike Index OAuth Stuff:
 
@@ -199,6 +205,8 @@ def get_current_user():
     	g.user = user.id
     	g.avatar = user.avatar
     	g.name = user.first_name
+    	g.logged_in = True
+    pass
 
 # Make current user available on templates
 @app.context_processor
@@ -320,7 +328,7 @@ def add_bike():
 		new_bike.front_wheel_size_iso_bsd = bike["front_wheel_size"].get("iso_bsd", None)	
 	
 	if bike["front_gear_type"] != None:
-		new_bike.front_gear_type = bike["front_gear_type"].get("name", None)
+		new_bike.front_gear_type = bike["front_gear_type"].get("name", None) 
 	
 	if bike["rear_gear_type"] != None:
 		new_bike.rear_gear_type = bike["rear_gear_type"].get("name", None)
@@ -359,8 +367,18 @@ def add_listing():
 
 	return str(new_listing.bike_id)
 
-@app.route("/listing/<int:id>") 
-def listing_success(id):
+@app.route("/seebike/<int:id>")
+def see_bike(id):
 	bike = db.session.query(Bike).get(id)
-	return render_template("listing.html", bike=bike)
+	return bike.title
+
+@app.route("/listing/<int:bike_id>") 
+def listing_success(bike_id):
+	# Use bike_id to get listing
+	listing = db.session.query(Listing).filter(Listing.bike_id == bike_id, Listing.post_status=="Active").one()
+	# Get user from listing
+	user = db.session.query(User).filter_by(id=listing.user_id).one()
+	# Use bike_id to get bike
+	bike = db.session.query(Bike).get(bike_id)
+	return render_template("listing.html", bike=bike, user=user, listing=listing)
 

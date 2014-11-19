@@ -15,14 +15,13 @@ To-do list:
 	- DB optimization stuff: Index listings for search?
 	- Airbnbify the design/css, make a navbar - DONE-ish
 	- Facebook OAuth for user sign-in - DONE
-
 	- user account management page (delete listings and such)
-	- flesh out individual bike listing page (include map, components, seller photos)
+	- flesh out individual bike listing page - IN PROGRESS
+	(include map, components, seller photos)
 	- redo the listing form map (google - mapbox)
 	- listing form verification
 	- allow user to add favorite bikes!
 	- users can ask seller questions about the bike
-
 
 	- edit listings / post back to BikeIndex?!
 
