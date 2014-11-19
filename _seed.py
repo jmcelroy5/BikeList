@@ -107,33 +107,50 @@ def populate_bikes(filename):
 			new_bike.frame_material = choice(materials)
 
 		# Fudging handlebar type to fill in gaps
+		handlebars = ["Flat","Forward-facing","Rear-facing"]
 		if new_bike.handlebar_type == None:
-			new_bike.handlebar_type = "Flat"
+			new_bike.handlebar_type = choice(handlebars)
 
 		# Fudging size data to fill in gaps
+		print new_bike.size
 		sizes = ['xs','s','m','l','xl']
-		if new_bike.size == None:
+		if new_bike.size is None or len(new_bike.size) == 0:
 			new_bike.size = choice(sizes)
+			print "is empty. Replaced with", new_bike.size
 
-		if new_bike.size.endswith('in'):
-			# converting inches to centimeters
-			new_bike.size = float(new_bike.size[:-2]) * 2.54
-		elif new_bike.size.endswith('cm'):
-			# integerizing the centimeters
-			new_bike.size = float(new_bike.size[:-2])
+		if len(new_bike.size) > 0 and new_bike.size not in sizes:
+			if new_bike.size.endswith('in'):
+				# converting inches to centimeters
+				size_convert = float(new_bike.size[:-2]) * 2.54
+				print "inches converted to ", size_convert, "cm"
+			elif new_bike.size.endswith('cm'):
+				# floating the cm
+				size_convert = float(new_bike.size[:-2])
+				print "already in cm "
+		else:
+			size_convert = "no need to convert"
+			new_bike.size_category = new_bike.size
+			print size_convert
+			print "put in size category: ", new_bike.size_category
 
-		# put sizes into buckets (need to add this process to app.py)
-		if new_bike.size <= 50:
-			new_bike.size = "xs"
-		elif new_bike.size > 50 and new_bike.size <= 53:
-			new_bike.size = "s"
-		elif new_bike.size > 53 and new_bike.size <= 56:
-			new_bike.size = "m"
-		elif new_bike.size > 56 and new_bike.size <= 59:
-			new_bike.size = "l"
-		elif new_bike.size > 59:
-			new_bike.size = "xl"
-
+		# put sizes into buckets 
+		if type(size_convert) is float:
+			if size_convert <= 50:
+				new_bike.size_category = "xs"
+				print "put in size category: ", new_bike.size_category
+			elif size_convert > 50 and size_convert <= 53:
+				new_bike.size_category = "s"
+				print "put in size category: ", new_bike.size_category
+			elif size_convert > 53 and size_convert <= 56:
+				new_bike.size_category = "m"
+				print "put in size category: ", new_bike.size_category
+			elif size_convert > 56 and size_convert <= 59:
+				new_bike.size_category = "l"
+				print "put in size category: ", new_bike.size_category
+			elif size_convert > 59:
+				new_bike.size_category = "xl"
+				print "put in size category: ", new_bike.size_category
+			
 		# breaking frame colors out of list format
 		new_bike.frame_colors = "" 			
 		for color in bike["frame_colors"]:

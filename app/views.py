@@ -95,11 +95,6 @@ def logout():
 
     return redirect('/')
 
-@app.route("/account")
-def account():
-	return "Individual account page will be here. Edit/delete listings, add new bikes, etc."
-	# return render_template("account.html")
-
 @app.route('/clearsession')
 def clear_session():
 	flask_session['logged_in'] = None
@@ -118,10 +113,10 @@ def get_session():
 	print "\n Current user:", flask_session.get("user", "Not set")
 	return "Check the console."
 
-# @app.route("/_get_current_user")
-# def get_current_user():
-# 	""" Get current user from session """
-# 	return g.user
+@app.route("/_get_current_user")
+def get_current_user():
+	""" Get current user from session """
+	return g.user
 
 @app.route("/_get_user_photo")
 def get_user_photo():
@@ -206,6 +201,7 @@ def get_current_user():
     	g.avatar = user.avatar
     	g.name = user.first_name
     	g.logged_in = True
+    pass
 
 # Make current user available on templates
 @app.context_processor
@@ -281,9 +277,10 @@ def index():
 @app.route("/fetchbike")
 def fetch_bike():
 	serial = request.args.get("serial")
-	params = {"serial":serial}
-	r = requests.get("https://bikeindex.org/api/v1/bikes", params=params)
+	print "serial from form ", serial
+	r = requests.get("https://bikeindex.org/api/v1/bikes?serial=" + serial)
 	bike = r.json()
+	print bike
 	return jsonify(response=bike)
 
 @app.route("/addbike", methods=['POST'])
@@ -312,7 +309,41 @@ def add_bike():
 	new_bike.paint_description = bike["paint_description"] # None
 	new_bike.front_tire_narrow = bike["front_tire_narrow"]
 
-	new_bike.frame_colors = "" 		# breaking frame colors out of list format
+	# list of valid size categories for comparison
+	valid_sizes = ['xs','s','m','l','xl']
+
+	# normalizing frame size measurements (inches to cm)
+	if len(new_bike.size) > 0 and new_bike.size not in valid_sizes:
+		if new_bike.size.endswith('in'):
+			# converting inches to centimeters
+			size_convert = float(new_bike.size[:-2]) * 2.54
+		elif new_bike.size.endswith('cm'):
+			# floating the cm
+			size_convert = float(new_bike.size[:-2])
+	else:
+		size_convert = "no need to convert"
+		new_bike.size_category = new_bike.size
+
+	# putting sizes into categories
+	if type(size_convert) is float:
+		if size_convert <= 50:
+			new_bike.size_category = "xs"
+			print "put in size category: ", new_bike.size_category
+		elif size_convert > 50 and size_convert <= 53:
+			new_bike.size_category = "s"
+			print "put in size category: ", new_bike.size_category
+		elif size_convert > 53 and size_convert <= 56:
+			new_bike.size_category = "m"
+			print "put in size category: ", new_bike.size_category
+		elif size_convert > 56 and size_convert <= 59:
+			new_bike.size_category = "l"
+			print "put in size category: ", new_bike.size_category
+		elif size_convert > 59:
+			new_bike.size_category = "xl"
+			print "put in size category: ", new_bike.size_category
+
+	# breaking frame colors out of list format
+	new_bike.frame_colors = "" 		
 	for color in bike["frame_colors"]:
 		new_bike.frame_colors += color
 
@@ -384,4 +415,28 @@ def listing_success(bike_id):
 	# Use bike_id to get bike
 	bike = db.session.query(Bike).get(bike_id)
 	return render_template("listing.html", bike=bike, user=user, listing=listing)
+
+@app.route("/mylistings")
+def my_listings():
+	user = flask_session['user']
+	query = db.session.query(Listing, Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active")
+	user_listings = query.filter(Listing.user_id == user).filter(Bike.user_id == user).all()
+
+	listings = []
+
+	# Building objects for template
+	for listing, bike in user_listings:
+		listings.append({'url': "/listing/" + str(bike.id),
+						 'photo': bike.photo,
+						 'price': listing.asking_price,
+						 'title': bike.title,
+						 'date': listing.post_date})
+
+	return render_template('mylistings.html', listings=listings)
+
+
+@app.route("/account")
+def account():
+	return "Individual account page will be here. Edit/delete listings, add new bikes, etc."
+	# return render_template("account.html")
 

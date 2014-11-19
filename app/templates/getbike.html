@@ -2,29 +2,13 @@
 
 {% block content %}
 
-<style>
-#sticky {
-    padding: 0.5ex;
-    width: 600px;
-    background-color: #333;
-    color: #fff;
-    font-size: 2em;
-    border-radius: 0.5ex;
-}
-#sticky.stick {
-    position: fixed;
-    top: 0;
-    z-index: 10000;
-    border-radius: 0 0 0.5em 0.5em;
-}
-</style>
 
 	<div class="container">
-		<form id="target">
-			<h3> List your bike </h3>
+		<h3> List your bike </h3>
+		<form id="get-serial">
 			Enter the serial number of the bike you want to sell. Remember, your bike has to be registered at BikeIndex.org before you can make a listing for it.<br><br>
 			<input id="bike-serial" type="text" name="serial" placeholder="Bike Serial Number"></input><br><br>
-			<button type="submit"> Find your bike </button><br><br>
+			<button id="submit-serial" type="submit"> Find your bike </button><br><br>
 		</form>
 
 <!-- 		<form action="/bikeindex_login">
@@ -56,20 +40,21 @@
 	<script>
 	(function() {
 
-	$("#target").on("click",function(e){
+	$("#submit-serial").one("click",function(e){
 		e.preventDefault();
 		var serial = $("#bike-serial").val();
+		$("#submit-serial").hide();
 		getBike(serial);
 	});
 
 	function getBike(serial) {
 
 		$.get("/fetchbike", {serial: serial}, function(data){
-		
+
 			// check to make sure we got one bike back
 			if (data["response"]["bikes"].length === 1){
 				var bike = data["response"]["bikes"][0];
-				console.log("bike:",bike)
+				console.log("bike:", bike)
 			}
 			// else {
 			// 	alert("No bike with that serial number found.");
@@ -84,7 +69,6 @@
 
 			// if bike is not stolen
 			if (bike && stolen===false){
-				console.log("are we getting here??")
 				// display bike photo and specs for verification
 				$("#verify-bike").show();
 				$("#bike-pic").attr('src', bike["photo"]);
@@ -116,8 +100,9 @@
 
 				$("#No").on("click", function(e){
 					e.preventDefault();
-					alert("Oh, bummer! Check to make sure you entered your serial number correctly.");
-					$("#bike-info").hide();
+					flash("Check to make sure you entered your serial number correctly.");
+					$("#verify-bike").hide();
+					$("#submit-serial").show();
 				});
 			}
 		});

@@ -29,6 +29,7 @@ class Bike(db.Model):
 
 	# Attributes I might want to require for valid listing
 	size = db.Column(db.String(5), nullable=True)
+	size_category = db.Column(db.String(5), nullable=True)
 	photo = db.Column(db.String(64), nullable=True)
 	thumb = db.Column(db.String(64), nullable=True)
 	handlebar_type = db.Column(db.String(20), nullable=True)	

@@ -131,11 +131,17 @@
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
 
+              <li>
+                <form class="navbar-form navbar-right" action="/sell">
+                  <button type="submit" class="btn btn-default">List Your Bike</button>
+                </form>
+              </li>
+
               {% if g.logged_in %}
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="caret"></span>  {{g.name}} </a>
                 <ul class="dropdown-menu" role="menu">
-                  <li><a href="#">My Listings</a></li>
+                  <li><a href="/mylistings">My Listings</a></li>
                   <li class="divider"></li>
                   <li><a href="#">My Favorite Bikes</a></li>
                   <li class="divider"></li>
@@ -150,10 +156,7 @@
               </li>
 
               {% endif %}
-                <form class="navbar-form navbar-right" action="/sell">
-                    <button type="submit" class="btn btn-default">List Your Bike</button>
-                  </form>
-              </li>
+
             </ul>
           </div>
         </div>

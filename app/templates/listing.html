@@ -16,7 +16,7 @@
 
 	#bikeLocation{
 		height: 200px;
-		width: 200px;
+		width: 300px;
 	}
 
 	.seller-contact img {
@@ -40,7 +40,7 @@
 </style>
 	<div class="bike-info">	
 		<h1> {{ bike.title }}</h1>
-		<span id="price"><h3>${{ listing.asking_price }}.00</h3></span><br>
+		<span id="price"><h3>${{ listing.asking_price }}.00</h3></span>
 		<img src={{ bike.photo }}><br><br>
 		<ul class="attr-list">
 			<li><span class="attr-title">Price</span>${{ listing.asking_price }}.00</li>
@@ -56,35 +56,26 @@
 		</ul>
 		+ detailed specs<br><br><br><br><br>
 	</div>
-	<br>
+
 	<div id="listing-info" class"container-fluid">
 		<div class="row">
-			<div class="col-md-3">
+			<div id="seller-text" class="col-md-12">
 				<h3>A few more words</h3>
-			</div>
-		</div>
-		<div class="row" id="seller-text">
-			<div class="col-md-3">
-				<p> {{ listing.additional_text }}</p>
+								<p> {{ listing.additional_text }}</p>
 				<a href="{{bike.bikeindex_url}}">See it on BikeIndex</a>
 			</div>
 		</div>
-
 		<div class="row">
-			<div class="col-md-3">
+			<div class="col-md-4">
 				<h3>Location</h3>
-			</div>
-			<div class="col-md-3">
-				<h3>Contact seller</h3>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-3">
 				<div id="bikeLocation">
 					<!-- Map will go here -->
 				</div>
 			</div>
+			<div class="col-md-1">
+			</div>
 			<div class="col-md-3 seller-contact">
+				<h3>Contact seller</h3>
 				{% if g.logged_in %}
 					<a href="{{ user.facebook_url }}"><img src="{{user.avatar}}"></a>
 					<h4> {{ user.first_name }} </h4>
@@ -113,7 +104,7 @@
 		var latitude = {{ listing.latitude }};
 		console.log(longitude, latitude);
 		// set starting view/zoom(SF)
-		map.setView([latitude, longitude], 14);
+		map.setView([latitude, longitude], 12);
 
 		// Create new marker/layer
 		newMarker = L.mapbox.featureLayer(); 
