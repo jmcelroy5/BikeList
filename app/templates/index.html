@@ -204,8 +204,8 @@ function Map(el) {
 		if (typeof markerLayer !== 'undefined'){
 			markerLayer.clearLayers();
 		} 
-		// Clear marker list
-		markerList = [];
+		// // Initiate / clear marker list
+		// markerList = [];
 
 		console.log("Map heard the results-update event from initial load");
 		// Place new markers
@@ -280,12 +280,18 @@ function Paginator(el){
 
 		// hides prev button when on first page
 		if (searchParameters["currentPage"] === 0){
-			$(prev).hide();
+			$(prev).hide(); 
 			$(".glyphicon-arrow-left").hide();
 		}
-		else if (results["pageUpper"] === results["totalResults"]){
+		if (results["pageUpper"] === results["totalResults"]){
 			$(next).hide();
 			$(".glyphicon-arrow-right").hide();
+		}
+		if (searchParameters["currentPage"] != 0 && results["pageUpper"] != results["totalResults"]){
+			$(prev).show();
+			$(next).show();
+			$(".glyphicon-arrow-left").show();
+			$(".glyphicon-arrow-right").show();
 		}
 	});
 
@@ -295,7 +301,44 @@ function Filters(el){
 
   	var handlebars = el.querySelector('#handlebars');
  
-	// add .on('change') to individual filter knobs.. 
+	// add .on('change') to individual filter knobs..
+
+	$('#filter-submit').click(function(e){
+
+		e.preventDefault();
+
+		var material_list = []
+		// get checked materials from form
+		$('#materials-filters input:checked').each(function(i,material){
+			material_list.push($(material).attr('name'));
+		});
+
+		setParameter('materials', material_list);
+
+		// get min price from form
+		var minPriceValue = $('#search-filters input[name="min_price"').val();
+		if (minPriceValue.length > 0){
+			setParameter('minPrice', minPriceValue);
+		}
+
+		// get max price from form
+		var maxPriceValue = $('#search-filters input[name="max_price"').val();
+		if (maxPriceValue.length > 0){
+			setParameter('maxPrice', maxPriceValue);
+		}
+
+		// get checked handlebars from form
+		var handlebar_list = [];
+		$('#handlebar-filters input:checked').each(function(i,handlebar){
+			handlebar_list.push($(handlebar).attr('name'));
+		});
+
+		setParameter('handlebars', handlebar_list);
+		
+		// reset page to 0
+		setParameter('currentPage',0)
+		events.trigger('parameter-update');
+	});
 }
 
 // Map functions
@@ -314,34 +357,37 @@ function initializeMap(){
 
 function placeMarkers(results){
 
-	listings = results["results"];
+	var listings = results["results"];
+
+	var geoJson = []
+
+	markerLayer = L.mapbox.featureLayer(); 
+
+	// Defining custom HTML for the popups
+	markerLayer.on('layeradd', function(e){
+		var marker = e.layer;
+		var photo = marker.feature.properties.image;
+		var url = marker.feature.properties.url;
+
+		var popupContent = '<a href="' + url + '">' + 
+							marker.feature.properties.title + '</a><br>' +
+							'<img src="' + photo + '">';
+		
+		marker.bindPopup(popupContent, {
+			closeButton: false,
+		});
+	});
 
 	for (var i = 0; i < listings.length; i++){
 
 		//Current listing
 		var listing = listings[i]
 
-		// create new marker/layer
-		newMarker = L.mapbox.featureLayer(); 
+		// // create new layer
+		// newMarker = L.mapbox.featureLayer(); 
 
-		// Defining custom HTML for marker's popup
-		newMarker.on('layeradd', function(e){
-			var marker = e.layer;
-			var photo = marker.feature.properties.image;
-			var url = marker.feature.properties.url;
-
-			var popupContent = '<a href="' + url + '">' + 
-								marker.feature.properties.title + '</a><br>' +
-								'<img src="' + photo + '">';
-			
-			marker.bindPopup(popupContent, {
-				closeButton: false,
-				// minWidth: 280
-			});
-		});
-
-		// Define geoJSON for new marker
-		var geoJson = [{
+		// Define geoJSON for marker and push to marker list
+		geoJson.push({
 			type: 'Feature',
 			"geometry": { 
 				"type": "Point", 
@@ -355,18 +401,20 @@ function placeMarkers(results){
 	        	'marker-color': '#00529f',
 	        	'marker-symbol': 'bicycle'
 			}
-		}];
+		});
 
-		// Set geoJSON
-		newMarker.setGeoJSON(geoJson);
+		// // Set geoJSON
+		// newMarker.setGeoJSON(geoJson);
 
-		// Add marker to the list
-		markerList.push(newMarker);
+		// // Add marker to the list
+		// markerList.push(newMarker);
 	}	
 
-	// Create a group for all the markers
-	markerLayer = L.layerGroup(markerList)
-	// And add them all to the map at once
+	// // Create a group for all the markers
+	// markerLayer = L.layerGroup(markerList)
+
+	// Add them all to the map 
+	markerLayer.setGeoJSON(geoJson);
 	markerLayer.addTo(map);
 }
 
@@ -374,7 +422,7 @@ function placeMarkers(results){
 
 // Controller
 
-$(document).ready(function(){
+$(function(){
 	new Map(document.querySelector('#map-panel'));
 	new Listings(document.querySelector('#search-results'));
 	new Paginator(document.querySelector('#paginator'));
@@ -399,41 +447,6 @@ $(document).ready(function(){
 	});
 
 	// add event listener to "apply filters" button
-
-	$('#filter-submit').click(function(e){
-
-		e.preventDefault();
-
-		var material_list = []
-		// get checked materials from form
-		$('#materials-filters input:checked').each(function(i,material){
-				material_list.push($(material).attr('name'));
-		});
-
-		setParameter('materials', material_list);
-
-		// get min price from form
-		var minPriceValue = $('#search-filters input[name="min_price"').val();
-		if (minPriceValue.length > 0){
-			setParameter('minPrice', minPriceValue);
-		}
-
-		// get max price from form
-		var maxPriceValue = $('#search-filters input[name="max_price"').val();
-		if (maxPriceValue.length > 0){
-			setParameter('maxPrice', maxPriceValue);
-		}
-
-		// get checked handlebars from form
-		var handlebar_list = [];
-		$('#handlebar-filters input:checked').each(function(i,handlebar){
-				handlebar_list.push($(handlebar).attr('name'));
-		});
-
-		setParameter('handlebars', handlebar_list);
-
-		events.trigger('parameter-update');
-	});
 
 });
 	
