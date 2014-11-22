@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+<style>
+td img{
+	width:100px;
+}
+ul{
+	list-style-type: none;
+}
+</style>
+
+<h1>{{ g.name }}'s listings</h1>
+<table class="table">
+{% for listing in listings %}
+
+	<tr>
+		<td><a href="{{ listing.url }}"><img src="{{ listing.photo }}"></a></td>
+		<td> 
+			<ul>
+				<li><h4>{{ listing.title }}</h4></li>
+				<li><strong>Price:</strong> ${{ listing.price }}.00</li>
+				<li><strong>Posted on:</strong> {{ listing.date.strftime('%m-%d-%Y') }}</li>
+			</ul>
+		</td>
+	</tr>
+{% endfor %}
+</table>
+
+
+{% endblock %}
+

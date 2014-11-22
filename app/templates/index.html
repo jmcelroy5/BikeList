@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 
 {% block scripts %}
+	<!-- Mapbox -->
 	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
+	<script src="{{ url_for('static',filename='js/microevent.js') }}"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -11,11 +14,7 @@ body{
 	margin-left:-53px;
 }
 
-#map-panel, 
-#map-panel.affix-top, 
-#map-panel.affix {
-	position:fixed;
-	height: 100%;
+#map-panel{
 	width: 570px;
 	float:left;
 	top:60px;
@@ -23,31 +22,31 @@ body{
 	bottom:0;
     position: fixed;
     margin-bottom:0px;
-    width:570px;
+    overflow:hidden;
   }
-
- #map-panel.affix-bottom{
- 	position: absolute;
- }
 
 #search-panel{
 	float:right;
 	width: 500px;
-	/*width:50%;**/
 }
 
 #search-results{
 	width:490px;
-	/*width:100%;*/
-	margin-left:10px;
+	list-style-type: none;
+	padding: 0;
+	overflow: auto;
 }
 
-#search-panel td {
-	width: 200px;
+#search-results li {
+	display: inline-block;
+	width: 40%;
+	vertical-align: top;
 }
 
 #search-panel img{
 	width: 200px;
+	width: 90%;
+	margin-right: 30px;
 	margin-bottom: 15px;
 }
 
@@ -55,7 +54,7 @@ body{
  	height: 300px;
  	width: 100%;
  	margin-top:-130px;
- 	top:0;
+ 	top: 0;
  }
 
 .filter-group{
@@ -82,12 +81,12 @@ input[type=number]{
 </style>
 
 <div id="content">
-
-	<div id="map-panel" data-spy="affix" >
+	
+	<div id="map-panel"  class="col-lg-6">
 		<!-- class="col-md-8" -->
 	</div>
 
-	<div id="search-panel">
+	<div id="search-panel" class="col-lg-6">
 		
 		<div id="search-filters">
 				<form action= "#">
@@ -117,65 +116,118 @@ input[type=number]{
 				</form>
 		</div>
 
-		<table id="search-results">
+		<div id="paginator">
+			<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+			<a id="prev">Previous</a> 
+			&nbsp;&nbsp;&nbsp;&nbsp; 
+			Showing <span id="low"></span> - <span id="high"></span> of <span id="total"></span> results
+			&nbsp;&nbsp;&nbsp;&nbsp; 
+ 			<a id="next">Next</a>
+			<span class="glyphicon glyphicon-arrow-right"></span>
+		</div><br>
+		<ul id="search-results">
 			<!-- Listings populate here -->
-		</table>
+		</ul>
 
 	</div>
 </div>
 			
-
-<!-- 	<nav>
-		<ul class="pagination">
-			<li><a href="#"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a></li>
-			<li><a href="#">1</a></li>
-			<li><a href="#">2</a></li>
-			<li><a href="#">3</a></li>
-			<li><a href="#">4</a></li>
-			<li><a href="#">5</a></li>
-			<li><a href="#"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a></li>
-		</ul>
-	</nav>
-<!-- </div> -->
-
-
 <script>
 
+// Models
 
-	$("#map-panel").affix();
+var events = new MicroEvent();
 
-	var displaySearchResults = function(data) {
+var searchParameters = {
+	materials: [],
+	handlebars: [],
+	maxPrice: null,
+	minPrice: null,
 
-		// List of listings
-		var listings = data['response']
+	// latitudeMin: null,
+	// latitudeMax: null,
+	// longitudeMin: null,
 
-		// Empty search results div
-		var resultsDiv = $("#search-results");
-		resultsDiv.empty();
+	resultLimit: 16,
+	currentPage: 0
+}
 
+function getParameter(key){		
+	return searchParameters[key];	
+}
+
+function setParameter(key, value){
+	searchParameters[key] = value;
+	// events.trigger('parameter-update');
+}
+
+var results = {
+	results: [],
+	numResults: null,
+	pageLower: null,
+	pageUpper: null,
+	totalResults: null
+	// store current marker list here so its not a global?
+}
+
+function fetchResults(callback){
+	$.get('/getbikes', searchParameters, callback);
+	// fetches the bikes for current searchParameters
+	// once it has that data, calls callback function
+}
+
+events.on('parameter-update', function() {
+	fetchResults(function(data){
+		updateResults(data);
+	});
+});
+
+// callback function for fetchResults
+function updateResults(data){
+	var response = data["response"];
+	console.log("response from server: ", response)
+	results.results = response["listings"]; // array of listings
+	console.log("list of search results to display: ", results.results)
+	results.numResults = response["num_results"];  // length of listings array
+	results.pageLower = response["page_range_lower"]; // lower bound of items to display
+	results.pageUpper = response["page_range_upper"]; // lower bound of items to display
+	results.totalResults = response["total_results"];
+	// trigger results-update so search panel, pagination, listings update
+	events.trigger('results-update');
+}
+
+// Views
+
+function Map(el) { 	
+	events.on('results-update', function() {
 		// Clear any markers that are on map 
 		if (typeof markerLayer !== 'undefined'){
 			markerLayer.clearLayers();
 		} 
-
 		// Clear marker list
 		markerList = [];
 
+		console.log("Map heard the results-update event from initial load");
 		// Place new markers
-		placeMarkers(listings);
+		placeMarkers(results);
+	});
+}
 
-		// Load search results table 
-		searchResultsTable(listings);
-	}
+function Listings(el) {
 
-	var searchResultsTable = function(listings){
+	// events.on('parameter-update', function(){
+	// 	// Show loading indicator in searchpanel while results are being fetched
+	// 	pass
+	// });
 
-		// Initializing 2-column search result table
-		var numCols = 2;
+	events.on('results-update', function() {
+		// Empty search results div - could you do el.empty()? is el available to you?
+		$searchPanel = $('#search-results')
+		$searchPanel.empty()
 
-		$table = $('#search-results');
+		listings = results["results"];
 
-		// Loop through response object
+		// Loop through next 10 records of response object
 		for (var i = 0; i < listings.length; i++){
 
 			// Current listing
@@ -191,144 +243,199 @@ input[type=number]{
 			var $bikePhoto = $("<img>")
 			$bikePhoto.attr('src', listing.photo)
 
-			// Add to end of search results table
-			var tr = $table.find(">tbody>tr:last");
-			if (!tr.length || tr.find(">td").length == numCols){
-				var tr = $("<tr>");
-				$table.append("<tr>");
-			}
+			var $li = $("<li>")
+			$li.append($listingLink,$bikePhoto);
+			$searchPanel.append($li);
+		}
+	});
+}
 
-			// Create table cell and append content
-			var td = $("<td>");
-			td.append($listingLink).append("<br>").append($bikePhoto);
-			tr.append(td)
+function Paginator(el){ 
+	// get next/previous buttons
+	var prev = el.querySelector('#prev'); // jquery vs. el.querySelector?
+	var next = el.querySelector('#next');
+	var lower = el.querySelector('#low');
+	var upper = el.querySelector('#high');
+	var total = el.querySelector('#total');
+
+	// add event listeners to buttons
+	$(prev).on('click', function(){
+		var page = getParameter('currentPage');
+		if (page > 0){
+			setParameter('currentPage', page - 1);
+		}
+		events.trigger('parameter-update')
+	});
+
+	$(next).on('click', function(){
+		var page = getParameter('currentPage');
+		setParameter('currentPage', page + 1);
+		events.trigger('parameter-update') // ultimately setParameter will trigger parameter-update 
+	});
+
+	events.on('results-update', function(){
+		$(lower).html(results["pageLower"]);
+		$(upper).html(results["pageUpper"]);
+		$(total).html(results["totalResults"]);
+
+		// hides prev button when on first page
+		if (searchParameters["currentPage"] === 0){
+			$(prev).hide();
+			$(".glyphicon-arrow-left").hide();
+		}
+		else if (results["pageUpper"] === results["totalResults"]){
+			$(next).hide();
+			$(".glyphicon-arrow-right").hide();
+		}
+	});
+
+}
+
+function Filters(el){
+
+  	var handlebars = el.querySelector('#handlebars');
+ 
+	// add .on('change') to individual filter knobs.. 
+}
+
+// Map functions
+
+function initializeMap(){
+	//Connect to MapBox API
+	L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
+
+	// Initiate map and set view
+	map = L.mapbox.map('map-panel', 'examples.map-i86nkdio');
+	// add geocoder bar
+	map.addControl(L.mapbox.geocoderControl('mapbox.places-v1'));
+	// set starting view/zoom(SF)
+	map.setView([37.78, -122.44], 13);
+}
+
+function placeMarkers(results){
+
+	listings = results["results"];
+
+	for (var i = 0; i < listings.length; i++){
+
+		//Current listing
+		var listing = listings[i]
+
+		// create new marker/layer
+		newMarker = L.mapbox.featureLayer(); 
+
+		// Defining custom HTML for marker's popup
+		newMarker.on('layeradd', function(e){
+			var marker = e.layer;
+			var photo = marker.feature.properties.image;
+			var url = marker.feature.properties.url;
+
+			var popupContent = '<a href="' + url + '">' + 
+								marker.feature.properties.title + '</a><br>' +
+								'<img src="' + photo + '">';
+			
+			marker.bindPopup(popupContent, {
+				closeButton: false,
+				// minWidth: 280
+			});
+		});
+
+		// Define geoJSON for new marker
+		var geoJson = [{
+			type: 'Feature',
+			"geometry": { 
+				"type": "Point", 
+				"coordinates": [listing.longitude, listing.latitude]
+			},
+			"properties": {
+				"title": listing.title,
+				"image": listing.photo,
+				"url": listing.url,
+				'marker-size': 'large',
+	        	'marker-color': '#00529f',
+	        	'marker-symbol': 'bicycle'
+			}
+		}];
+
+		// Set geoJSON
+		newMarker.setGeoJSON(geoJson);
+
+		// Add marker to the list
+		markerList.push(newMarker);
+	}	
+
+	// Create a group for all the markers
+	markerLayer = L.layerGroup(markerList)
+	// And add them all to the map at once
+	markerLayer.addTo(map);
+}
+
+// TODO: function that generates hash on parameter update
+
+// Controller
+
+$(document).ready(function(){
+	new Map(document.querySelector('#map-panel'));
+	new Listings(document.querySelector('#search-results'));
+	new Paginator(document.querySelector('#paginator'));
+	new Filters(document.querySelector('#search-filters'));
+
+	initializeMap();
+
+	fetchResults(function(data){
+		updateResults(data);
+	});
+
+	// Keeps the map same height as window
+
+	function resizeDiv() {
+		var vph = $(window).height();
+		$("#map-panel").css({'height': vph });
+	}
+
+	$(window).on('resize', function(event) {
+		console.log("resizeDiv called!");
+		resizeDiv();
+	});
+
+	// add event listener to "apply filters" button
+
+	$('#filter-submit').click(function(e){
+
+		e.preventDefault();
+
+		var material_list = []
+		// get checked materials from form
+		$('#materials-filters input:checked').each(function(i,material){
+				material_list.push($(material).attr('name'));
+		});
+
+		setParameter('materials', material_list);
+
+		// get min price from form
+		var minPriceValue = $('#search-filters input[name="min_price"').val();
+		if (minPriceValue.length > 0){
+			setParameter('minPrice', minPriceValue);
 		}
 
-		$('#search-panel').append($table);
+		// get max price from form
+		var maxPriceValue = $('#search-filters input[name="max_price"').val();
+		if (maxPriceValue.length > 0){
+			setParameter('maxPrice', maxPriceValue);
+		}
 
-	}
-
-	function placeMarkers(listings){
-
-		for (var i = 0; i < listings.length; i++){
-
-			//Current listing
-			var listing = listings[i]
-
-			// create new marker/layer
-			newMarker = L.mapbox.featureLayer(); 
-
-			// Defining custom HTML for marker's popup
-			newMarker.on('layeradd', function(e){
-				var marker = e.layer;
-				var photo = marker.feature.properties.image;
-				var url = marker.feature.properties.url;
-
-				var popupContent = '<a href="' + url + '">' + 
-									marker.feature.properties.title + '</a><br>' +
-									'<img src="' + photo + '">';
-				
-				marker.bindPopup(popupContent, {
-					closeButton: false,
-					// minWidth: 280
-				});
-			});
-
-			// Define geoJSON for new marker
-			var geoJson = [{
-				type: 'Feature',
-				"geometry": { 
-					"type": "Point", 
-					"coordinates": [listing.longitude, listing.latitude]
-				},
-				"properties": {
-					"title": listing.title,
-					"image": listing.photo,
-					"url": listing.url,
-					'marker-size': 'large',
-		        	'marker-color': '#00529f',
-		        	'marker-symbol': 'bicycle'
-				}
-			}];
-
-			// Set geoJSON
-			newMarker.setGeoJSON(geoJson);
-
-			// Add marker to the list
-			markerList.push(newMarker);
-		}	
-
-		// Create a group for all the markers
-		markerLayer = L.layerGroup(markerList)
-		// And add them all to the map at once
-		markerLayer.addTo(map);
-	}
-
-	function loadSearchResults(materials, min_price, max_price, handlebars){
-		$.get('/get_all_bikes', {	materials: materials, 
-									min_price: min_price, 
-									max_price: max_price,
-									handlebars: handlebars }, displaySearchResults);
-	}
-
-	function initializeMap(){
-		//Connect to MapBox API
-		L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
-
-		// Initiate map and set view
-		map = L.mapbox.map('map-panel', 'examples.map-i86nkdio');
-		// add geocoder bar
-		map.addControl(L.mapbox.geocoderControl('mapbox.places-v1'));
-		// set starting view/zoom(SF)
-		map.setView([37.79, -122.41], 14);
-
-	}
-
-	function addEventListeners(){
-
-		$('#filter-submit').click(function(e){
-
-			e.preventDefault();
-
-			var materials = [];
-			$('#materials-filters input:checked').each(function(i,material){
-		 		materials.push($(material).attr('name'));
-			});
-
-			var min_price_value = $('#search-filters input[name="min_price"').val();
-			if (min_price_value.length > 0){
-				var min_price = min_price_value
-			}
-			else{
-				var min_price = "";
-			}
-
-			var max_price_value = $('#search-filters input[name="max_price"').val();
-			if (max_price_value.length > 0){
-				var max_price = max_price_value
-			}
-			else{
-				var max_price = "";
-			}
-
-			var handlebars = [];
-			$('#handlebar-filters input:checked').each(function(i,handlebar){
-		 		handlebars.push($(handlebar).attr('name'));
-			});
-
-			loadSearchResults(materials, min_price, max_price, handlebars);
+		// get checked handlebars from form
+		var handlebar_list = [];
+		$('#handlebar-filters input:checked').each(function(i,handlebar){
+				handlebar_list.push($(handlebar).attr('name'));
 		});
-	}
 
-	$(document).ready(function(){
+		setParameter('handlebars', handlebar_list);
 
-		initializeMap();
-
-		loadSearchResults([]);
-
-		addEventListeners();
-
+		events.trigger('parameter-update');
 	});
+
+});
 	
 
 </script>
