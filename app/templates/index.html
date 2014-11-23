@@ -144,9 +144,10 @@ var searchParameters = {
 	maxPrice: null,
 	minPrice: null,
 
-	// latitudeMin: null,
-	// latitudeMax: null,
-	// longitudeMin: null,
+	latitudeMin: null,
+	latitudeMax: null,
+	longitudeMin: null,
+	longitudeMax: null,
 
 	resultLimit: 16,
 	currentPage: 0
@@ -198,19 +199,86 @@ function updateResults(data){
 
 // Views
 
-function Map(el) { 	
+function Map(el) { 
+	this.el = el;
+	this.initialize();
+
 	events.on('results-update', function() {
 		// Clear any markers that are on map 
-		if (typeof markerLayer !== 'undefined'){
-			markerLayer.clearLayers();
+		if (typeof this.markerLayer !== 'undefined'){
+			this.markerLayer.clearLayers();
 		} 
-		// // Initiate / clear marker list
-		// markerList = [];
-
-		console.log("Map heard the results-update event from initial load");
 		// Place new markers
-		placeMarkers(results);
+		this.placeMarkers(results);
+	}.bind(this));
+
+	// Change search parameters when map moves
+	this.map.on('moveend', function(){
+		setParameter('latitudeMin', this.map.getBounds().getSouth());
+		setParameter('latitudeMax', this.map.getBounds().getNorth());
+		setParameter('longitudeMin', this.map.getBounds().getWest());
+		setParameter('longitudeMax', this.map.getBounds().getEast());
+		events.trigger('parameter-update');
+	}.bind(this));
+}
+
+Map.prototype.initialize = function() {
+	//Connect to MapBox API
+	L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
+
+	// Initiate map and set view
+	this.map = L.mapbox.map(this.el, 'examples.map-i86nkdio');
+	// add geocoder bar
+	this.map.addControl(L.mapbox.geocoderControl('mapbox.places-v1'));
+	// set starting view/zoom(SF)
+	this.map.setView([37.78, -122.44], 13);
+};
+
+Map.prototype.placeMarkers = function(results){
+
+	var listings = results["results"];
+
+	var geoJson = []
+
+	this.markerLayer = L.mapbox.featureLayer(); 
+
+	// Defining custom HTML for the popups
+	this.markerLayer.on('layeradd', function(e){
+		var marker = e.layer;
+		var photo = marker.feature.properties.image;
+		var url = marker.feature.properties.url;
+		var popupContent = '<a href="' + url + '">' + 
+							marker.feature.properties.title + '</a><br>' +
+							'<img src="' + photo + '">';
+		marker.bindPopup(popupContent, {
+			closeButton: false,
+		});
 	});
+
+	for (var i = 0; i < listings.length; i++){
+
+		//Current listing
+		var listing = listings[i]
+		// Define geoJSON for marker and push to layer list
+		geoJson.push({
+			type: 'Feature',
+			"geometry": { 
+				"type": "Point", 
+				"coordinates": [listing.longitude, listing.latitude]
+			},
+			"properties": {
+				"title": listing.title,
+				"image": listing.photo,
+				"url": listing.url,
+				'marker-size': 'large',
+	        	'marker-color': '#00529f',
+	        	'marker-symbol': 'bicycle'
+			}
+		});
+	}	
+	// Add them all to the map 
+	this.markerLayer.setGeoJSON(geoJson);
+	this.markerLayer.addTo(this.map);
 }
 
 function Listings(el) {
@@ -303,7 +371,7 @@ function Filters(el){
  
 	// add .on('change') to individual filter knobs..
 
-	$('#filter-submit').click(function(e){
+	$('#filter-submit').on('click', function(e){
 
 		e.preventDefault();
 
@@ -341,83 +409,6 @@ function Filters(el){
 	});
 }
 
-// Map functions
-
-function initializeMap(){
-	//Connect to MapBox API
-	L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
-
-	// Initiate map and set view
-	map = L.mapbox.map('map-panel', 'examples.map-i86nkdio');
-	// add geocoder bar
-	map.addControl(L.mapbox.geocoderControl('mapbox.places-v1'));
-	// set starting view/zoom(SF)
-	map.setView([37.78, -122.44], 13);
-}
-
-function placeMarkers(results){
-
-	var listings = results["results"];
-
-	var geoJson = []
-
-	markerLayer = L.mapbox.featureLayer(); 
-
-	// Defining custom HTML for the popups
-	markerLayer.on('layeradd', function(e){
-		var marker = e.layer;
-		var photo = marker.feature.properties.image;
-		var url = marker.feature.properties.url;
-
-		var popupContent = '<a href="' + url + '">' + 
-							marker.feature.properties.title + '</a><br>' +
-							'<img src="' + photo + '">';
-		
-		marker.bindPopup(popupContent, {
-			closeButton: false,
-		});
-	});
-
-	for (var i = 0; i < listings.length; i++){
-
-		//Current listing
-		var listing = listings[i]
-
-		// // create new layer
-		// newMarker = L.mapbox.featureLayer(); 
-
-		// Define geoJSON for marker and push to marker list
-		geoJson.push({
-			type: 'Feature',
-			"geometry": { 
-				"type": "Point", 
-				"coordinates": [listing.longitude, listing.latitude]
-			},
-			"properties": {
-				"title": listing.title,
-				"image": listing.photo,
-				"url": listing.url,
-				'marker-size': 'large',
-	        	'marker-color': '#00529f',
-	        	'marker-symbol': 'bicycle'
-			}
-		});
-
-		// // Set geoJSON
-		// newMarker.setGeoJSON(geoJson);
-
-		// // Add marker to the list
-		// markerList.push(newMarker);
-	}	
-
-	// // Create a group for all the markers
-	// markerLayer = L.layerGroup(markerList)
-
-	// Add them all to the map 
-	markerLayer.setGeoJSON(geoJson);
-	markerLayer.addTo(map);
-}
-
 // TODO: function that generates hash on parameter update
 
 // Controller
@@ -428,14 +419,11 @@ $(function(){
 	new Paginator(document.querySelector('#paginator'));
 	new Filters(document.querySelector('#search-filters'));
 
-	initializeMap();
-
 	fetchResults(function(data){
 		updateResults(data);
 	});
 
 	// Keeps the map same height as window
-
 	function resizeDiv() {
 		var vph = $(window).height();
 		$("#map-panel").css({'height': vph });
@@ -446,7 +434,6 @@ $(function(){
 		resizeDiv();
 	});
 
-	// add event listener to "apply filters" button
 
 });
 	

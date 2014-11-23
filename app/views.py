@@ -203,9 +203,25 @@ def get_bikes():
 	max_price = request.args.get('maxPrice')
 	print "MAX_PRICE=========", max_price
 
+	print "search params object:", request.args
+	lat_min = request.args.get('latitudeMin')
+	lat_max = request.args.get('latitudeMax')
+	long_min = request.args.get('longitudeMin')
+	long_max = request.args.get('longitudeMax')
+	print ("\n\n\n\n lat and long from search params", lat_min, lat_max, long_min, long_max)
 	# Base query for active listings
 	query = db.session.query(Listing, Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active") # Base query
 	# query = Listing.query.join(Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active")
+
+	# Filter for listings in current map view
+	try:
+		query = query.filter(Listing.latitude > float(lat_min)).filter(Listing.latitude < float(lat_max))
+		query = query.filter(Listing.longitude > float(long_min)).filter(Listing.longitude < float(long_max))
+		print ("\n\n\n\n", lat_min, lat_max, long_min, long_max)
+	except ValueError:
+		print "map has not been moved yet"
+	except TypeError:
+		print "map has not been moved yet"
 
 	# Filters
 	if materials:	
