@@ -272,6 +272,7 @@ def get_bikes():
 						'url': "/listing/" + str(bike.id),
 						'latitude': listing.latitude, 
 						'longitude': listing.longitude,
+						'id': listing.id,
 						'photo': bike.photo,
 						'price': listing.asking_price,
 						'material': bike.frame_material,

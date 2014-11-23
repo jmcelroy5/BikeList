@@ -250,15 +250,16 @@ Map.prototype.placeMarkers = function(results){
 		var popupContent = '<a href="' + url + '">' + 
 							marker.feature.properties.title + '</a><br>' +
 							'<img src="' + photo + '">';
-		marker.bindPopup(popupContent, {
-			closeButton: false,
-		});
+		marker.bindPopup(popupContent);
 	});
+
+	// object to map markers to listing ids
 
 	for (var i = 0; i < listings.length; i++){
 
 		//Current listing
 		var listing = listings[i]
+
 		// Define geoJSON for marker and push to layer list
 		geoJson.push({
 			type: 'Feature',
@@ -268,6 +269,7 @@ Map.prototype.placeMarkers = function(results){
 			},
 			"properties": {
 				"title": listing.title,
+				"id": listing.id,
 				"image": listing.photo,
 				"url": listing.url,
 				'marker-size': 'large',
@@ -279,6 +281,10 @@ Map.prototype.placeMarkers = function(results){
 	// Add them all to the map 
 	this.markerLayer.setGeoJSON(geoJson);
 	this.markerLayer.addTo(this.map);
+}
+
+Map.prototype.toggleMarkerColor = function(){
+	
 }
 
 function Listings(el) {
@@ -311,11 +317,16 @@ function Listings(el) {
 			var $bikePhoto = $("<img>")
 			$bikePhoto.attr('src', listing.photo)
 
-			var $li = $("<li>")
+			var $li = $("<li class='listing-link' listing-id='"+ listing.id + "' >")
+
+			// link it to its map marker for hover event
+			var marker = 
+
 			$li.append($listingLink,$bikePhoto);
 			$searchPanel.append($li);
 		}
 	});
+
 }
 
 function Paginator(el){ 
@@ -433,7 +444,6 @@ $(function(){
 		console.log("resizeDiv called!");
 		resizeDiv();
 	});
-
 
 });
 	
