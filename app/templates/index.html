@@ -123,17 +123,17 @@ input[type=number]{
 						Min: $<span id="value-low"></span>
 						<span id="slider-right">Max: $<span id="value-high"></span></span>
 					</div><br>
-					<button type="submit" id="filter-submit">Apply Filters</button>
+					<button class= "btn btn-default" type="submit" id="filter-submit">Apply Filters</button>
 				</form>
 		</div>
 
 		<div id="paginator">
 			<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-			<a id="prev">Previous</a> 
+			<button class="btn dtn-default"id="prev">Previous</button> 
 			&nbsp;&nbsp;&nbsp;&nbsp; 
 			Showing <span id="low"></span> - <span id="high"></span> of <span id="total"></span> results
 			&nbsp;&nbsp;&nbsp;&nbsp; 
- 			<a id="next">Next</a>
+ 			<button class="btn btn-default" id="next">Next</button>
 			<span class="glyphicon glyphicon-arrow-right"></span>
 		</div><br>
 		<ul id="search-results">
@@ -223,6 +223,18 @@ function Map(el) {
 		this.placeMarkers(results);
 	}.bind(this));
 
+	events.on('listing-mouse-in', function(listingId) {
+		this.setMarkerActive(listingId);
+	}.bind(this));
+
+	// Another way: events.on('listing-mouse-in', this.setMarkerActive.bind(this));
+
+	events.on('listing-mouse-out', function(listingId) {
+		this.setMarkerInactive(listingId);
+	}.bind(this));
+
+	// Another way: events.on('listing-mouse-out', this.setMarkerInactive.bind(this));
+
 	// Change search parameters when map moves
 	this.map.on('moveend', function(){
 		setParameter('latitudeMin', this.map.getBounds().getSouth());
@@ -231,14 +243,6 @@ function Map(el) {
 		setParameter('longitudeMax', this.map.getBounds().getEast());
 		events.trigger('parameter-update');
 	}.bind(this));
-
-	this.toggleMarkerColor = function(listingId){
-		alert("The map heard the click event!")
-		var idx = this.markerMap[listingId];
-		this.geoJson[idx].properties["marker-color"] = "#ffffff";
-		this.markerLayer.setGeoJson(this.geoJson);
-		this.markerLayer.addTo(this.map);
-	}.bind(this);
 }
 
 Map.prototype.initialize = function() {
@@ -304,13 +308,19 @@ Map.prototype.placeMarkers = function(results){
 	this.markerLayer.addTo(this.map);
 }
 
-Map.prototype.toggleMarkerColor = function(listingId){
-	alert("The map heard the click event!")
+Map.prototype.setMarkerActive = function(listingId){
 	var idx = this.markerMap[listingId];
 	this.geoJson[idx].properties["marker-color"] = "#ffffff";
-	this.markerLayer.setGeoJson(this.geoJson);
+	this.markerLayer.setGeoJSON(this.geoJson);
 	this.markerLayer.addTo(this.map);
-}.bind(Map);
+};
+
+Map.prototype.setMarkerInactive = function(listingId){
+	var idx = this.markerMap[listingId];
+	this.geoJson[idx].properties["marker-color"] = "#00529f";
+	this.markerLayer.setGeoJSON(this.geoJson);
+	this.markerLayer.addTo(this.map);
+};
 
 function Listings(el) {
 
@@ -348,11 +358,15 @@ function Listings(el) {
 			$searchPanel.append($li);
 		}
 		// link it to its map marker for hover event
-		$("li.listing-link").on('click', function(){
-			var listingId = $(this).data('id');
-			console.log(listingId, " listing was clicked.");
-			Map.prototype.toggleMarkerColor(listingId);
-		});
+		$(".listing-link")
+			.on('mouseover', function(){
+				var listingId = $(this).data('id');
+				events.trigger('listing-mouse-in', listingId);
+			})
+			.on('mouseout', function(){
+				var listingId = $(this).data('id');
+				events.trigger('listing-mouse-out', listingId);
+			});
 	});
 
 }
@@ -427,7 +441,7 @@ function Filters(el){
 		setParameter('minPrice', minPriceValue);
 
 		// get max price from form
-		var maxPriceValue = $('#value-high').val()[1];
+		var maxPriceValue = $('#range').val()[1];
 		setParameter('maxPrice', maxPriceValue);
 
 		// get checked handlebars from slider
@@ -461,7 +475,7 @@ function Filters(el){
 	}),
 	range: {
 		'min': [0],
-		'max': [2000]
+		'max': [1500]
 	}
 	});
 
@@ -475,7 +489,7 @@ $('#range').Link('upper').to($('#value-high'), 'html');
 // Controller
 
 $(function(){
-	new Map(document.querySelector('#map-panel'));
+	window.map = new Map(document.querySelector('#map-panel'));
 	new Listings(document.querySelector('#search-results'));
 	new Paginator(document.querySelector('#paginator'));
 	new Filters(document.querySelector('#search-filters'));
@@ -494,7 +508,6 @@ $(function(){
 		console.log("resizeDiv called!");
 		resizeDiv();
 	});
-
 });
 	
 
