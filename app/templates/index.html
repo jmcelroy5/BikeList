@@ -17,7 +17,7 @@ body{
 }
 
 #map-panel{
-	width: 570px;
+	width: 430px;
 	float:left;
 	top:60px;
 	left:0;
@@ -29,11 +29,11 @@ body{
 
 #search-panel{
 	float:right;
-	width: 500px;
+	width: 650px;
 }
 
 #search-results{
-	width:490px;
+	width:560px;
 	list-style-type: none;
 	padding: 0;
 	overflow: auto;
@@ -41,7 +41,7 @@ body{
 
 #search-results li {
 	display: inline-block;
-	width: 40%;
+	width: 32%;
 	vertical-align: top;
 }
 
@@ -53,7 +53,7 @@ body{
 }
 
 #search-filters{
- 	height: 300px;
+ 	height: 345px;
  	width: 100%;
  	margin-top:-130px;
  	top: 0;
@@ -85,6 +85,15 @@ input[type=number]{
 	float:right;
 }
 
+.myBtn:hover,
+.myBtn:active,
+.myBtn:focus {
+	background-color:#fff
+}
+
+.invisible{
+	visibility: hidden;
+}
 
 </style>
 
@@ -98,6 +107,15 @@ input[type=number]{
 		
 		<div id="search-filters">
 				<form action= "#">
+					<div id="size-filters" class="filter-group">
+						<strong>Frame Size</strong><br>
+						<input name="xs" type="checkbox">  Xsmall  </input>
+						<input name="s" type="checkbox">  Small  </input>
+						<input name="m" type="checkbox">  Medium  </input>
+						<input name="l" type="checkbox">  Large  </input>
+						<input name="xl" type="checkbox">  Xlarge  </input>
+						<!-- <input name="Wood or organic material" type="checkbox">Wood/Bamboo</input>  -->
+					</div>
 					<div id="materials-filters" class="filter-group">
 						<strong>Frame Material</strong><br>
 						<input name="Titanium" type="checkbox">  Titanium</input>
@@ -123,22 +141,23 @@ input[type=number]{
 						Min: $<span id="value-low"></span>
 						<span id="slider-right">Max: $<span id="value-high"></span></span>
 					</div><br>
-					<button class= "btn btn-default" type="submit" id="filter-submit">Apply Filters</button>
+					<button class= "btn btn-primary" type="submit" id="filter-submit">Apply Filters</button>
 				</form>
 		</div>
 
-		<div id="paginator">
-			<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-			<button class="btn dtn-default"id="prev">Previous</button> 
-			&nbsp;&nbsp;&nbsp;&nbsp; 
-			Showing <span id="low"></span> - <span id="high"></span> of <span id="total"></span> results
-			&nbsp;&nbsp;&nbsp;&nbsp; 
- 			<button class="btn btn-default" id="next">Next</button>
-			<span class="glyphicon glyphicon-arrow-right"></span>
-		</div><br>
 		<ul id="search-results">
 			<!-- Listings populate here -->
 		</ul>
+
+		<div id="paginator">
+			<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+			<button class="btn btn-default myBtn" id="prev">Previous</button> 
+			&nbsp;&nbsp;&nbsp;&nbsp; 
+			Showing <span id="low"></span> - <span id="high"></span> of <span id="total"></span> results
+			&nbsp;&nbsp;&nbsp;&nbsp; 
+ 			<button class="btn btn-default myBtn" id="next">Next</button>
+			<span class="glyphicon glyphicon-arrow-right"></span>
+		</div><br>
 
 	</div>
 </div>
@@ -160,7 +179,7 @@ var searchParameters = {
 	longitudeMin: null,
 	longitudeMax: null,
 
-	resultLimit: 16,
+	resultLimit: 15,
 	currentPage: 0
 }
 
@@ -401,18 +420,18 @@ function Paginator(el){
 
 		// hides prev button when on first page
 		if (searchParameters["currentPage"] === 0){
-			$(prev).hide(); 
-			$(".glyphicon-arrow-left").hide();
+			$(prev).addClass("invisible"); 
+			$(".glyphicon-arrow-left").addClass("invisible");
 		}
 		if (results["pageUpper"] === results["totalResults"]){
-			$(next).hide();
-			$(".glyphicon-arrow-right").hide();
+			$(next).addClass("invisible");
+			$(".glyphicon-arrow-right").addClass("invisible");
 		}
 		if (searchParameters["currentPage"] != 0 && results["pageUpper"] != results["totalResults"]){
-			$(prev).show();
-			$(next).show();
-			$(".glyphicon-arrow-left").show();
-			$(".glyphicon-arrow-right").show();
+			$(prev).removeClass("invisible");
+			$(next).removeClass("invisible");
+			$(".glyphicon-arrow-left").removeClass("invisible");
+			$(".glyphicon-arrow-right").removeClass("invisible");
 		}
 	});
 
