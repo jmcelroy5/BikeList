@@ -174,6 +174,8 @@ def index():
 @app.route("/getbikes")
 def get_bikes():
 	""" get search results """
+	sizes = request.args.getlist('sizes[]') 		# returns list of names of checkboxes that are checked when form submits
+	print "SIZES=========", sizes
 	materials = request.args.getlist('materials[]') 		# returns list of names of checkboxes that are checked when form submits
 	print "MATERIALS=========", materials
 	# materials looks like: [u'Carbon or composite', u'Aluminum']
@@ -205,6 +207,8 @@ def get_bikes():
 		print "map has not been moved yet"
 
 	# Filters
+	if sizes:
+		query = query.filter(Bike.size_category.in_(sizes))
 	if materials:	
 		query = query.filter(Bike.frame_material.in_(materials))
 	if handlebars:

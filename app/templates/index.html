@@ -53,7 +53,7 @@ body{
 }
 
 #search-filters{
- 	height: 345px;
+ 	height: 360px;
  	width: 100%;
  	margin-top:-130px;
  	top: 0;
@@ -169,6 +169,7 @@ input[type=number]{
 var events = new MicroEvent();
 
 var searchParameters = {
+	sizes: [],
 	materials: [],
 	handlebars: [],
 	maxPrice: null,
@@ -216,14 +217,13 @@ events.on('parameter-update', function() {
 // callback function for fetchResults
 function updateResults(data){
 	var response = data["response"];
-	console.log("response from server: ", response)
 	results.results = response["listings"]; // array of listings
-	console.log("list of search results to display: ", results.results)
 	results.numResults = response["num_results"];  // length of listings array
 	results.pageLower = response["page_range_lower"]; // lower bound of items to display
 	results.pageUpper = response["page_range_upper"]; // lower bound of items to display
 	results.totalResults = response["total_results"];
-	// trigger results-update so search panel, pagination, listings update
+
+	// trigger results-update so search panel, pagination, and listings update
 	events.trigger('results-update');
 }
 
@@ -270,7 +270,7 @@ Map.prototype.initialize = function() {
 
 	// Initiate map and set view
 	this.map = L.mapbox.map(this.el, 'examples.map-i86nkdio');
-	// add geocoder bar
+	// Add geocoder search bar
 	this.map.addControl(L.mapbox.geocoderControl('mapbox.places-v1'));
 	// set starting view/zoom(SF)
 	this.map.setView([37.78, -122.44], 13);
@@ -447,13 +447,19 @@ function Filters(el){
 
 		e.preventDefault();
 
-		var material_list = []
+		var sizeList = []
+		// get checked sizes from form
+		$('#size-filters input:checked').each(function(i,size){
+			sizeList.push($(size).attr('name'));
+		});
+		setParameter('sizes', sizeList);
+
+		var materialList = []
 		// get checked materials from form
 		$('#materials-filters input:checked').each(function(i,material){
-			material_list.push($(material).attr('name'));
+			materialList.push($(material).attr('name'));
 		});
-
-		setParameter('materials', material_list);
+		setParameter('materials', materialList);
 
 		// get min price from slider
 		var minPriceValue = $('#range').val()[0];
@@ -464,12 +470,12 @@ function Filters(el){
 		setParameter('maxPrice', maxPriceValue);
 
 		// get checked handlebars from slider
-		var handlebar_list = [];
+		var handlebarList = [];
 		$('#handlebar-filters input:checked').each(function(i,handlebar){
-			handlebar_list.push($(handlebar).attr('name'));
+			handlebarList.push($(handlebar).attr('name'));
 		});
 
-		setParameter('handlebars', handlebar_list);
+		setParameter('handlebars', handlebarList);
 		
 		// reset page to 0
 		setParameter('currentPage',0)
