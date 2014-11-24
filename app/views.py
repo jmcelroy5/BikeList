@@ -1,9 +1,7 @@
 from flask import render_template, request, jsonify, g, redirect, flash, url_for
 from flask import session as flask_session
-import webhelpers.paginate as paginate
 from model import Bike, Listing, User
 import model
-from flask.ext.login import LoginManager
 from app import app, db, facebook, bikeindex
 import datetime
 import json
@@ -148,23 +146,6 @@ def user_data():
 def add_user_bikes(user):
 	# get user id from session
 	pass
-
-
-
-# # Flask-Login session manager stuff
-
-# app.config.from_object('config')
-
-# login_manager = LoginManager()
-# login_manager.init_app(app) 
-
-# @login_manager.user_loader
-# def load_user(id):
-# 	try:
-# 		return session.query(User).get(int(id))
-# 	except (TypeError, ValueError):
-# 		pass
-
 
 # Runs on browser refresh. Checks for current user and bike
 @app.before_request

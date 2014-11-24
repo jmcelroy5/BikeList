@@ -3,8 +3,10 @@
 {% block scripts %}
 	<!-- Mapbox -->
 	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
-	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
 	<script src="{{ url_for('static',filename='js/microevent.js') }}"></script>
+	<script src="{{ url_for('static',filename='js/jquery.nouislider.all.min.js') }}"></script>
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
+	<link href="{{ url_for('static',filename='css/jquery.nouislider.css') }}" rel="stylesheet">
 
 {% endblock %}
 
@@ -58,8 +60,6 @@ body{
  }
 
 .filter-group{
-	display:inline-block;
-	margin-bottom:20px;
 	padding: 10px;
 	border-bottom:1px dotted;
 }
@@ -75,6 +75,14 @@ input[type=number]{
 #content{
     width: 1100px;
 	margin-top: 75px;
+}
+#range{
+	margin-top: 10px;
+	margin-bottom:10px;
+}
+
+#slider-right{
+	float:right;
 }
 
 
@@ -109,8 +117,11 @@ input[type=number]{
 					</div>
 					<div id="price-filters" class="filter-group">
 						<strong>Price</strong><br>
-						Min: $ <input name="min_price" type="number"></input>
-						Max: $ <input name="max_price" type="number"></input>
+<!-- 						Min: $ <input name="min_price" type="number"></input>
+						Max: $ <input name="max_price" type="number"></input> -->
+						<div id="range"></div>
+						Min: $<span id="value-low"></span>
+						<span id="slider-right">Max: $<span id="value-high"></span></span>
 					</div><br>
 					<button type="submit" id="filter-submit">Apply Filters</button>
 				</form>
@@ -220,6 +231,14 @@ function Map(el) {
 		setParameter('longitudeMax', this.map.getBounds().getEast());
 		events.trigger('parameter-update');
 	}.bind(this));
+
+	this.toggleMarkerColor = function(listingId){
+		alert("The map heard the click event!")
+		var idx = this.markerMap[listingId];
+		this.geoJson[idx].properties["marker-color"] = "#ffffff";
+		this.markerLayer.setGeoJson(this.geoJson);
+		this.markerLayer.addTo(this.map);
+	}.bind(this);
 }
 
 Map.prototype.initialize = function() {
@@ -238,7 +257,7 @@ Map.prototype.placeMarkers = function(results){
 
 	var listings = results["results"];
 
-	var geoJson = []
+	this.geoJson = [] 
 
 	this.markerLayer = L.mapbox.featureLayer(); 
 
@@ -253,15 +272,16 @@ Map.prototype.placeMarkers = function(results){
 		marker.bindPopup(popupContent);
 	});
 
-	// object to map markers to listing ids
+	// object that will be used to map listings to their marker
+	this.markerMap = {}
 
 	for (var i = 0; i < listings.length; i++){
 
 		//Current listing
 		var listing = listings[i]
 
-		// Define geoJSON for marker and push to layer list
-		geoJson.push({
+		// Define geoJSON for marker and push to geojson list
+		this.geoJson.push({
 			type: 'Feature',
 			"geometry": { 
 				"type": "Point", 
@@ -269,23 +289,28 @@ Map.prototype.placeMarkers = function(results){
 			},
 			"properties": {
 				"title": listing.title,
-				"id": listing.id,
 				"image": listing.photo,
 				"url": listing.url,
 				'marker-size': 'large',
 	        	'marker-color': '#00529f',
-	        	'marker-symbol': 'bicycle'
-			}
+	        	'marker-symbol': 'bicycle',
+	        }
 		});
+
+		this.markerMap[listing.id] = i
 	}	
 	// Add them all to the map 
-	this.markerLayer.setGeoJSON(geoJson);
+	this.markerLayer.setGeoJSON(this.geoJson);
 	this.markerLayer.addTo(this.map);
 }
 
-Map.prototype.toggleMarkerColor = function(){
-	
-}
+Map.prototype.toggleMarkerColor = function(listingId){
+	alert("The map heard the click event!")
+	var idx = this.markerMap[listingId];
+	this.geoJson[idx].properties["marker-color"] = "#ffffff";
+	this.markerLayer.setGeoJson(this.geoJson);
+	this.markerLayer.addTo(this.map);
+}.bind(Map);
 
 function Listings(el) {
 
@@ -317,14 +342,17 @@ function Listings(el) {
 			var $bikePhoto = $("<img>")
 			$bikePhoto.attr('src', listing.photo)
 
-			var $li = $("<li class='listing-link' listing-id='"+ listing.id + "' >")
-
-			// link it to its map marker for hover event
-			var marker = 
+			var $li = $("<li class='listing-link' data-id='"+ listing.id + "' >")
 
 			$li.append($listingLink,$bikePhoto);
 			$searchPanel.append($li);
 		}
+		// link it to its map marker for hover event
+		$("li.listing-link").on('click', function(){
+			var listingId = $(this).data('id');
+			console.log(listingId, " listing was clicked.");
+			Map.prototype.toggleMarkerColor(listingId);
+		});
 	});
 
 }
@@ -394,19 +422,15 @@ function Filters(el){
 
 		setParameter('materials', material_list);
 
-		// get min price from form
-		var minPriceValue = $('#search-filters input[name="min_price"').val();
-		if (minPriceValue.length > 0){
-			setParameter('minPrice', minPriceValue);
-		}
+		// get min price from slider
+		var minPriceValue = $('#range').val()[0];
+		setParameter('minPrice', minPriceValue);
 
 		// get max price from form
-		var maxPriceValue = $('#search-filters input[name="max_price"').val();
-		if (maxPriceValue.length > 0){
-			setParameter('maxPrice', maxPriceValue);
-		}
+		var maxPriceValue = $('#value-high').val()[1];
+		setParameter('maxPrice', maxPriceValue);
 
-		// get checked handlebars from form
+		// get checked handlebars from slider
 		var handlebar_list = [];
 		$('#handlebar-filters input:checked').each(function(i,handlebar){
 			handlebar_list.push($(handlebar).attr('name'));
@@ -418,6 +442,32 @@ function Filters(el){
 		setParameter('currentPage',0)
 		events.trigger('parameter-update');
 	});
+
+	// Price Slider JQuery plugin
+	$('#range').noUiSlider({
+		start: [100,500],
+		step: 50,
+		margin: 20,
+		connect: true,
+		direction: 'ltr',
+		orientation: 'horizontal',
+	
+	behaviour: 'tap-drag',
+	
+	format: wNumb({
+		mark: '.',
+		decimals: 2,
+		thousand: ','
+	}),
+	range: {
+		'min': [0],
+		'max': [2000]
+	}
+	});
+
+// Write to the min/max value spans
+$('#range').Link('lower').to($('#value-low'), 'html');
+$('#range').Link('upper').to($('#value-high'), 'html');
 }
 
 // TODO: function that generates hash on parameter update
