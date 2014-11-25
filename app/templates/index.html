@@ -33,7 +33,7 @@ body{
 }
 
 #search-results{
-	width:560px;
+	width:650px;
 	list-style-type: none;
 	padding: 0;
 	overflow: auto;
@@ -94,6 +94,42 @@ input[type=number]{
 .invisible{
 	visibility: hidden;
 }
+
+.marker-popup {
+	font-size:14px;
+}
+
+.marker-popup img{
+	width: 100px;
+}
+
+.img {
+    position: relative;
+    float: left;
+    width:  150px;
+    height: 100px;
+    background-position: 50% 50%;
+    background-repeat:   no-repeat;
+    background-size:     cover;
+    margin-bottom: 25px;
+    margin-top:10px;
+    border-radius: 10px;
+    border:1px solid black;
+}
+
+.pricetag{
+	width:50px;
+	height:25px;
+	z-index: 10;
+	background-color: #494949;
+	opacity: 0.9;
+	position: absolute;
+	bottom:0;
+	color: white;
+	text-align: right;
+	padding:3px;
+}	
+
 
 </style>
 
@@ -255,13 +291,17 @@ function Map(el) {
 	// Another way: events.on('listing-mouse-out', this.setMarkerInactive.bind(this));
 
 	// Change search parameters when map moves
-	this.map.on('moveend', function(){
-		setParameter('latitudeMin', this.map.getBounds().getSouth());
-		setParameter('latitudeMax', this.map.getBounds().getNorth());
-		setParameter('longitudeMin', this.map.getBounds().getWest());
-		setParameter('longitudeMax', this.map.getBounds().getEast());
-		events.trigger('parameter-update');
-	}.bind(this));
+
+	this.map.on('dragend', this.getViewCoords.bind(this));
+	this.map.on('zoomend', this.getViewCoords.bind(this));
+}
+
+Map.prototype.getViewCoords = function(){
+	setParameter('latitudeMin', this.map.getBounds().getSouth());
+	setParameter('latitudeMax', this.map.getBounds().getNorth());
+	setParameter('longitudeMin', this.map.getBounds().getWest());
+	setParameter('longitudeMax', this.map.getBounds().getEast());
+	events.trigger('parameter-update');
 }
 
 Map.prototype.initialize = function() {
@@ -289,9 +329,9 @@ Map.prototype.placeMarkers = function(results){
 		var marker = e.layer;
 		var photo = marker.feature.properties.image;
 		var url = marker.feature.properties.url;
-		var popupContent = '<a href="' + url + '">' + 
+		var popupContent = '<div class="marker-popup"><a href="' + url + '">' + 
 							marker.feature.properties.title + '</a><br>' +
-							'<img src="' + photo + '">';
+							'<img src="' + photo + '"></div>';
 		marker.bindPopup(popupContent);
 	});
 
@@ -368,15 +408,17 @@ function Listings(el) {
 			});
 			
 			// Create JQuery object for bike photo	
-			var $bikePhoto = $("<img>")
-			$bikePhoto.attr('src', listing.photo)
+			var $bikePhoto = $("<div class='img'>")
+			$bikePhoto.attr('style','background-image:url("' + listing.photo + '");')
+			$bikePhoto.html("<div class='pricetag'>  $" + listing.price + "</div>")
 
 			var $li = $("<li class='listing-link' data-id='"+ listing.id + "' >")
 
 			$li.append($listingLink,$bikePhoto);
 			$searchPanel.append($li);
 		}
-		// link it to its map marker for hover event
+
+		// triggers marker color change when hovering over listing
 		$(".listing-link")
 			.on('mouseover', function(){
 				var listingId = $(this).data('id');
@@ -391,8 +433,7 @@ function Listings(el) {
 }
 
 function Paginator(el){ 
-	// get next/previous buttons
-	var prev = el.querySelector('#prev'); // jquery vs. el.querySelector?
+	var prev = el.querySelector('#prev'); 
 	var next = el.querySelector('#next');
 	var lower = el.querySelector('#low');
 	var upper = el.querySelector('#high');
@@ -410,7 +451,7 @@ function Paginator(el){
 	$(next).on('click', function(){
 		var page = getParameter('currentPage');
 		setParameter('currentPage', page + 1);
-		events.trigger('parameter-update') // ultimately setParameter will trigger parameter-update 
+		events.trigger('parameter-update') 
 	});
 
 	events.on('results-update', function(){
@@ -418,15 +459,17 @@ function Paginator(el){
 		$(upper).html(results["pageUpper"]);
 		$(total).html(results["totalResults"]);
 
-		// hides prev button when on first page
+		// hides prev button on first page
 		if (searchParameters["currentPage"] === 0){
 			$(prev).addClass("invisible"); 
 			$(".glyphicon-arrow-left").addClass("invisible");
 		}
+		// hides next button on last page
 		if (results["pageUpper"] === results["totalResults"]){
 			$(next).addClass("invisible");
 			$(".glyphicon-arrow-right").addClass("invisible");
 		}
+		// makes sure both prev/next buttons showing on all other pages
 		if (searchParameters["currentPage"] != 0 && results["pageUpper"] != results["totalResults"]){
 			$(prev).removeClass("invisible");
 			$(next).removeClass("invisible");
@@ -484,7 +527,7 @@ function Filters(el){
 
 	// Price Slider JQuery plugin
 	$('#range').noUiSlider({
-		start: [100,500],
+		start: [0,1500],
 		step: 50,
 		margin: 20,
 		connect: true,
@@ -534,7 +577,6 @@ $(function(){
 		resizeDiv();
 	});
 });
-	
 
 </script>
 

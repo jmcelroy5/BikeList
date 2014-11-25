@@ -104,8 +104,20 @@ class Listing(db.Model):
 	longitude = db.Column(db.Float, nullable=True)
 	additional_text = db.Column(db.String(500),nullable=True)
 
+	# Listing also has comments attribute (list of comments)
+
 	def __repr__(self):
 		return '<Listing %r>' % (self.additional_text)
+
+class Comment(db.Model):
+	__tablename__ = "comments"
+
+	id = db.Column(db.Integer, primary_key = True)	
+
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	listing_id = db.Column(db.Integer, db.ForeignKey('listings.id'))
+
+	listing = db.relationship("Listing", backref=db.backref("comments"))
 
 def create_tables():
     db.Model.metadata.create_all(db.engine)

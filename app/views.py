@@ -125,15 +125,17 @@ def bikeindex_login():
 @bikeindex.authorized_handler
 def bikeindex_authorized(resp):
 	""" Running into error here (Flask Oauth exception: Invalid response from BikeIndex)"""
+	print "\n\n\n response from bikeindex", resp
 	flask_session['BI_authorized'] = True
-	flask_session['bikeindex_token'] = resp['authenticity_token']
-	print resp
+	flask_session['bikeindex_token'] = resp['code']
+
 
 
 @app.route("/getuser_bikeindex") # This works 
 def user_data():
     """Grab user profile information from Bike Index."""
-    access_token = os.environ.get('BIKEINDEX_ACCESS_TOKEN')
+    # access_token = os.environ.get('BIKEINDEX_ACCESS_TOKEN')
+    access_token = flask_session['bikeindex_token']
     BI_request = requests.get('https://bikeindex.org/api/v2/users/current?access_token=' + access_token)
     BI_user = BI_request.json()	 
     bikeindex_userdata = {
@@ -261,7 +263,7 @@ def get_bikes():
 						'photo': bike.photo,
 						'price': listing.asking_price,
 						'material': bike.frame_material,
-						'title': bike.title + " ($" + str(listing.asking_price) + ")"})
+						'title': bike.title })
 		if current_page == 0:
 			response["page_range_lower"] = 1
 		else:
