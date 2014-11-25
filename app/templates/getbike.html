@@ -16,46 +16,27 @@
 		</form>
 		 -->
 
-		 <!-- Modal -->
-		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		  <div class="modal-dialog">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-		        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-		      </div>
-		      <div class="modal-body">
-		      	<div id="verify-bike" class="bike-info">
-					<img id="bike-pic"><br><br>
-					<h1></h1>
-					<ul class="attr-list">
-						<li id="serial"><span class="attr-title">Serial</span></li>
-						<li id="manufacturer"><span class="attr-title">Manufacturer</span></li>
-						<li id="model"><span class="attr-title">Model</span></li>
-						<li id="year"><span class="attr-title">Year</span></li>
-						<li id="material"><span class="attr-title">Frame Material</span></li>
-						<li id="handlebar"><span class="attr-title">Handlebar type</span></li>
-						<li id="wheel"><span class="attr-title">Wheel diameter</span></li>
-						<li id="color"><span class="attr-title">Primary colors</span></li>
-					</ul>
-					<div id='confirm'>
-						<form>
-							<!-- <h2> Is this the bike you want to sell?</h2> -->
-							<button id="Yes">Sell this bike</button>
-							<button id="No">That's not my bike</button>
-						</form>	
-					</div>
-				</div>
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		        <button type="button" class="btn btn-primary">Save changes</button>
-		      </div>
-		    </div>
-		  </div>
+		<div id="verify-bike" class="bike-info">
+			<img id="bike-pic"><br><br>
+			<h1></h1>
+			<ul class="attr-list">
+				<li id="serial"><span class="attr-title">Serial</span></li>
+				<li id="manufacturer"><span class="attr-title">Manufacturer</span></li>
+				<li id="model"><span class="attr-title">Model</span></li>
+				<li id="year"><span class="attr-title">Year</span></li>
+				<li id="material"><span class="attr-title">Frame Material</span></li>
+				<li id="handlebar"><span class="attr-title">Handlebar type</span></li>
+				<li id="wheel"><span class="attr-title">Wheel diameter</span></li>
+				<li id="color"><span class="attr-title">Primary colors</span></li>
+			</ul>
+			<div id='confirm'>
+				<form>
+					<!-- <h2> Is this the bike you want to sell?</h2> -->
+					<button class="btn btn-primary" id="Yes">Sell this bike</button>
+					<button class="btn btn-default" id="No">That's not my bike</button>
+				</form>	
+			</div>
 		</div>
-
-
 
 	</div>
 	<script>

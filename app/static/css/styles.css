@@ -6,7 +6,7 @@ body{
 	margin: 20px;
 }
 
-h1, h2, h3, h4{
+h1, h2, h3, h4, #logo{
 	font-family: 'Exo 2', sans-serif;
 	font-weight: 400;
 	line-height: 1.2em;
