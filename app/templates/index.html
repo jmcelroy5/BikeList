@@ -143,7 +143,7 @@ input[type=number]{
 }
 /* Filled heart */
 .fa-heart{
-	color: #ff3b52;
+	color: #ff85db;
 }
 
 </style>
@@ -274,7 +274,8 @@ function updateResults(data){
 	results.pageUpper = response["page_range_upper"]; // lower bound of items to display
 	results.totalResults = response["total_results"];
 	results.favorites = response["favorites"];
-	
+	console.log("User favorites: ", results.favorites)
+
 	// trigger results-update so search panel, pagination, and listings update
 	events.trigger('results-update');
 }
@@ -385,7 +386,7 @@ Map.prototype.placeMarkers = function(results){
 
 Map.prototype.setMarkerActive = function(listingId){
 	var idx = this.markerMap[listingId];
-	this.geoJson[idx].properties["marker-color"] = "#ffffff";
+	this.geoJson[idx].properties["marker-color"] = "#82c2ee";
 	this.markerLayer.setGeoJSON(this.geoJson);
 	this.markerLayer.addTo(this.map);
 };
@@ -435,10 +436,10 @@ function Listings(el) {
 			
 			var heartIcon = $("<i class='heart fa fa-heart-o' data-id='" + listing.id + "'></i>");	
 
-			// if (include(results["favorites"], listing.id)){
-			// 	heartIcon.removeClass("fa-heart-o");
-			// 	heartIcon.addClass("fa-heart");
-			// }
+			if (results.favorites != null && include(results.favorites, listing.id)){
+				heartIcon.removeClass("fa-heart-o");
+				heartIcon.addClass("fa-heart");
+			}
 
 			$bikePhoto.append(heartIcon)
 

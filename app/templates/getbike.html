@@ -114,8 +114,6 @@
 		var bikedata = JSON.stringify(bike);
 
 		$.post("/addbike", {bike: bikedata}, function(){
-			alert("Bike added to database!");	// or flash message in flask
-
 			window.location.replace("/list");
 		});
 	}

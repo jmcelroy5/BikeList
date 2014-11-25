@@ -152,14 +152,14 @@ def add_user_bikes(user):
 # Runs on browser refresh. Checks for current user and bike
 @app.before_request
 def get_current_user():
-    # user_id = flask_session.get('user', None)
-    # if user_id:
-    # 	user = db.session.query(User).filter_by(id=user_id).one()
-    # 	g.user = user.id
-    # 	g.avatar = user.avatar
-    # 	g.name = user.first_name
-    # 	g.logged_in = True
-    pass
+    user_id = flask_session.get('user', None)
+    if user_id:
+    	user = db.session.query(User).filter_by(id=user_id).one()
+    	g.user = user.id
+    	g.avatar = user.avatar
+    	g.name = user.first_name
+    	g.logged_in = True
+    # pass
 
 # Make current user available on templates
 @app.context_processor
@@ -205,9 +205,9 @@ def get_bikes():
 		query = query.filter(Listing.longitude > float(long_min)).filter(Listing.longitude < float(long_max))
 		print ("\n\n\n\n", lat_min, lat_max, long_min, long_max)
 	except ValueError:
-		print "map has not been moved yet"
+		pass
 	except TypeError:
-		print "map has not been moved yet"
+		pass
 
 	# Filters
 	if sizes:
@@ -240,6 +240,7 @@ def get_bikes():
 
 	# Getting user's favorite bikes in case there were updates
 	favorites = get_favorites()
+	print "\n\n\n user favorites ", favorites, "\n\n\n"
 
 	# Initializing response object
 	response = {
@@ -248,6 +249,7 @@ def get_bikes():
 		"page_range_lower": None,
 		"page_range_upper": None,
 		"total_results": total_count,
+		"favorites": favorites
 	}
 
 	# Building final response object
@@ -424,7 +426,7 @@ def my_listings():
 	user = flask_session['user']
 	query = db.session.query(Listing, Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active")
 	user_listings = query.filter(Listing.user_id == user).filter(Bike.user_id == user).all()
-
+	print "\n\n\nthis is user_listings", user_listings, "\n\n\n"
 	listings = []
 
 	# Building objects for template
@@ -439,20 +441,16 @@ def my_listings():
 
 @app.route("/favoritebikes")
 def user_favorites():
-	favorites = user.favorites
 
-	query = db.session.query(Listing, Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active")
+	favorites = get_favorites()
 
 	listings = []
 
 	for listing_id in favorites:
-		fav = query.filter(Listing.id == listing_id).first()
-		print fav, "is what we're getting back from db"
-		listings.append(fav)
-
-	# Building objects for template
-	for listing, bike in listings:
-		listings.append({'url': "/listing/" + str(bike.id),
+		listing_bike = [db.session.query(Listing, Bike).filter(Listing.bike_id == Bike.id, Listing.id == listing_id).first()]
+		print "\n\n\nthis is listing_bike", listing_bike, "\n\n\n"
+		for listing, bike in listing_bike:
+			listings.append({'url': "/listing/" + str(bike.id),
 							 'photo': bike.photo,
 							 'price': listing.asking_price,
 							 'title': bike.title,
@@ -485,8 +483,11 @@ def get_favorites():
 	user_id = flask_session.get('user', None)
 
 	if user_id != None:
+		favorites = []
 		query_favorites = db.session.query(Favorite).filter(Favorite.user_id == user_id).all()
-		return query_favorites
+		for favorite in query_favorites:
+			favorites.append(favorite.listing_id)
+		return favorites
 	else:
 		return None
 

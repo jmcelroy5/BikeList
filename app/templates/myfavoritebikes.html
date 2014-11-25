@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+<style>
+img{
+	width:200px;
+	display: inline-block;
+}
+table{
+	margin-top:50px;
+}
+</style>
+
+<h1>{{ g.name }}'s wish list</h1>
+<table class="table">
+{% for listing in listings %}
+
+	<tr>
+		<td><a href="{{ listing.url }}"><img src="{{ listing.photo }}"></a></td>
+		<td> 
+			<h4>{{ listing.title }}</h4>
+			<strong>Price:</strong> ${{ listing.price }}.00<br>
+			<strong>Posted on:</strong> {{ listing.date.strftime('%m-%d-%Y') }}
+		</td>
+	</tr>
+{% endfor %}
+</table>
+
+
+{% endblock %}
+
+
+
