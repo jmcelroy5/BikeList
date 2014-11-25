@@ -106,15 +106,14 @@ input[type=number]{
 .img {
     position: relative;
     float: left;
-    width:  150px;
-    height: 100px;
+    width:  180px;
+    height: 133px;
     background-position: 50% 50%;
     background-repeat:   no-repeat;
     background-size:     cover;
     margin-bottom: 25px;
     margin-top:10px;
-    border-radius: 10px;
-    border:1px solid black;
+    border-radius: 5px;
 }
 
 .pricetag{
@@ -128,8 +127,24 @@ input[type=number]{
 	color: white;
 	text-align: right;
 	padding:3px;
-}	
+}
 
+.heart {
+	text-align: right;
+	font-size: 20px;
+	float: right;
+	margin-right: -5px;
+	margin-top: -31px;
+}
+
+/* Empty heart  */
+.fa-heart-o{
+	color: #b4b4b4
+}
+/* Filled heart */
+.fa-heart{
+	color: #ff3b52;
+}
 
 </style>
 
@@ -217,7 +232,7 @@ var searchParameters = {
 	longitudeMax: null,
 
 	resultLimit: 15,
-	currentPage: 0
+	currentPage: 0, 
 }
 
 function getParameter(key){		
@@ -234,8 +249,8 @@ var results = {
 	numResults: null,
 	pageLower: null,
 	pageUpper: null,
-	totalResults: null
-	// store current marker list here so its not a global?
+	totalResults: null,
+	favorites: []
 }
 
 function fetchResults(callback){
@@ -258,7 +273,8 @@ function updateResults(data){
 	results.pageLower = response["page_range_lower"]; // lower bound of items to display
 	results.pageUpper = response["page_range_upper"]; // lower bound of items to display
 	results.totalResults = response["total_results"];
-
+	results.favorites = response["favorites"];
+	
 	// trigger results-update so search panel, pagination, and listings update
 	events.trigger('results-update');
 }
@@ -381,6 +397,11 @@ Map.prototype.setMarkerInactive = function(listingId){
 	this.markerLayer.addTo(this.map);
 };
 
+// find out if an item is in a given array
+function include(arr,obj) {
+    return (arr.indexOf(obj) != -1);
+}
+
 function Listings(el) {
 
 	// events.on('parameter-update', function(){
@@ -389,13 +410,13 @@ function Listings(el) {
 	// });
 
 	events.on('results-update', function() {
-		// Empty search results div - could you do el.empty()? is el available to you?
 		$searchPanel = $('#search-results')
 		$searchPanel.empty()
 
+		// Get the updated search results
 		listings = results["results"];
 
-		// Loop through next 10 records of response object
+		// Loop through listings in response object
 		for (var i = 0; i < listings.length; i++){
 
 			// Current listing
@@ -411,14 +432,23 @@ function Listings(el) {
 			var $bikePhoto = $("<div class='img'>")
 			$bikePhoto.attr('style','background-image:url("' + listing.photo + '");')
 			$bikePhoto.html("<div class='pricetag'>  $" + listing.price + "</div>")
+			
+			var heartIcon = $("<i class='heart fa fa-heart-o' data-id='" + listing.id + "'></i>");	
 
-			var $li = $("<li class='listing-link' data-id='"+ listing.id + "' >")
+			// if (include(results["favorites"], listing.id)){
+			// 	heartIcon.removeClass("fa-heart-o");
+			// 	heartIcon.addClass("fa-heart");
+			// }
 
-			$li.append($listingLink,$bikePhoto);
+			$bikePhoto.append(heartIcon)
+
+			var $li = $("<li class='listing-link' data-id='"+ listing.id + "' >");
+
+			$li.append($listingLink, $bikePhoto);
 			$searchPanel.append($li);
 		}
 
-		// triggers marker color change when hovering over listing
+		// Triggers marker color change when hovering over listing
 		$(".listing-link")
 			.on('mouseover', function(){
 				var listingId = $(this).data('id');
@@ -428,6 +458,13 @@ function Listings(el) {
 				var listingId = $(this).data('id');
 				events.trigger('listing-mouse-out', listingId);
 			});
+
+		// Adds click listener to hearts and toggles favorite
+		$(".heart").on('click', function(){
+			var listingId = $(this).data('id');
+			$(this).toggleClass("fa-heart-o fa-heart");
+			$.post("/favorite", {listing: listingId});
+		});
 	});
 
 }

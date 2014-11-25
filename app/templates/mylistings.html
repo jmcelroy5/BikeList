@@ -5,11 +5,12 @@
 
 {% block content %}
 <style>
-td img{
-	width:100px;
+img{
+	width:200px;
+	display: inline-block;
 }
-ul{
-	list-style-type: none;
+table{
+	margin-top:50px;
 }
 </style>
 
@@ -20,11 +21,9 @@ ul{
 	<tr>
 		<td><a href="{{ listing.url }}"><img src="{{ listing.photo }}"></a></td>
 		<td> 
-			<ul>
-				<li><h4>{{ listing.title }}</h4></li>
-				<li><strong>Price:</strong> ${{ listing.price }}.00</li>
-				<li><strong>Posted on:</strong> {{ listing.date.strftime('%m-%d-%Y') }}</li>
-			</ul>
+			<h4>{{ listing.title }}</h4>
+			<strong>Price:</strong> ${{ listing.price }}.00<br>
+			<strong>Posted on:</strong> {{ listing.date.strftime('%m-%d-%Y') }}
 		</td>
 	</tr>
 {% endfor %}

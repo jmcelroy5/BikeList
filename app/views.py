@@ -1,6 +1,6 @@
 from flask import render_template, request, jsonify, g, redirect, flash, url_for
 from flask import session as flask_session
-from model import Bike, Listing, User
+from model import Bike, Listing, User, Comment, Favorite
 import model
 from app import app, db, facebook, bikeindex
 import datetime
@@ -97,7 +97,7 @@ def get_session():
 	print "\n Current user:", flask_session.get("user", "Not set")
 	return "Check the console."
 
-@app.route("/_get_current_user")
+@app.route("/get_current_user")
 def get_current_user():
 	""" Get current user from session """
 	return g.user
@@ -152,13 +152,14 @@ def add_user_bikes(user):
 # Runs on browser refresh. Checks for current user and bike
 @app.before_request
 def get_current_user():
-    user_id = flask_session.get('user', None)
-    if user_id:
-    	user = db.session.query(User).filter_by(id=user_id).one()
-    	g.user = user.id
-    	g.avatar = user.avatar
-    	g.name = user.first_name
-    	g.logged_in = True
+    # user_id = flask_session.get('user', None)
+    # if user_id:
+    # 	user = db.session.query(User).filter_by(id=user_id).one()
+    # 	g.user = user.id
+    # 	g.avatar = user.avatar
+    # 	g.name = user.first_name
+    # 	g.logged_in = True
+    pass
 
 # Make current user available on templates
 @app.context_processor
@@ -216,13 +217,9 @@ def get_bikes():
 	if handlebars:
 		query = query.filter(Bike.handlebar_type.in_(handlebars))
 	if min_price:
-		query = query.filter(Listing.asking_price >= min_price)
+		query = query.filter(Listing.asking_price >= float(min_price.replace(',','')))
 	if max_price:
-		query = query.filter(Listing.asking_price <= max_price)
-
-	# Need to add size filter...
-	# if size:
-	# 	query = query.filter_by(things = foo)
+		query = query.filter(Listing.asking_price <= float(max_price.replace(',','')))
 
 	# get total number of listings found for this search before applying page limit
 	total_count = query.count()
@@ -235,13 +232,14 @@ def get_bikes():
 	# number of results per page
 	limit = int(request.args.get("resultLimit"))
 
-	print "\n \n \n CURRENT PAGE is ", current_page
 	offset = current_page * limit
-	print "\n \n \nOFFSET for this page is ", offset, type(offset)
 
 	query = query.offset(offset)
 
 	all_listings = query.limit(limit)	# Finish the query
+
+	# Getting user's favorite bikes in case there were updates
+	favorites = get_favorites()
 
 	# Initializing response object
 	response = {
@@ -249,12 +247,11 @@ def get_bikes():
 		"num_results": all_listings.count(),
 		"page_range_lower": None,
 		"page_range_upper": None,
-		"total_results": total_count
+		"total_results": total_count,
 	}
 
 	# Building final response object
 	for listing, bike in all_listings:
-		print bike
 		response["listings"].append({
 						'url': "/listing/" + str(bike.id),
 						'latitude': listing.latitude, 
@@ -440,9 +437,65 @@ def my_listings():
 
 	return render_template('mylistings.html', listings=listings)
 
+@app.route("/favoritebikes")
+def user_favorites():
+	favorites = user.favorites
+
+	query = db.session.query(Listing, Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active")
+
+	listings = []
+
+	for listing_id in favorites:
+		fav = query.filter(Listing.id == listing_id).first()
+		print fav, "is what we're getting back from db"
+		listings.append(fav)
+
+	# Building objects for template
+	for listing, bike in listings:
+		listings.append({'url': "/listing/" + str(bike.id),
+							 'photo': bike.photo,
+							 'price': listing.asking_price,
+							 'title': bike.title,
+							 'date': listing.post_date})
+
+	return render_template('myfavoritebikes.html', listings=listings)
+
+@app.route("/favorite", methods=["POST"])
+def add_or_remove_favorite():
+	listing_id = request.form.get("listing")
+	user_id = flask_session["user"]
+
+	# check if user has already favorited that listing
+	existing_fav = db.session.query(Favorite).filter(Favorite.user_id == user_id).filter(Favorite.listing_id == listing_id).first()
+
+	if existing_fav != None:
+		db.session.delete(existing_fav)
+	else:
+		new_favorite = Favorite()
+		new_favorite.user_id = user_id
+		new_favorite.listing_id = listing_id
+		db.session.add(new_favorite)
+
+	db.session.commit()
+
+	return "bike favorited... or unfavorited"
+
+def get_favorites():
+	""" get list of current user's favorited bikes """
+	user_id = flask_session.get('user', None)
+
+	if user_id != None:
+		query_favorites = db.session.query(Favorite).filter(Favorite.user_id == user_id).all()
+		return query_favorites
+	else:
+		return None
 
 @app.route("/account")
 def account():
 	return "Individual account page will be here. Edit/delete listings, add new bikes, etc."
 	# return render_template("account.html")
+
+
+
+
 

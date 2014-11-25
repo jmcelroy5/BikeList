@@ -113,11 +113,21 @@ class Comment(db.Model):
 	__tablename__ = "comments"
 
 	id = db.Column(db.Integer, primary_key = True)	
-
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	listing_id = db.Column(db.Integer, db.ForeignKey('listings.id'))
 
+	comment_text = db.Column(db.String(500), nullable=False)
+
 	listing = db.relationship("Listing", backref=db.backref("comments"))
+
+class Favorite(db.Model):
+	__tablename__ = "favorites"
+	
+	id = db.Column(db.Integer, primary_key = True)	
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	listing_id = db.Column(db.Integer, db.ForeignKey('listings.id'))
+
+	user = db.relationship("User", backref=db.backref("favorites"))
 
 def create_tables():
     db.Model.metadata.create_all(db.engine)
