@@ -9,26 +9,61 @@
 {% block content %}
 <style>
 
-	#mapbox{
-		height:300px;
-	}
+#mapbox{
+	width: 430px;
+	float:left;
+	top:60px;
+	left:0;
+	bottom:0;
+    position: fixed;
+    margin-bottom:0px;
+    overflow:hidden;
+  }
+
+#search-panel{
+	float:right;
+	width: 746px;
+	margin-left: 430px;
+	position: absolute;
+	margin-top: -66px;
+}
+
+#listing-form{
+	margin-top:10px;
+	margin-bottom:100px;
+}
+
+.bike-pic{
+	width: 400px;
+	float: left;
+	margin-left: 0px;
+	border-radius:5px;
+	display:block;
+	margin-top:10px;
+}
+
 
 </style>
 
+<div id="content">
+	
+	<div id="mapbox" class="col-lg-6">
+	</div>
 
+	<div id="search-panel" class="col-lg-6">
+		<h1> Complete Your Listing </h1>
+		<img class="bike-pic" src={{ bike.photo }}>
 		<form id="listing-form" action="#" method='POST'>
-			<h1> Complete Your Listing </h1>
-			asking price
+			<h4>Asking price</h4>
 			$ <input id="price"type="text" name="price"></input><br><br>  <!--Numbers only-->
-			your address or cross streets
+			<h4>Your location</h4>
 			<input id="location" type="text" name="zipcode"></input><br><br>
-			anything else you want to say?<br><br>
+			<h4>Anything else you want to say?</h4>
 			<textarea id="comments" rows="4" cols="50" name="comments" placeholder="What do you love about this bike?"></textarea><br><br>
-			<input type="submit" value="Finish Listing"></input>
+			<input class="btn btn-default" type="submit" value="Finish Listing"></input>
 		</form>
-
-		<div id="mapbox">
-		</div>
+	</div>
+</div>
 
 	<script>
 

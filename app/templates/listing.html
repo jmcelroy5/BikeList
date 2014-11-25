@@ -8,42 +8,70 @@
 {% block content %}
 <style>
 
-	.bike-info > img{
-		width: 500px;
+	.bike-pic{
+		width: 400px;
 		float: left;
-		margin: 10px;
+		margin: 0px;
+		border-radius:5px;
 	}
 
-	#bikeLocation{
-		height: 200px;
-		width: 300px;
+	img.seller-contact{
+		width: 100px;
+		margin-bottom:60px;
+		margin-left: 0;
+		margin-right: 20px;
+		float: left;
 	}
 
-	.seller-contact img {
-/*		display:inline;
-		float:left;*/
-		margin-right:10px;
-		width:115px;
-	}
-	#listing-info{
-		display: block;
-		/*margin-top:px;*/
-	}
 	#seller-text{
 		margin-bottom:15px;
 	}
+
 	#price{
 		color: #3887be;
 		/*margin-bottom:10px;*/
 	}
 
+	#bikelocation{
+		width: 430px;
+		float:left;
+		top:60px;
+		left:0;
+		bottom:0;
+	    position: fixed;
+	    margin-bottom:0px;
+	    overflow:hidden;
+  	}
+
+	#search-panel{
+		float:right;
+		width: 746px;
+		margin-left: 430px;
+		margin-top: -66;
+		position: absolute;
+	}
+
+	#listing-form{
+		margin-top:50px;
+	}
+
+	.attr-list{
+		display:inline-block;
+		width:60%;
+	}
+
+	.contact-seller{
+
+	}
+
 </style>
-	<div class="bike-info">	
+	<div id="search-panel">	
 		<h1> {{ bike.title }}</h1>
 		<span id="price"><h3>${{ listing.asking_price }}.00</h3></span>
-		<img src={{ bike.photo }}><br><br>
+		<img class="bike-pic" src={{ bike.photo }}><br><br>
+
 		<ul class="attr-list">
-			<li><span class="attr-title">Price</span>${{ listing.asking_price }}.00</li>
+			<h3>Specs</h3>
 			<li id="serial"><span class="attr-title">Serial</span>{{ bike.serial }}</li>
 			<li id="size"><span class="attr-title">Size</span>{{ bike.size }}</li>
 			<li id="manufacturer"><span class="attr-title">Manufacturer</span>{{ bike.manufacturer }}</li>
@@ -54,37 +82,30 @@
 			<li id="wheel"><span class="attr-title">Wheel diameter</span> {{ bike.rear_wheel_size }}</li>
 			<li id="color"><span class="attr-title">Primary colors</span>{{ bike.frame_colors }}</li>
 		</ul>
-		+ detailed specs<br><br><br><br><br>
-	</div>
 
-	<div id="listing-info" class"container-fluid">
-		<div class="row">
-			<div id="seller-text" class="col-md-12">
-				<h3>A few more words</h3>
-								<p> {{ listing.additional_text }}</p>
-				<a href="{{bike.bikeindex_url}}">See it on BikeIndex</a>
-			</div>
+		<h3>A few more words</h3>
+		<p> {{ listing.additional_text }}</p>
+		<a href="{{bike.bikeindex_url}}">See it on BikeIndex</a>
+
+		<div id="bikeLocation">
+			<!-- Map will go here -->
 		</div>
-		<div class="row">
-			<div class="col-md-4">
-				<h3>Location</h3>
-				<div id="bikeLocation">
-					<!-- Map will go here -->
-				</div>
-			</div>
-			<div class="col-md-1">
-			</div>
-			<div class="col-md-3 seller-contact">
-				<h3>Contact seller</h3>
-				{% if g.logged_in %}
-					<a href="{{ user.facebook_url }}"><img src="{{user.avatar}}"></a>
-					<h4> {{ user.first_name }} </h4>
-					<p>{{ user.email }}</p>
-				{% else %}
-					<p> You must be <a href="/login">logged in</a> to see seller's contact information.</p>
-				{% endif %}
-			</div>
+		
+
+			<h3>Contact seller</h3>
+			{% if g.logged_in %}
+				<a href="{{ user.facebook_url }}"><img class="seller-contact" src="{{user.avatar}}"></a>
+				<br>
+				<h4> {{ user.first_name }} </h4>
+				<p>{{ user.email }}</p>
+			{% else %}
+				<p> You must be <a href="/login">logged in</a> to see seller's contact information.</p>
+			{% endif %}
 		</div>
+		<div style="clear:both"/>
+
+		</div>
+
 	</div>
 
 

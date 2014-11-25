@@ -383,7 +383,9 @@ def add_bike():
 
 @app.route("/list")
 def listing_form():
-	return render_template("listing_form.html")
+	bike_id = flask_session.get("bike")
+	bike = db.session.query(Bike).get(bike_id)
+	return render_template("listing_form.html", bike=bike)
 
 @app.route("/addlisting", methods=['POST'])
 def add_listing():
