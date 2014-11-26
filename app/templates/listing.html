@@ -92,19 +92,19 @@
 		</div>
 		
 
-			<h3>Contact seller</h3>
-			{% if g.logged_in %}
-				<a href="{{ user.facebook_url }}"><img class="seller-contact" src="{{user.avatar}}"></a>
-				<br>
-				<h4> {{ user.first_name }} </h4>
-				<p>{{ user.email }}</p>
-			{% else %}
-				<p> You must be <a href="/login">logged in</a> to see seller's contact information.</p>
-			{% endif %}
-		</div>
-		<div style="clear:both"/>
+		<h3>Contact seller</h3>
+		{% if g.logged_in %}
+			<a href="{{ user.facebook_url }}"><img class="seller-contact" src="{{user.avatar}}"></a>
+			<br>
+			<h4> {{ user.first_name }} </h4>
+			<p>{{ user.email }}</p>
+		{% else %}
+			<p> You must be <a href="/login">logged in</a> to see seller's contact information.</p>
+		{% endif %}
 
-		</div>
+		<div style="clear:both">
+		<a href="/">  &lt;&lt; Back to search</a>
+		</div><br>
 
 	</div>
 

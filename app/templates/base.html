@@ -239,7 +239,14 @@
           var bikedata = JSON.stringify(bike);
 
           $.post("/addbike", {bike: bikedata}, function(){
-            window.location.replace("/list");
+            $("#verify-bike").hide();
+            $("#get-serial").hide();
+            $(".modal-footer").show();
+            $(".modal-body").prepend("<h4> Your listing has been created! </h4>");
+            $("#submit-serial").replaceWith("<button id='continue-to-form' class='btn btn-primary'>Continue</button>");
+            $("#continue-to-form").on('click', function(){
+              window.location.replace("/list");
+            });
           });
         }
 
