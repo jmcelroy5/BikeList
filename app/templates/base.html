@@ -134,7 +134,7 @@
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                     <h3 class="modal-title" id="myModalLabel">List Your Bike</h3>
                   </div>
-                  <div class="modal-body">
+                  <div id="modal-body" class="modal-body">
                       <form id="get-serial">
                         <h4>Enter your bike serial number to get started.</h4><br>
                         <input class="form-control" id="bike-serial" type="text" name="serial" placeholder="Bike Serial Number"></input><br><br>
@@ -153,7 +153,7 @@
                           </div>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button id="submit-serial" class="btn btn-primary">Find Your Bike</button>
                   </div>
                 </div>
@@ -192,7 +192,7 @@
         $("#submit-serial").on("click",function(e){
           var serial = $("#bike-serial").val();
           $("#get-serial").hide();
-          $(".modal-footer").hide();
+          $("#submit-serial").hide();
           getBike(serial);
         });
 
@@ -203,17 +203,14 @@
             // check to make sure we got one bike back
             if (data["response"]["bikes"].length === 1){
               var bike = data["response"]["bikes"][0];
-              console.log("bike:", bike)
+              console.log(bike);
             }
-            // else {
-            //  alert("No bike with that serial number found.");
-            // }
 
             // check if bike is stolen
             var stolen = bike["stolen"];
             if (stolen===true){
-              alert("Uh oh. Looks like we have a stolen bike on our hands.");
-              // Go to a stolen bike page.
+              $("#modal-body").html("<img src='https://bikeindex.org/assets/home/hacksaw-man.svg'>");
+              $("#modal-body").prepend("<h1>That bike is stolen!</h1>").css("color","red").css("text-align","center");
             }
 
             // if bike is not stolen
@@ -246,7 +243,7 @@
           $.post("/addbike", {bike: bikedata}, function(){
             $("#verify-bike").hide();
             $("#get-serial").hide();
-            $(".modal-footer").show();
+            $("$submit-serial").show();
             $(".modal-body").prepend("<h4> Your listing has been created! </h4>");
             $("#submit-serial").replaceWith("<button id='continue-to-form' class='btn btn-primary'>Continue</button>");
             $("#continue-to-form").on('click', function(){
