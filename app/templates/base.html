@@ -37,13 +37,6 @@
       height:50px;
     }
 
-    #header-avatar{
-      border-radius:10px;
-      width: 50px;
-      margin-right:50px;
-      margin-left: 5px;
-    }
-
     #maindiv{
       margin-top:55px;
     }
@@ -59,7 +52,7 @@
       position: absolute;
     }
 
-    .navbar-nav>li{
+    .nav li{
       margin-left: 16px;
     }
 
@@ -105,8 +98,26 @@
 
               {% else %}
               <li>
-                <a href="/login">Login</a>
+                <a data-toggle="modal" data-target="#login-modal"><h4>Login</h4></a>
               </li>
+
+              <!-- Login Modal -->
+              <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                      <h4 class="modal-title" id="myModalLabel">Login</h4>
+                    </div>
+                    <div class="modal-body">
+                      <a href="/facebook_login"><img src="http://i.stack.imgur.com/pZzc4.png"></a>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               {% endif %}
 
@@ -115,13 +126,7 @@
                   <button type="button" id="btn-list-bike" class="btn btn-default btn-md" data-toggle="modal" data-target="#list-bike-modal">List Your Bike</button>
                 </form>
               </li>
-
-              <!-- Button trigger modal -->
-<!--             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-              Launch demo modal
-            </button>
- -->
-            <!-- Modal -->
+            <!-- List Your Bike Modal -->
             <div class="modal fade" id="list-bike-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
