@@ -23,9 +23,9 @@ def get_all_bikes():
 	for bike in bikes:
 		print (bike.id, bike.title)
 
-def populate_listings():
+def populate_listings_SF():
 	bike_list = model.Bike.query.all()
-	for bike in bike_list:
+	for bike in bike_list[:40]:
 		listing = model.Listing()
 
 		listing.bike_id = bike.id
@@ -33,9 +33,27 @@ def populate_listings():
 		listing.post_expiration = datetime.datetime.now() + datetime.timedelta(30) # Post expires 30 days from now
 		listing.post_status = "Active"
 		listing.asking_price = randrange(100,1500)
-		listing.latitude = 	uniform(37.75, 37.8) 			# Random lat in SF
-		listing.longitude = uniform(-122.478,-122.4)  		# Random long in SF
+		listing.latitude = 	uniform(37.75, 37.8) 			# Random lat in  SF 
+		listing.longitude = uniform(-122.478,-122.4)  			# Random long in SF
 		listing.additional_text = "This is a test bike. Isn't it beautiful?"
+		db.session.add(listing)
+
+	db.session.commit()
+	rows = model.Listing.query.count()
+	print rows, "listings generated successfuly!"
+
+def populate_listings_EB():
+	bike_list = model.Bike.query.all()
+	for bike in bike_list[40:]:
+		listing = model.Listing()
+
+		listing.bike_id = bike.id
+		listing.post_date = datetime.datetime.now()
+		listing.post_expiration = datetime.datetime.now() + datetime.timedelta(30) # Post expires 30 days from now
+		listing.post_status = "Active"
+		listing.asking_price = randrange(100,1500)
+		listing.latitude = 	uniform(37.79717, 37.89016)			# East Bay
+		listing.longitude = uniform(-122.2968864, -122.243671)	# East Bay
 		db.session.add(listing)
 
 	db.session.commit()
