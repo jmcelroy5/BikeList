@@ -270,14 +270,6 @@ def get_bikes():
 		response["page_range_upper"] = response["page_range_lower"] + response["num_results"] - 1
 
 	return jsonify(response=response)
-		
-@app.route("/sell")
-def get_bike():
-	if flask_session.get("logged_in", None) == True:
-		return render_template("getbike.html")
-	else:
-		flash("Sign up to sell a bike on BikeList!")
-		return redirect("/login")
 
 @app.route("/fetchbike")
 def fetch_bike():
