@@ -143,7 +143,7 @@ input[type=number]{
 	color: #d8cec0;
 }
 
-.favorited{
+.fa-heart{
 	color: #ff85db;
 }
 
@@ -438,8 +438,9 @@ function Listings(el) {
 			var heartIcon = $("<i class='heart fa fa-heart-o' data-id='" + listing.id + "'></i>");	
 
 			if (results.favorites != null && include(results.favorites, listing.id)){
-				// heartIcon.removeClass("fa-heart-o");
-				heartIcon.addClass("favorited");
+				heartIcon.removeClass("fa-heart-o");
+				heartIcon.addClass("fa-heart");
+				// heartIcon.addClass("favorited");
 			}
 
 			// $bikePhoto.append(heartIcon)
@@ -464,7 +465,7 @@ function Listings(el) {
 		// Adds click listener to hearts and toggles favorite
 		$(".heart").on('click', function(){
 			var listingId = $(this).data('id');
-			$(this).toggleClass("favorited");
+			$(this).toggleClass("fa-heart-o fa-heart");
 			$.post("/favorite", {listing: listingId});
 		});
 	});
