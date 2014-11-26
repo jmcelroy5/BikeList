@@ -27,17 +27,6 @@ body{
     overflow:hidden;
   }
 
-#search-panel{
-	float:right;
-	width: 650px;
-}
-
-#search-results{
-	width:650px;
-	list-style-type: none;
-	padding: 0;
-	overflow: auto;
-}
 
 #search-results li {
 	display: inline-block;
@@ -54,19 +43,16 @@ body{
 }
 
 #search-filters{
- 	height: 360px;
- 	width: 100%;
+ 	height: 288px;
+ 	width: 732px;
  	margin-top:-130px;
  	top: 0;
+ 	/*background-color: #f6f6f6;*/
  }
 
 .filter-group{
 	padding: 10px;
-	border-bottom:1px dotted;
-}
-
-#filter-submit:hover{
-	border:2px;
+	border-bottom:1px dotted #cecece;
 }
 
 input[type=number]{
@@ -120,7 +106,7 @@ input[type=number]{
 .pricetag{
 	width:50px;
 	height:25px;
-	z-index: 10;
+	z-index: 0.5;
 	background-color: #494949;
 	opacity: 0.9;
 	position: absolute;
@@ -147,6 +133,42 @@ input[type=number]{
 	color: #ff85db;
 }
 
+#sticky-bar.affix{
+	margin-top:0px;
+	top: 72px;
+	z-index: 1;
+	margin-left: -34px;
+	width: 768px;
+	padding:10px;
+}
+
+#sticky-bar {
+	margin-left: -34px;
+	width: 768px;
+	padding: 10px;
+	background-color: #ffffff;
+	border-bottom: 1px dotted #cecece;
+	border-top: 1px dotted #cecece;
+	margin-top: -15px;
+	text-align: right;
+}
+
+#search-panel{
+	float:right;
+	width: 650px;
+}
+
+#search-results{
+	width:650px;
+	list-style-type: none;
+	padding: 0;
+	overflow: auto;
+}
+
+.btn-default:hover{
+	background-color: white;
+}
+
 </style>
 
 <div id="content">
@@ -158,7 +180,7 @@ input[type=number]{
 	<div id="search-panel" class="col-lg-6">
 		
 		<div id="search-filters">
-				<form action= "#">
+				<form id="filter-knobs" action= "#">
 					<div id="size-filters" class="filter-group">
 						<strong>Frame Size</strong><br>
 						<input name="xs" type="checkbox">  Xsmall  </input>
@@ -192,25 +214,30 @@ input[type=number]{
 						<div id="range"></div>
 						Min: $<span id="value-low"></span>
 						<span id="slider-right">Max: $<span id="value-high"></span></span>
-					</div><br>
-					<button class= "btn btn-primary" type="submit" id="filter-submit">Apply Filters</button>
+						<br>
+					</div>
 				</form>
 		</div>
+		<div id="search-results-wrapper">
+			<div id="sticky-bar">
+				<button class= "btn btn-default" id="filter-clear">Clear Filters</button>
+				<button class= "btn btn-primary" id="filter-submit">Apply Filters</button>
+			</div>
 
-		<ul id="search-results">
-			<!-- Listings populate here -->
-		</ul>
+			<ul id="search-results">
+				<!-- Listings populate here -->
+			</ul>
 
-		<div id="paginator">
-			<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-			<button class="btn btn-default myBtn" id="prev">Previous</button> 
-			&nbsp;&nbsp;&nbsp;&nbsp; 
-			Showing <span id="low"></span> - <span id="high"></span> of <span id="total"></span> results
-			&nbsp;&nbsp;&nbsp;&nbsp; 
- 			<button class="btn btn-default myBtn" id="next">Next</button>
-			<span class="glyphicon glyphicon-arrow-right"></span>
-		</div><br>
-
+			<div id="paginator">
+				<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+				<button class="btn btn-default myBtn" id="prev">Previous</button> 
+				&nbsp;&nbsp;&nbsp;&nbsp; 
+				Showing <span id="low"></span> - <span id="high"></span> of <span id="total"></span> results
+				&nbsp;&nbsp;&nbsp;&nbsp; 
+	 			<button class="btn btn-default myBtn" id="next">Next</button>
+				<span class="glyphicon glyphicon-arrow-right"></span>
+			</div><br>
+		</div>
 	</div>
 </div>
 			
@@ -235,6 +262,19 @@ var searchParameters = {
 	resultLimit: 15,
 	currentPage: 0, 
 }
+
+var currentUser = {
+	id: null,
+	avatar: null,
+	name: null,
+}
+
+$.get('/getuser', function(data){
+	currentUser.id = data.user;
+	currentUser.avatar = data.avatar;
+	currentUser.name = data.name;
+	console.log(currentUser);
+});
 
 function getParameter(key){		
 	return searchParameters[key];	
@@ -435,19 +475,19 @@ function Listings(el) {
 			$bikePhoto.attr('style','background-image:url("' + listing.photo + '");')
 			$bikePhoto.html("<div class='pricetag'>  $" + listing.price + "</div>")
 			
-			var heartIcon = $("<i class='heart fa fa-heart-o' data-id='" + listing.id + "'></i>");	
-
-			if (results.favorites != null && include(results.favorites, listing.id)){
-				heartIcon.removeClass("fa-heart-o");
-				heartIcon.addClass("fa-heart");
-				// heartIcon.addClass("favorited");
-			}
-
-			// $bikePhoto.append(heartIcon)
-
 			var $li = $("<li class='listing-link' data-id='"+ listing.id + "' >");
+			$li.append($bikePhoto, $listingLink);
 
-			$li.append($bikePhoto, $listingLink, heartIcon);
+			if (currentUser["id"]!= null){
+				var $heartIcon = $("<i class='heart fa fa-heart-o' data-id='" + listing.id + "'></i>");
+				if (results.favorites != null && include(results.favorites, listing.id)){
+					$heartIcon.removeClass("fa-heart-o");
+					$heartIcon.addClass("fa-heart");
+					// heartIcon.addClass("favorited");
+				}
+				$li.append($heartIcon);
+			}			
+
 			$searchPanel.append($li);
 		}
 
@@ -565,6 +605,22 @@ function Filters(el){
 		events.trigger('parameter-update');
 	});
 
+	$('#filter-clear').on('click', function(e){
+		e.preventDefault();
+		// reset price slider
+		$("#range").val([0, 1500]);
+		// reset checked fields
+		$("input:checked").removeAttr('checked');
+
+		setParameter("sizes", []),
+		setParameter("materials", []),
+		setParameter("handlebars", []),
+		setParameter("maxPrice", null),
+		setParameter("minPrice", null),
+		setParameter("currentPage",0)
+		events.trigger("parameter-update");
+	});
+
 	// Price Slider JQuery plugin
 	$('#range').noUiSlider({
 		start: [0,1500],
@@ -574,20 +630,21 @@ function Filters(el){
 		direction: 'ltr',
 		orientation: 'horizontal',
 	
-	behaviour: 'tap-drag',
-	
-	format: wNumb({
-		mark: '.',
-		decimals: 2,
-		thousand: ','
-	}),
-	range: {
-		'min': [0],
-		'max': [1500]
-	}
+		behaviour: 'tap-drag',
+		
+		format: wNumb({
+			mark: '.',
+			decimals: 2,
+			thousand: ','
+		}),
+		range: {
+			'min': [0],
+			'max': [1500]
+		}
 	});
 
-// Write to the min/max value spans
+
+// Write price filter values to the min/max value spans
 $('#range').Link('lower').to($('#value-low'), 'html');
 $('#range').Link('upper').to($('#value-high'), 'html');
 }
@@ -597,6 +654,18 @@ $('#range').Link('upper').to($('#value-high'), 'html');
 // Controller
 
 $(function(){
+
+	$('#sticky-bar').affix({
+  		offset: {
+    		top: $('#sticky-bar').offset().top - 72,
+  		}
+	});
+
+	// $('#sticky-bar').on('affix.bs.affix', function () {
+	//     // alert('Fired!');
+	//     // $('#filter-knobs').addClass("invisible");
+	// });
+	
 	window.map = new Map(document.querySelector('#map-panel'));
 	new Listings(document.querySelector('#search-results'));
 	new Paginator(document.querySelector('#paginator'));
@@ -606,15 +675,6 @@ $(function(){
 		updateResults(data);
 	});
 
-	// Keeps the map same height as window
-	function resizeDiv() {
-		var vph = $(window).height();
-		$("#map-panel").css({'height': vph });
-	}
-
-	$(window).on('resize', function(event) {
-		resizeDiv();
-	});
 });
 
 </script>

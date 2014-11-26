@@ -97,16 +97,10 @@ def get_session():
 	print "\n Current user:", flask_session.get("user", "Not set")
 	return "Check the console."
 
-@app.route("/get_current_user")
-def get_current_user():
-	""" Get current user from session """
-	return g.user
-
 @app.route("/_get_user_photo")
 def get_user_photo():
 	photo = facebook.get('/me/picture?redirect=0&height=1000&type=normal&width=1000').data
 	photo_url = photo['data']['url']
-	print "\n\n\nTHIS IS THE PHOTO URL", photo_url
 	return photo_url
 
 # Bike Index OAuth Stuff:
@@ -152,9 +146,9 @@ def add_user_bikes(user):
 # Runs on browser refresh. Checks for current user and bike
 @app.before_request
 def get_current_user():
-    user_id = flask_session.get('user', None)
-    if user_id:
-    	user = db.session.query(User).filter_by(id=user_id).one()
+    current_user = flask_session.get('user', None)
+    if current_user:
+    	user = db.session.query(User).filter_by(id=current_user).one()
     	g.user = user.id
     	g.avatar = user.avatar
     	g.name = user.first_name
@@ -162,12 +156,17 @@ def get_current_user():
     # pass
 
 # Make current user available on templates
-@app.context_processor
+@app.route("/getuser")
 def inject_user():
     try:
-        return {'user': g.user}
+        return jsonify({"user": g.user, "avatar": g.avatar, "name": g.name})
     except AttributeError:
-        return {'user': None}
+        return jsonify({"user": None})
+        
+# @app.route("/get_current_user")
+# def get_current_user():
+# 	""" Get current user from session """
+# 	return jsonify(g.user)
 
 @app.route("/")
 def index():

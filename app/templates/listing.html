@@ -12,7 +12,7 @@
 		width: 400px;
 		float: left;
 		margin: 0px;
-		border-radius:5px;
+		border-radius:5 px;
 	}
 
 	img.seller-contact{
@@ -99,7 +99,7 @@
 			<h4> {{ user.first_name }} </h4>
 			<p>{{ user.email }}</p>
 		{% else %}
-			<p> You must be <a href="/login">logged in</a> to see seller's contact information.</p>
+			<p> You must be <a data-toggle="modal" data-target="#login-modal">logged in</a> to see seller's contact information.</p>
 		{% endif %}
 
 		<div style="clear:both">
