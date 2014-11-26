@@ -191,8 +191,9 @@
 
         $("#submit-serial").on("click",function(e){
           var serial = $("#bike-serial").val();
-          $("#get-serial").hide();
-          $("#submit-serial").hide();
+          if (serial.length < 1){
+            $("#get-serial > h4").text("Please enter a valid serial number").css("color","red");
+          }
           getBike(serial);
         });
 
@@ -205,16 +206,25 @@
               var bike = data["response"]["bikes"][0];
               console.log(bike);
             }
+            else if (data["response"]["bikes"].length === 0){
+                $("#get-serial > h4").text("No bike with that serial number found. Make sure you entered your serial number exactly.").css("color","red")
+                $("#verify-bike").hide();
+                $("#get-serial").show();
+                $("#submit-serial").show();
+            }
 
             // check if bike is stolen
-            var stolen = bike["stolen"];
-            if (stolen===true){
+            if (bike && bike["stolen"]===true){
               $("#modal-body").html("<img src='https://bikeindex.org/assets/home/hacksaw-man.svg'>");
               $("#modal-body").prepend("<h1>That bike is stolen!</h1>").css("color","red").css("text-align","center");
+              $("#submit-serial").hide();
             }
 
             // if bike is not stolen
-            if (bike && stolen===false){
+            if (bike && bike["stolen"]===false){
+              // hide form and submit button
+              $("#get-serial").hide();
+              $("#submit-serial").hide();
               // display bike photo and specs for verification
               $("#verify-bike").show();
               $("#bike-pic").attr('src', bike["photo"]);
@@ -227,9 +237,10 @@
 
               $("#No").on("click", function(e){
                 e.preventDefault();
-                $("#get-serial > h4").text("Make sure you entered your serial number correctly.").css("color","red")
+                $("#get-serial > h4").text("Make sure you entered the serial number correctly.").css("color","red")
                 $("#verify-bike").hide();
                 $("#get-serial").show();
+                $("#submit-serial").show();
                 $(".modal-footer").show();
               });
             }
@@ -241,10 +252,9 @@
           var bikedata = JSON.stringify(bike);
 
           $.post("/addbike", {bike: bikedata}, function(){
+            alert("bike added!");
             $("#verify-bike").hide();
-            $("#get-serial").hide();
-            $("$submit-serial").show();
-            $(".modal-body").prepend("<h4> Your listing has been created! </h4>");
+            $(".modal-body").prepend("<h4>Your listing has been created!</h4>").css("color","green")
             $("#submit-serial").replaceWith("<button id='continue-to-form' class='btn btn-primary'>Continue</button>");
             $("#continue-to-form").on('click', function(){
               window.location.replace("/list");
