@@ -152,7 +152,6 @@ input[type=number]{
 */
 
 #filter-btn-bar{
-	border-top: 1px dotted #cecece;
 	margin-top: -15px;
 	text-align: right;
 	padding: 10px;
@@ -175,6 +174,17 @@ input[type=number]{
 	background-color: white;
 }
 
+#limit-map-search {
+	background-color: white;
+	color: rgb(82, 77, 77);
+	font-size: 12;
+	margin-left: 45px;
+	width: 246px;
+	padding: 8px;
+	bottom: 21px;
+	position: fixed;
+}
+
 </style>
 
 <div id="content">
@@ -182,47 +192,48 @@ input[type=number]{
 	<div id="map-panel"  class="col-lg-6">
 		<!-- class="col-md-8" -->
 	</div>
+	<div id="limit-map-search"><input name="search-by-map" type="checkbox">  Limit search results to current map view</div>
 
 	<div id="search-panel" class="col-lg-6">
-		
 		<div id="search-filters">
-				<form id="filter-knobs" action= "#">
-					<div id="size-filters" class="filter-group">
-						<strong>Frame Size</strong><br>
-						<input name="xs" type="checkbox">  Xsmall  </input>
-						<input name="s" type="checkbox">  Small  </input>
-						<input name="m" type="checkbox">  Medium  </input>
-						<input name="l" type="checkbox">  Large  </input>
-						<input name="xl" type="checkbox">  Xlarge  </input>
-						<!-- <input name="Wood or organic material" type="checkbox">Wood/Bamboo</input>  -->
-					</div>
-					<div id="materials-filters" class="filter-group">
-						<strong>Frame Material</strong><br>
-						<input name="Titanium" type="checkbox">  Titanium</input>
-						<input name="Carbon or composite" type="checkbox">  Carbon Fiber</input>
-						<input name="Aluminum" type="checkbox">  Aluminum</input>
-						<input name="Steel" type="checkbox">  Steel</input>
-						<!-- <input name="Wood or organic material" type="checkbox">Wood/Bamboo</input>  -->
-					</div>
-					<div id="handlebar-filters" class="filter-group">
-						<strong>Handlebar Type</strong><br>
-						<input name="Drop" type="checkbox">  Drop</input>
-						<input name="Flat" type="checkbox">  Flat</input>
-						<input name="Forward facing" type="checkbox">  Forward-facing</input>
-						<input name="Rear facing" type="checkbox">  Rear-facing</input>
-						<!-- <input name="Not handlebars" type="checkbox">Not handlebars</input>
-					<input name="BMX style" type="checkbox">BMX-style</input> -->
-					</div>
-					<div id="price-filters" class="filter-group">
-						<strong>Price</strong><br>
+
+			<form id="filter-knobs" action= "#">
+				<div id="size-filters" class="filter-group">
+					<strong>Frame Size</strong><br>
+					<input name="xs" type="checkbox">  Xsmall  </input>
+					<input name="s" type="checkbox">  Small  </input>
+					<input name="m" type="checkbox">  Medium  </input>
+					<input name="l" type="checkbox">  Large  </input>
+					<input name="xl" type="checkbox">  Xlarge  </input>
+					<!-- <input name="Wood or organic material" type="checkbox">Wood/Bamboo</input>  -->
+				</div>
+				<div id="materials-filters" class="filter-group">
+					<strong>Frame Material</strong><br>
+					<input name="Titanium" type="checkbox">  Titanium</input>
+					<input name="Carbon or composite" type="checkbox">  Carbon Fiber</input>
+					<input name="Aluminum" type="checkbox">  Aluminum</input>
+					<input name="Steel" type="checkbox">  Steel</input>
+					<!-- <input name="Wood or organic material" type="checkbox">Wood/Bamboo</input>  -->
+				</div>
+				<div id="handlebar-filters" class="filter-group">
+					<strong>Handlebar Type</strong><br>
+					<input name="Drop" type="checkbox">  Drop</input>
+					<input name="Flat" type="checkbox">  Flat</input>
+					<input name="Forward facing" type="checkbox">  Forward-facing</input>
+					<input name="Rear facing" type="checkbox">  Rear-facing</input>
+					<!-- <input name="Not handlebars" type="checkbox">Not handlebars</input>
+				<input name="BMX style" type="checkbox">BMX-style</input> -->
+				</div>
+				<div id="price-filters" class="filter-group">
+					<strong>Price</strong><br>
 <!-- 						Min: $ <input name="min_price" type="number"></input>
-						Max: $ <input name="max_price" type="number"></input> -->
-						<div id="range"></div>
-						Min: $<span id="value-low"></span>
-						<span id="slider-right">Max: $<span id="value-high"></span></span>
-						<br>
-					</div>
-				</form>
+					Max: $ <input name="max_price" type="number"></input> -->
+					<div id="range"></div>
+					Min: $<span id="value-low"></span>
+					<span id="slider-right">Max: $<span id="value-high"></span></span>
+					<br>
+				</div>
+			</form>
 		</div>
 		<div id="search-results-wrapper">
 			<div id="filter-btn-bar">
@@ -297,7 +308,6 @@ var results = {
 	pageLower: null,
 	pageUpper: null,
 	totalResults: null,
-	favorites: []
 }
 
 function fetchResults(callback){
@@ -330,6 +340,7 @@ function updateResults(data){
 
 function Map(el) { 
 	this.el = el;
+
 	this.initialize();
 
 	events.on('results-update', function() {
@@ -344,16 +355,17 @@ function Map(el) {
 	events.on('listing-mouse-in', function(listingId) {
 		this.setMarkerActive(listingId);
 	}.bind(this));
-
 	// Another way: events.on('listing-mouse-in', this.setMarkerActive.bind(this));
 
 	events.on('listing-mouse-out', function(listingId) {
 		this.setMarkerInactive(listingId);
 	}.bind(this));
-
 	// Another way: events.on('listing-mouse-out', this.setMarkerInactive.bind(this));
 
-	// Change search parameters when map moves
+	// Search when user moves map. Will make this optional
+	$("#limit-map-search input").on("click", function(){
+		alert("you clicked me!");
+	});	
 
 	this.map.on('dragend', this.getViewCoords.bind(this));
 	this.map.on('zoomend', this.getViewCoords.bind(this));
@@ -371,12 +383,15 @@ Map.prototype.initialize = function() {
 	//Connect to MapBox API
 	L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
 
-	// Initiate map and set view
-	this.map = L.mapbox.map(this.el, 'examples.map-i86nkdio');
+	// Initialize map 
+	this.map = L.mapbox.map(this.el, 'examples.map-i86nkdio', { zoomControl: false });
+	// Set starting view/zoom(SF)
+	this.map.setView([37.78, -122.44], 13);
+	// Set zoom control location
+	new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
 	// Add geocoder search bar
 	this.map.addControl(L.mapbox.geocoderControl('mapbox.places-v1'));
-	// set starting view/zoom(SF)
-	this.map.setView([37.78, -122.44], 13);
+
 };
 
 Map.prototype.placeMarkers = function(results){
