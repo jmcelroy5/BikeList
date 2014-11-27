@@ -133,7 +133,7 @@ input[type=number]{
 	color: #ff85db;
 }
 
-#sticky-bar.affix{
+/*#sticky-bar.affix{
 	margin-top:0px;
 	top: 72px;
 	z-index: 1;
@@ -144,13 +144,19 @@ input[type=number]{
 
 #sticky-bar {
 	margin-left: -34px;
-	width: 768px;
-	padding: 10px;
 	background-color: #ffffff;
 	border-bottom: 1px dotted #cecece;
+	margin-top: -15px;
+	text-align: right;
+}
+*/
+
+#filter-btn-bar{
 	border-top: 1px dotted #cecece;
 	margin-top: -15px;
 	text-align: right;
+	padding: 10px;
+	width: 768px;
 }
 
 #search-panel{
@@ -165,7 +171,7 @@ input[type=number]{
 	overflow: auto;
 }
 
-.btn-default:hover{
+.btn-default:hover, .btn-default:active{
 	background-color: white;
 }
 
@@ -219,7 +225,7 @@ input[type=number]{
 				</form>
 		</div>
 		<div id="search-results-wrapper">
-			<div id="sticky-bar">
+			<div id="filter-btn-bar">
 				<button class= "btn btn-default" id="filter-clear">Clear Filters</button>
 				<button class= "btn btn-primary" id="filter-submit">Apply Filters</button>
 			</div>
@@ -315,7 +321,6 @@ function updateResults(data){
 	results.pageUpper = response["page_range_upper"]; // lower bound of items to display
 	results.totalResults = response["total_results"];
 	results.favorites = response["favorites"];
-	console.log("User favorites: ", results.favorites)
 
 	// trigger results-update so search panel, pagination, and listings update
 	events.trigger('results-update');
@@ -550,10 +555,10 @@ function Paginator(el){
 			$(".glyphicon-arrow-right").addClass("invisible");
 		}
 		// makes sure both prev/next buttons showing on all other pages
-		if (searchParameters["currentPage"] != 0 && results["pageUpper"] != results["totalResults"]){
+		if (results["currentPage"] != 0 && results["pageUpper"] < results["totalResults"]){
 			$(prev).removeClass("invisible");
-			$(next).removeClass("invisible");
 			$(".glyphicon-arrow-left").removeClass("invisible");
+			$(next).removeClass("invisible");
 			$(".glyphicon-arrow-right").removeClass("invisible");
 		}
 	});
@@ -655,15 +660,10 @@ $('#range').Link('upper').to($('#value-high'), 'html');
 
 $(function(){
 
-	$('#sticky-bar').affix({
-  		offset: {
-    		top: $('#sticky-bar').offset().top - 72,
-  		}
-	});
-
-	// $('#sticky-bar').on('affix.bs.affix', function () {
-	//     // alert('Fired!');
-	//     // $('#filter-knobs').addClass("invisible");
+	// $('#sticky-bar').affix({
+ //  		offset: {
+ //    		top: $('#sticky-bar').offset().top - 72,
+ //  		}
 	// });
 	
 	window.map = new Map(document.querySelector('#map-panel'));
