@@ -284,13 +284,15 @@ var currentUser = {
 	id: null,
 	avatar: null,
 	name: null,
+	favorites: []
 }
 
+// where should this function go?
 $.get('/getuser', function(data){
 	currentUser.id = data.user;
 	currentUser.avatar = data.avatar;
 	currentUser.name = data.name;
-	console.log(currentUser);
+	currentUser.favorites = data.favorites;
 });
 
 function getParameter(key){		
@@ -333,7 +335,7 @@ function updateResults(data){
 	results.favorites = response["favorites"];
 
 	// trigger results-update so search panel, pagination, and listings update
-	events.trigger('results-update');
+	events.trigger('results-update', currentPage = searchParameters["currentPage"]);
 }
 
 // Views
@@ -500,10 +502,9 @@ function Listings(el) {
 
 			if (currentUser["id"]!= null){
 				var $heartIcon = $("<i class='heart fa fa-heart-o' data-id='" + listing.id + "'></i>");
-				if (results.favorites != null && include(results.favorites, listing.id)){
+				if (currentUser.favorites != null && include(currentUser.favorites, listing.id)){
 					$heartIcon.removeClass("fa-heart-o");
 					$heartIcon.addClass("fa-heart");
-					// heartIcon.addClass("favorited");
 				}
 				$li.append($heartIcon);
 			}			
@@ -554,27 +555,30 @@ function Paginator(el){
 		events.trigger('parameter-update') 
 	});
 
-	events.on('results-update', function(){
+	events.on('results-update', function(currentPage){
 		$(lower).html(results["pageLower"]);
 		$(upper).html(results["pageUpper"]);
 		$(total).html(results["totalResults"]);
 
 		// hides prev button on first page
-		if (searchParameters["currentPage"] === 0){
+		if (currentPage === 0){
 			$(prev).addClass("invisible"); 
 			$(".glyphicon-arrow-left").addClass("invisible");
+		}
+		// shows prev button when page > 1
+		if (currentPage > 0){
+			$(prev).removeClass("invisible"); 
+			$(".glyphicon-arrow-left").removeClass("invisible");
+		}
+		// shows next button when not on last page
+		if (results["pageUpper"] < results["totalResults"]){
+			$(next).removeClass("invisible");
+			$(".glyphicon-arrow-right").removeClass("invisible");
 		}
 		// hides next button on last page
 		if (results["pageUpper"] === results["totalResults"]){
 			$(next).addClass("invisible");
 			$(".glyphicon-arrow-right").addClass("invisible");
-		}
-		// makes sure both prev/next buttons showing on all other pages
-		if (results["currentPage"] != 0 && results["pageUpper"] < results["totalResults"]){
-			$(prev).removeClass("invisible");
-			$(".glyphicon-arrow-left").removeClass("invisible");
-			$(next).removeClass("invisible");
-			$(".glyphicon-arrow-right").removeClass("invisible");
 		}
 	});
 
