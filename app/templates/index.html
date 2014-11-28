@@ -44,7 +44,7 @@ body{
 
 #search-filters{
  	height: 288px;
- 	width: 732px;
+ 	width: 634px;
  	margin-top:-130px;
  	top: 0;
  	/*background-color: #f6f6f6;*/
@@ -155,7 +155,7 @@ input[type=number]{
 	margin-top: -15px;
 	text-align: right;
 	padding: 10px;
-	width: 768px;
+	width: 634px;
 }
 
 #search-panel{
@@ -179,10 +179,15 @@ input[type=number]{
 	color: rgb(82, 77, 77);
 	font-size: 12;
 	margin-left: 45px;
-	width: 246px;
+	/*width: 246px;*/
+	width: 177px;
 	padding: 8px;
 	bottom: 21px;
 	position: fixed;
+}
+
+#next, #prev, #search-panel, #filter-clear{
+	color: #4d4d4d;
 }
 
 </style>
@@ -192,7 +197,7 @@ input[type=number]{
 	<div id="map-panel"  class="col-lg-6">
 		<!-- class="col-md-8" -->
 	</div>
-	<div id="limit-map-search"><input name="search-by-map" type="checkbox">  Limit search results to current map view</div>
+	<div id="limit-map-search"><input name="search-by-map" type="checkbox"> &nbsp; Search when I move map</div>
 
 	<div id="search-panel" class="col-lg-6">
 		<div id="search-filters">
@@ -246,13 +251,13 @@ input[type=number]{
 			</ul>
 
 			<div id="paginator">
-				<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-				<button class="btn btn-default myBtn" id="prev">Previous</button> 
+				
+				<button class="btn btn-default myBtn" id="prev"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> &nbsp; Previous</button> 
 				&nbsp;&nbsp;&nbsp;&nbsp; 
 				Showing <span id="low"></span> - <span id="high"></span> of <span id="total"></span> results
 				&nbsp;&nbsp;&nbsp;&nbsp; 
-	 			<button class="btn btn-default myBtn" id="next">Next</button>
-				<span class="glyphicon glyphicon-arrow-right"></span>
+	 			<button class="btn btn-default myBtn" id="next">Next <span class="glyphicon glyphicon-arrow-right"></span> </button>
+				
 			</div><br>
 		</div>
 	</div>
@@ -275,6 +280,8 @@ var searchParameters = {
 	latitudeMax: null,
 	longitudeMin: null,
 	longitudeMax: null,
+
+	searchOnMapMove: false,
 
 	resultLimit: 15,
 	currentPage: 0, 
@@ -364,13 +371,17 @@ function Map(el) {
 	}.bind(this));
 	// Another way: events.on('listing-mouse-out', this.setMarkerInactive.bind(this));
 
-	// Search when user moves map. Will make this optional
-	$("#limit-map-search input").on("click", function(){
-		alert("you clicked me!");
-	});	
-
-	this.map.on('dragend', this.getViewCoords.bind(this));
-	this.map.on('zoomend', this.getViewCoords.bind(this));
+	// User can choose whether they want map move to trigger search
+	$("#limit-map-search input:checkbox").change(function(){
+		if ($("#limit-map-search input:checkbox").is(':checked')){
+			alert("Map searching turned on.")
+			this.map.enableMapSearch();
+		}
+		else{
+			alert("Map searching turned off.")
+			this.map.disableMapSearch();
+		}
+	}.bind(this));
 }
 
 Map.prototype.getViewCoords = function(){
@@ -379,6 +390,18 @@ Map.prototype.getViewCoords = function(){
 	setParameter('longitudeMin', this.map.getBounds().getWest());
 	setParameter('longitudeMax', this.map.getBounds().getEast());
 	events.trigger('parameter-update');
+}
+
+Map.prototype.enableMapSearch = function(){
+	this.map.on('dragend', this.getViewCoords.bind(this));
+	this.map.on('zoomend', this.getViewCoords.bind(this));
+	searchParameters["searchOnMapMove"] = true;
+}
+
+Map.prototype.disableMapSearch = function(){
+	this.map.off('dragend');
+	this.map.off('zoomend');
+	searchParameters["searchOnMapMove"] = false;
 }
 
 Map.prototype.initialize = function() {
@@ -444,6 +467,9 @@ Map.prototype.placeMarkers = function(results){
 	}	
 	// Add them all to the map 
 	this.markerLayer.setGeoJSON(this.geoJson);
+	if (searchParameters["searchOnMapMove"] === false){
+		this.map.fitBounds(this.markerLayer.getBounds());
+	}
 	this.markerLayer.addTo(this.map);
 }
 
@@ -546,12 +572,18 @@ function Paginator(el){
 		if (page > 0){
 			setParameter('currentPage', page - 1);
 		}
+		$('html, body').animate({
+    		scrollTop: ($('#search-results').offset().top - 125)
+		},500);
 		events.trigger('parameter-update')
 	});
 
 	$(next).on('click', function(){
 		var page = getParameter('currentPage');
 		setParameter('currentPage', page + 1);
+	$('html, body').animate({
+    	scrollTop: ($('#search-results').offset().top - 125)
+	},500);
 		events.trigger('parameter-update') 
 	});
 
@@ -585,10 +617,6 @@ function Paginator(el){
 }
 
 function Filters(el){
-
-  	var handlebars = el.querySelector('#handlebars');
- 
-	// add .on('change') to individual filter knobs..
 
 	$('#filter-submit').on('click', function(e){
 
@@ -667,10 +695,9 @@ function Filters(el){
 		}
 	});
 
-
-// Write price filter values to the min/max value spans
-$('#range').Link('lower').to($('#value-low'), 'html');
-$('#range').Link('upper').to($('#value-high'), 'html');
+	// Write price filter values to the min/max value spans
+	$('#range').Link('lower').to($('#value-low'), 'html');
+	$('#range').Link('upper').to($('#value-high'), 'html');
 }
 
 // TODO: function that generates hash on parameter update
