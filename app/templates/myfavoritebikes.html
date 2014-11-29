@@ -16,27 +16,57 @@ p {
 	margin-left:30px;
 	margin-top:30px;
 }
+
+#fav-bike-table{
+	width:650px;
+}
+
+#fav-bike-wrapper{
+	margin-left:170px;
+}
+
 </style>
+<div id="fav-bike-wrapper">
+	<h1>{{ g.name }}'s wish list</h1>
+	<table id="fav-bike-table" class="table">
+	{% for listing in listings %}
 
-<h1>{{ g.name }}'s wish list</h1>
-<table class="table">
-{% for listing in listings %}
+		<tr>
+			<td><a href="{{ listing.url }}"><img src="{{ listing.photo }}"></a></td>
+			<td> 
+				<a href="{{ listing.url }}"><h4>{{ listing.title }}</h4></a>
+				<strong>Price:</strong> ${{ listing.price }}.00<br>
+				<strong>Posted on:</strong> {{ listing.date.strftime('%m-%d-%Y') }}<br>
+				<a class="remove-favorite" data-id="{{listing.id}}" >Remove</a>
+			</td>
+		</tr>
 
-	<tr>
-		<td><a href="{{ listing.url }}"><img src="{{ listing.photo }}"></a></td>
-		<td> 
-			<h4>{{ listing.title }}</h4>
-			<strong>Price:</strong> ${{ listing.price }}.00<br>
-			<strong>Posted on:</strong> {{ listing.date.strftime('%m-%d-%Y') }}
-		</td>
-	</tr>
-{% endfor %}
+	{% endfor %}
 
-{% if listings == [] %}
-	<p> You haven't added any favorite bikes yet.</p>
-{% endif %}
+	{% if listings == [] %}
+		<h4> You haven't added any favorite bikes yet.</h4>
+	{% endif %}
 
-</table>
+	</table>
+</div>
+
+<script>
+	
+	events = new MicroEvent();
+
+	$('.remove-favorite').on('click', function(e){
+		listingId = $(e.currentTarget).data("id");
+		console.log("listing # ", listingId," will be deleted")
+		events.trigger("remove-favorite", listingId);
+	});
+
+	events.on("remove-favorite", function(listingId){
+		$.post("/favorite", {listing:listingId}, function(){
+			window.location.reload();
+		});
+	});	
+
+</script>
 
 
 {% endblock %}

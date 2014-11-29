@@ -308,6 +308,12 @@ def add_bike():
 		elif size_convert > 59:
 			new_bike.size_category = "xl"
 
+
+	# changing size abbrevation for display
+	size_to_display = {"xs": "extra small", "s":"small", "m":"medium", "l":"large", "xl": "extra large" }
+	if new_bike.size in valid_sizes:
+		new_bike.size = size_to_display[new_bike.size]
+
 	# breaking frame colors out of list format
 	new_bike.frame_colors = "" 		
 	for color in bike["frame_colors"]:
@@ -431,12 +437,14 @@ def user_favorites():
 								 'photo': bike.photo,
 								 'price': listing.asking_price,
 								 'title': bike.title,
-								 'date': listing.post_date})
+								 'date': listing.post_date,
+								 'id': listing.id})
 	return render_template('myfavoritebikes.html', listings=listings)
 
 @app.route("/favorite", methods=["POST"])
 def add_or_remove_favorite():
 	listing_id = request.form.get("listing")
+	print listing_id, "WILL BE DELETED!!!"
 	user_id = flask_session["user"]
 
 	# check if user has already favorited that listing
@@ -451,7 +459,7 @@ def add_or_remove_favorite():
 		db.session.add(new_favorite)
 	
 	db.session.commit()
-	return "bike favorited... or unfavorited"
+	return "favorite added or removed"
 
 def get_favorites():
 	""" get list of current user's favorited bikes """
@@ -461,6 +469,7 @@ def get_favorites():
 	if user_id != None:
 		query_favorites = db.session.query(Favorite).filter(Favorite.user_id == user_id).all()
 		for favorite in query_favorites:
+			print "favorite  ", favorite.listing_id
 			favorites.append(favorite.listing_id)
 	if len(favorites) > 0:
 		return favorites

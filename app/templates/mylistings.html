@@ -24,26 +24,39 @@ p {
 	margin-top:30px;
 }
 
+#my-listings-table{
+	width:650px;
+}
+
+#my-listings-wrapper{
+	margin-left:170px;
+}
+
 </style>
 
-<h1>{{ g.name }}'s listings</h1>
-<table class="table">
-{% for listing in listings %}
 
-	<tr>
-		<td><a href="{{ listing.url }}"><img src="{{ listing.photo }}"></a></td>
-		<td> 
-			<a href="{{ listing.url }}"><h4>{{ listing.title }}</h4></a>
-			<strong>Price:</strong> ${{ listing.price }}.00<br>
-			<strong>Posted on:</strong> {{ listing.date.strftime('%m-%d-%Y') }}<br>
-			<a class="delete-listing" data-id="{{listing.id}}" >Delete</a>
-		</td>
-	</tr>
+<div id="my-listings-wrapper">
+	<h1>{{ g.name }}'s listings</h1>
+	<table id="my-listings-table" class="table">
+	{% for listing in listings %}
+		<tr>
+			<td><a href="{{ listing.url }}"><img src="{{ listing.photo }}"></a></td>
+			<td> 
+				<a href="{{ listing.url }}"><h4>{{ listing.title }}</h4></a>
+				<strong>Price:</strong> ${{ listing.price }}.00<br>
+				<strong>Posted on:</strong> {{ listing.date.strftime('%m-%d-%Y') }}<br>
+				<a class="delete-listing" data-id="{{listing.id}}" >Delete</a>
+			</td>
+		</tr>
 
-{% endfor %}
-{% if listings == [] %}
-	<p> You haven't listed any bikes yet.</p>
-{% endif %}
+	{% endfor %}
+
+	{% if listings == [] %}
+		<h4> You haven't listed any bikes yet.</h4>
+	{% endif %}
+
+	</table>
+</div>
 
 	<div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
