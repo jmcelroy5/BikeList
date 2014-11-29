@@ -413,9 +413,11 @@ Map.prototype.initialize = function() {
 	L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
 
 	// Initialize map 
-	this.map = L.mapbox.map(this.el, 'examples.map-i86nkdio', { zoomControl: false });
-	// Set starting view/zoom(SF)
-	this.map.setView([37.78, -122.44], 13);
+	this.map = L.mapbox.map(this.el, 'asdv.ka97lo0j', { zoomControl: false });
+
+	// // Set starting view/zoom(SF)
+	// this.map.setView([37.78, -122.44], 13);
+	
 	// Set zoom control location
 	new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
 	// Add geocoder search bar

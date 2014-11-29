@@ -75,6 +75,13 @@
       text-align:center;
     }
 
+    #loading{
+      margin-left:75px;
+      width: 62px;
+      height:62px;
+      display: None;
+    }
+
     </style>
 
 
@@ -115,15 +122,8 @@
               <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
-                    <div class="modal-header">
-                     <!--  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button> -->
-                      <!-- <h4 class="modal-title" id="myModalLabel">Login</h4> -->
-                    </div>
                     <div class="modal-body">
                       <a href="/facebook_login"><img style="width:50%" src="http://i.stack.imgur.com/pZzc4.png"></a>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     </div>
                   </div>
                 </div>
@@ -142,11 +142,12 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h3 class="modal-title">List Your Bike</h3>
+                    <h3 class="modal-title" style="color:black;">List Your Bike</h3>
                   </div>
                   <div id="modal-body" class="modal-body">
                       <form id="get-serial">
-                        <h4>Enter your bike serial number to get started.</h4><br>
+                        <h3>Enter your bike serial number to get started.</h3><br>
+                        <img id="loading" width="62px" src="{{ url_for('static',filename='images/spinner.gif') }}" />
                         <input class="form-control" id="bike-serial" type="text" name="serial" placeholder="Bike Serial Number"></input><br><br>
                         <strong>Note:</strong>&nbsp;Your bike must already be registered at <a href="http://www.bikeindex.org/"> BikeIndex.org </a> before you can sell it on BikeList. Make sure you have filled out as much information about your bike as possible on your BikeIndex registration. <br><br>
                       </form>
@@ -180,7 +181,7 @@
         {% if messages %}
         {% for message in messages %}
 
-            <!-- class="flashes"--> 
+            <!-- make a class="flashes"--> 
             {{message}}
 
           {% endfor %}
@@ -192,16 +193,17 @@
           {% endblock %}
       </div>
 
-
-
         <script>
         (function() {
 
         $("#submit-serial").on("click",function(e){
           var serial = $("#bike-serial").val();
-          $("#bike-serial").replaceWith("<img src='/static/loading.gif'>");
+          $("#bike-serial").hide();
+          $("#loading").show();
           if (serial.length < 1){
-            $("#get-serial > h4").text("Please enter a valid serial number").css("color","red");
+            $("#loading").hide();
+            $("#bike-serial").show();
+            $("#get-serial > h3").text("Please enter a valid serial number").css("color","red");
           }
           getBike(serial);
         });
@@ -213,11 +215,12 @@
             // check to make sure we got one bike back
             if (data["response"]["bikes"].length === 1){
               var bike = data["response"]["bikes"][0];
-              // console.log(bike);
+              console.log(bike);
             }
             else if (data["response"]["bikes"].length === 0){
-                $("#get-serial > h4").text("No bike with that serial number found. Make sure you entered your serial number exactly.").css("color","red")
-                // $("#verify-bike").hide();
+                $("#get-serial > h3").text("No bike with that serial number found. Make sure you entered your serial number exactly.").css("color","red")
+                $("#bike-serial").show();
+                $("#loading").hide();
                 $("#get-serial").show();
                 $("#submit-serial").show();
             }
@@ -225,6 +228,7 @@
             // check if bike is stolen
             if (bike && bike["stolen"]===true){
               $("#modal-body").html("<img src='https://bikeindex.org/assets/home/hacksaw-man.svg'>");
+              $("#modal-body").prepend("<a href='" + bike.url + "'><h4>Notify the owner on BikeIndex</h4></a>");
               $("#modal-body").prepend("<h1>That bike is stolen!</h1>").css("color","red").css("text-align","center");
               $("#submit-serial").hide();
             }
@@ -242,7 +246,7 @@
 
           $.post("/addbike", {bike: bikedata}, function(){
             // $("#verify-bike").hide();
-            $(".modal-body").html("<h4>We found your bike on BikeIndex!</h4>").css("color","green")
+            $(".modal-body").html("<h3 style='color:#66CD00'> We found your bike on BikeIndex.</h3>").css("color","green")
             $("#submit-serial").replaceWith("<button id='continue-to-form' class='btn btn-primary'>Continue</button>");
             $("#continue-to-form").on('click', function(){
               window.location.replace("/list");
