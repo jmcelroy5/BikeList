@@ -55,6 +55,7 @@ p {
 	events = new MicroEvent();
 
 	$('.remove-favorite').on('click', function(e){
+		alert("")
 		listingId = $(e.currentTarget).data("id");
 		console.log("listing # ", listingId," will be deleted")
 		events.trigger("remove-favorite", listingId);
