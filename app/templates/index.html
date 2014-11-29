@@ -339,9 +339,8 @@ function updateResults(data){
 	results.pageUpper = response["page_range_upper"]; // lower bound of items to display
 	results.totalResults = response["total_results"];
 	results.favorites = response["favorites"];
-
 	// trigger results-update so search panel, pagination, and listings update
-	events.trigger('results-update', currentPage = searchParameters["currentPage"]);
+	events.trigger('results-update', searchParameters["currentPage"]);
 }
 
 // Views
@@ -417,7 +416,7 @@ Map.prototype.initialize = function() {
 
 	// // Set starting view/zoom(SF)
 	// this.map.setView([37.78, -122.44], 13);
-	
+
 	// Set zoom control location
 	new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
 	// Add geocoder search bar
@@ -474,7 +473,7 @@ Map.prototype.placeMarkers = function(results){
 	// Add them all to the map 
 	this.markerLayer.setGeoJSON(this.geoJson);
 	this.markerLayer.addTo(this.map);
-	if (!searchParameters.searchOnMapMove){
+	if (!searchParameters.searchOnMapMove && listings.length){
 		this.map.fitBounds(this.markerLayer.getBounds());
 	}
 }
@@ -514,15 +513,18 @@ function Listings(el) {
 
 	// events.on('parameter-update', function(){
 	// 	// Show loading indicator in searchpanel while results are being fetched
-	// 	pass
 	// });
 
 	events.on('results-update', function() {
-		$searchPanel = $('#search-results')
-		$searchPanel.empty()
+		$searchResults = $('#search-results');
+		$searchResults.empty();
 
 		// Get the updated search results
 		listings = results["results"];
+
+		if (listings.length < 1){
+			$searchResults.html("<h4>No bikes found. Expand your search and try again.</h4>");
+		}
 
 		// Loop through listings in response object
 		for (var i = 0; i < listings.length; i++){
@@ -553,7 +555,7 @@ function Listings(el) {
 				$li.append($heartIcon);
 			}			
 
-			$searchPanel.append($li);
+			$searchResults.append($li);
 		}
 
 		// Triggers marker color change when hovering over listing
@@ -609,6 +611,13 @@ function Paginator(el){
 		$(lower).html(results["pageLower"]);
 		$(upper).html(results["pageUpper"]);
 		$(total).html(results["totalResults"]);
+
+		if (results.results.length < 1){
+			$("#paginator").hide();
+		}
+		else{
+			$("#paginator").show();
+		}
 
 		// hides prev button on first page
 		if (currentPage === 0){
@@ -667,7 +676,6 @@ function Filters(el){
 		$('#handlebar-filters input:checked').each(function(i,handlebar){
 			handlebarList.push($(handlebar).attr('name'));
 		});
-
 		setParameter('handlebars', handlebarList);
 		
 		// reset page to 0
