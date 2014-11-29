@@ -103,6 +103,7 @@ class Listing(db.Model):
 	latitude = db.Column(db.Float, nullable=True)
 	longitude = db.Column(db.Float, nullable=True)
 	additional_text = db.Column(db.String(500),nullable=True)
+	email = db.Column(db.String(120), nullable=False)
 
 	# Listing also has comments attribute (list of comments)
 

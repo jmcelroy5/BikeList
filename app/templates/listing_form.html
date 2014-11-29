@@ -55,12 +55,14 @@
 		<img class="bike-pic" src={{ bike.photo }}>
 		<form id="listing-form" action="#" method='POST'>
 			<h4>Asking price</h4>
-			$ <input id="price"type="text" name="price"></input><br><br>  <!--Numbers only-->
+			<input id="price" type="number" name="price" class="form-control" placeholder="$" required></input><br>  <!--Numbers only-->
 			<h4>Your location</h4>
-			<input id="location" type="text" name="zipcode"></input><br><br>
+			<input id="location" type="text" name="zipcode" class="form-control" required placeholder="Enter your address, cross streets, or zipcode"></input><br>
+			<h4>Your email</h4>
+			<input id="email" type="email" name="contact" class="form-control" required placeholder="Enter a valid email"></input><br>
 			<h4>Anything else you want to say?</h4>
-			<textarea id="comments" rows="4" cols="50" name="comments" placeholder="What do you love about this bike?"></textarea><br><br>
-			<input class="btn btn-default" type="submit" value="Finish Listing"></input>
+			<textarea id="comments" rows="4" cols="50" name="comments" class="form-control" placeholder="What do you love about this bike? What condition is it in? What components have you upgraded? When are you available for test rides?"></textarea><br><br>
+			<input class="btn btn-primary" type="submit" value="Finish Listing"></input>
 		</form>
 	</div>
 </div>
@@ -89,17 +91,19 @@
 		$("#listing-form").on("submit", function(e){
 			// Send marker coordinates for location instead of form field value
 			e.preventDefault();
-			var price = document.getElementById("price").value;
-			var comments = document.getElementById("comments").value;
+			var price = $("#price").val();
+			var comments = $("#comments").val();
+			var email = $("#email").val();
 
 			// AJAX post to add listing to database
 			$.post("/addlisting", {
 				price: price,
 				comments: comments,
 				latitude: latitude,
-				longitude: longitude
+				longitude: longitude,
+				email: email
 				},
-				function(response){ // server response returns bike_id
+				function(response){ 
 					window.location.href = "/mylistings";
 				});
 			});

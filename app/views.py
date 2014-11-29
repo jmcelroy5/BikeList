@@ -65,7 +65,6 @@ def login():
 def logout():
     clear_session()
     flash("You are logged out.")
-
     return redirect('/')
 
 @app.route('/clearsession')
@@ -201,14 +200,14 @@ def get_bikes():
 	# Get total number of listings found for this search before applying page limit
 	total_count = query.count()
 
-	# Default order by ascending price 
-	all_listings = query.order_by(Listing.asking_price.asc())
-
 	# Find out which page is being requested
 	current_page = int(request.args.get("currentPage"))
 
 	# Number of results per page
 	limit = int(request.args.get("resultLimit"))
+
+	# Default order by ascending price 
+	query = query.order_by(Listing.asking_price.asc())
 
 	# Apply the offset depending on the page number and results/page
 	offset = current_page * limit
@@ -252,7 +251,6 @@ def fetch_bike():
 	print "serial from form ", serial
 	r = requests.get("https://bikeindex.org/api/v1/bikes?serial=" + serial)
 	bike = r.json()
-	print bike
 	return jsonify(response=bike)
 
 @app.route("/addbike", methods=['POST'])
@@ -267,6 +265,7 @@ def add_bike():
 
 	# Populate bike attributes
 	new_bike.id = bike["id"]	# primary key
+	new_bike.user_id = g.user
 	new_bike.serial = bike["serial"]	
 	new_bike.size = bike["frame_size"]
 	new_bike.manufacturer = bike["manufacturer_name"]
@@ -300,19 +299,14 @@ def add_bike():
 	if type(size_convert) is float:
 		if size_convert <= 50:
 			new_bike.size_category = "xs"
-			print "put in size category: ", new_bike.size_category
 		elif size_convert > 50 and size_convert <= 53:
 			new_bike.size_category = "s"
-			print "put in size category: ", new_bike.size_category
 		elif size_convert > 53 and size_convert <= 56:
 			new_bike.size_category = "m"
-			print "put in size category: ", new_bike.size_category
 		elif size_convert > 56 and size_convert <= 59:
 			new_bike.size_category = "l"
-			print "put in size category: ", new_bike.size_category
 		elif size_convert > 59:
 			new_bike.size_category = "xl"
-			print "put in size category: ", new_bike.size_category
 
 	# breaking frame colors out of list format
 	new_bike.frame_colors = "" 		
@@ -340,8 +334,8 @@ def add_bike():
 		new_bike.rear_gear_type = bike["rear_gear_type"].get("name", None)
 
 	# Add bike to session and commit changes
-	# model.session.add(new_bike)
-	# model.session.commit() 
+	db.session.add(new_bike)
+	db.session.commit() 
 
 	# Store bike id in flask session (to remember it for listing)
 	flask_session["bike"] = bike["id"]
@@ -362,18 +356,30 @@ def add_listing():
 	new_listing.bike_id = flask_session["bike"]	# get bike id from flask session
 	new_listing.post_date = datetime.datetime.now()
 	new_listing.post_expiration = datetime.datetime.now() + datetime.timedelta(30) # Post expires 30 days from now
-	new_listing.post_status = "active"
+	new_listing.post_status = "Active"
 	new_listing.asking_price = request.form["price"] # FORM
 	new_listing.latitude = request.form["latitude"] # FORM
 	new_listing.longitude = request.form["longitude"] # FORM
-	new_listing.additional_text = request.form["comments"] # FORM
-	new_listing.user_id = g.user
+	new_listing.additional_text = request.form["comments"] #FORM
+	new_listing.user_id = g.user # Flask session
+	new_listing.email = request.form["email"] #FORM
 
-	# model.session.add(new_listing)
-	# model.session.commit()
-	flash("Your listing has been created.") 
+	db.session.add(new_listing)
+	db.session.commit()
 
 	return str(new_listing.bike_id)
+
+@app.route("/deletelisting", methods=['POST'])
+def delete_listing():
+	listing_id = request.form.get("listingId");
+
+	listing_to_delete = db.session.query(Listing).get(listing_id)
+	bike_to_delete = db.session.query(Bike).get(listing_to_delete.bike_id)
+	db.session.delete(listing_to_delete)
+	db.session.delete(bike_to_delete)
+	db.session.commit()
+	# TOASK: Should post functions return a status response?
+	return "listing deleted"
 
 @app.route("/seebike/<int:id>")
 def see_bike(id):
@@ -400,7 +406,8 @@ def my_listings():
 
 	# Building objects for template
 	for listing, bike in user_listings:
-		listings.append({'url': "/listing/" + str(bike.id),
+		listings.append({'id': listing.id,
+						'url': "/listing/" + str(bike.id),
 						 'photo': bike.photo,
 						 'price': listing.asking_price,
 						 'title': bike.title,
@@ -412,17 +419,19 @@ def my_listings():
 def user_favorites():
 
 	favorites = get_favorites()
+	print "FAVORITES\n\n\n", favorites
 
 	listings = []
 
-	for listing_id in favorites:
-		listing_bike = [db.session.query(Listing, Bike).filter(Listing.bike_id == Bike.id, Listing.id == listing_id).first()]
-		for listing, bike in listing_bike:
-			listings.append({'url': "/listing/" + str(bike.id),
-							 'photo': bike.photo,
-							 'price': listing.asking_price,
-							 'title': bike.title,
-							 'date': listing.post_date})
+	if favorites != None:
+		for listing_id in favorites:
+			listing_bike = [db.session.query(Listing, Bike).filter(Listing.bike_id == Bike.id, Listing.id == listing_id).first()]
+			for listing, bike in listing_bike:
+				listings.append({'url': "/listing/" + str(bike.id),
+								 'photo': bike.photo,
+								 'price': listing.asking_price,
+								 'title': bike.title,
+								 'date': listing.post_date})
 	return render_template('myfavoritebikes.html', listings=listings)
 
 @app.route("/favorite", methods=["POST"])
@@ -447,12 +456,13 @@ def add_or_remove_favorite():
 def get_favorites():
 	""" get list of current user's favorited bikes """
 	user_id = flask_session.get('user', None)
+	favorites = []
 
 	if user_id != None:
-		favorites = []
 		query_favorites = db.session.query(Favorite).filter(Favorite.user_id == user_id).all()
 		for favorite in query_favorites:
 			favorites.append(favorite.listing_id)
+	if len(favorites) > 0:
 		return favorites
 	else:
 		return None

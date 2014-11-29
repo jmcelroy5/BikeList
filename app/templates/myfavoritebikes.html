@@ -12,6 +12,10 @@ img{
 table{
 	margin-top:50px;
 }
+p {
+	margin-left:30px;
+	margin-top:30px;
+}
 </style>
 
 <h1>{{ g.name }}'s wish list</h1>
@@ -27,6 +31,11 @@ table{
 		</td>
 	</tr>
 {% endfor %}
+
+{% if listings == [] %}
+	<p> You haven't added any favorite bikes yet.</p>
+{% endif %}
+
 </table>
 
 

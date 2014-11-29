@@ -11,7 +11,19 @@ img{
 }
 table{
 	margin-top:50px;
+	width:500px;
 }
+
+#delete-modal .modal-body {
+	color: red;
+	text-align: center;
+}
+
+p {
+	margin-left:30px;
+	margin-top:30px;
+}
+
 </style>
 
 <h1>{{ g.name }}'s listings</h1>
@@ -21,14 +33,61 @@ table{
 	<tr>
 		<td><a href="{{ listing.url }}"><img src="{{ listing.photo }}"></a></td>
 		<td> 
-			<h4>{{ listing.title }}</h4>
+			<a href="{{ listing.url }}"><h4>{{ listing.title }}</h4></a>
 			<strong>Price:</strong> ${{ listing.price }}.00<br>
-			<strong>Posted on:</strong> {{ listing.date.strftime('%m-%d-%Y') }}
+			<strong>Posted on:</strong> {{ listing.date.strftime('%m-%d-%Y') }}<br>
+			<a class="delete-listing" data-id="{{listing.id}}" >Delete</a>
 		</td>
 	</tr>
-{% endfor %}
-</table>
 
+{% endfor %}
+{% if listings == [] %}
+	<p> You haven't listed any bikes yet.</p>
+{% endif %}
+
+	<div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+		    <div class="modal-header">
+		     <!--  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button> -->
+		      <!-- <h4 class="modal-title" id="myModalLabel">Login</h4> -->
+		    </div>
+		    <div class="modal-body">
+		      <h3>Are you sure you want to delete your listing?</h3>
+		    </div>
+		    <div class="modal-footer">
+		    	<button type="button" class="cancel btn btn-default" data-dismiss="modal">Cancel</button>
+		    	<button type="button" class="confirm-delete btn btn-danger">Delete</button>
+		    </div>
+		  </div>
+		</div>
+	</div>
+</table>
+	
+
+<script>
+	
+	events = new MicroEvent();
+
+	$('.delete-listing').on('click', function(e){
+		listingId = $(e.currentTarget).data("id");
+		events.trigger("delete-listing", listingId);
+	});
+
+	events.on("delete-listing", function(listingId){
+		$('#delete-modal').modal('show');
+		$(".confirm-delete").on('click', function(e) {
+			$.post("/deletelisting", {listingId:listingId}, function(){
+				$("#delete-modal .modal-body").html("<h3>Listing deleted.</h3><br><h4 style='color:black'>If you sold your bike, remember to transfer ownership to the new owner on BikeIndex!</h4>");
+				$(".confirm-delete").hide();
+				$(".cancel").text("OK").on('click', function(){
+					window.location.reload();
+				});
+			});
+		});	
+	});
+
+</script>
 
 {% endblock %}
 

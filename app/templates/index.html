@@ -3,7 +3,6 @@
 {% block scripts %}
 	<!-- Mapbox -->
 	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
-	<script src="{{ url_for('static',filename='js/microevent.js') }}"></script>
 	<script src="{{ url_for('static',filename='js/jquery.nouislider.all.min.js') }}"></script>
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
 	<link href="{{ url_for('static',filename='css/jquery.nouislider.css') }}" rel="stylesheet">
@@ -281,7 +280,7 @@ var searchParameters = {
 	longitudeMin: null,
 	longitudeMax: null,
 
-	searchOnMapMove: false,
+	// searchOnMapMove: false,
 
 	resultLimit: 15,
 	currentPage: 0, 
@@ -373,15 +372,13 @@ function Map(el) {
 
 	// User can choose whether they want map move to trigger search
 	$("#limit-map-search input:checkbox").change(function(){
-		if ($("#limit-map-search input:checkbox").is(':checked')){
-			alert("Map searching turned on.")
-			this.map.enableMapSearch();
+		if ($(this).is(':checked')){
+			window.map.enableMapSearch();
 		}
 		else{
-			alert("Map searching turned off.")
-			this.map.disableMapSearch();
+			window.map.disableMapSearch();
 		}
-	}.bind(this));
+	});
 }
 
 Map.prototype.getViewCoords = function(){
@@ -389,19 +386,26 @@ Map.prototype.getViewCoords = function(){
 	setParameter('latitudeMax', this.map.getBounds().getNorth());
 	setParameter('longitudeMin', this.map.getBounds().getWest());
 	setParameter('longitudeMax', this.map.getBounds().getEast());
+	setParameter('currentPage',0)
 	events.trigger('parameter-update');
 }
 
 Map.prototype.enableMapSearch = function(){
 	this.map.on('dragend', this.getViewCoords.bind(this));
 	this.map.on('zoomend', this.getViewCoords.bind(this));
-	searchParameters["searchOnMapMove"] = true;
+	setParameter("searchOnMapMove",true);
+	events.trigger('parameter-update');
 }
 
 Map.prototype.disableMapSearch = function(){
 	this.map.off('dragend');
 	this.map.off('zoomend');
-	searchParameters["searchOnMapMove"] = false;
+	setParameter('latitudeMin', null);
+	setParameter('latitudeMax', null);
+	setParameter('longitudeMin', null)
+	setParameter('longitudeMax', null);
+	setParameter("searchOnMapMove", false);
+	events.trigger('parameter-update');
 }
 
 Map.prototype.initialize = function() {
@@ -467,10 +471,10 @@ Map.prototype.placeMarkers = function(results){
 	}	
 	// Add them all to the map 
 	this.markerLayer.setGeoJSON(this.geoJson);
-	if (searchParameters["searchOnMapMove"] === false){
+	this.markerLayer.addTo(this.map);
+	if (!searchParameters.searchOnMapMove){
 		this.map.fitBounds(this.markerLayer.getBounds());
 	}
-	this.markerLayer.addTo(this.map);
 }
 
 Map.prototype.setMarkerActive = function(listingId){
@@ -490,6 +494,18 @@ Map.prototype.setMarkerInactive = function(listingId){
 // find out if an item is in a given array
 function include(arr,obj) {
     return (arr.indexOf(obj) != -1);
+}
+
+// escape user input for display
+escapeHTML = function(html) {
+  return String(html)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/'/g, '&#x27;')
+    .replace(/`/g, '&#x60;')
 }
 
 function Listings(el) {
@@ -521,7 +537,7 @@ function Listings(el) {
 			// Create JQuery object for bike photo	
 			var $bikePhoto = $("<div class='img'>")
 			$bikePhoto.attr('style','background-image:url("' + listing.photo + '");')
-			$bikePhoto.html("<div class='pricetag'>  $" + listing.price + "</div>")
+			$bikePhoto.html("<div class='pricetag'>  $" + escapeHTML(listing.price) + "</div>")
 			
 			var $li = $("<li class='listing-link' data-id='"+ listing.id + "' >");
 			$li.append($bikePhoto, $listingLink);
