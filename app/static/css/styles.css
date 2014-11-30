@@ -1,20 +1,151 @@
-body{
-	font-family: "Open Sans",sans-serif;
-	font-weight: 300;
-	padding: 37px;
-	padding-top: 70px;
-	margin: 20px;
+
+/* index.html*/
+
+#map-panel{
+	width: 430px;
+	float:left;
+	top:70px;
+	left:0;
+	bottom:0;
+    position: fixed;
+    margin-bottom:0px;
+    overflow:hidden;
+  }
+
+#search-results li {
+	display: inline-block;
+	width: 32%;
+	vertical-align: top;
+	margin-bottom: 20px;
 }
 
-h1, h2, h3, h4, #logo{
-	font-family: 'Exo 2', sans-serif;
-	font-weight: 400;
-	line-height: 1.2em;
+#search-filters{
+ 	height: 288px;
+ 	width: 634px;
+ 	margin-top:-71px;
+ 	top: 0;
+ }
+
+.filter-group{
+	padding: 10px;
+	border-bottom:1px dotted #cecece;
 }
 
-li{
-	display: list-item;
-	text-align: -webkit-match-parent;
+input[type=number]{
+    width: 60px;
+} 
+
+#content{
+    width: 1100px;
+	margin-top: 75px;
+}
+#range{
+	margin-top: 10px;
+	margin-bottom:10px;
+}
+
+#slider-right{
+	float:right;
+}
+
+.myBtn:hover,
+.myBtn:active,
+.myBtn:focus {
+	background-color:#fff
+}
+
+.invisible{
+	visibility: hidden;
+}
+
+.marker-popup {
+	font-size:14px;
+}
+
+.marker-popup img{
+	width: 100px;
+}
+
+.img {
+    position: relative;
+    float: left;
+    width:  194px;
+    height: 133px;
+    background-position: 50% 50%;
+    background-repeat:   no-repeat;
+    background-size:     cover;
+    margin-bottom: 3px;
+    margin-top:10px;
+    border-radius: 5px;
+}
+
+.pricetag{
+	width:50px;
+	height:25px;
+	z-index: 0.5;
+	background-color: #494949;
+	opacity: 0.9;
+	position: absolute;
+	bottom:0;
+	color: white;
+	text-align: right;
+	padding:3px;
+}
+
+.heart {
+	text-align: right;
+	font-size: 20px;
+	float: right;
+	margin-right: 30px;
+	margin-top: 0px;
+}
+
+/* Empty heart  */
+.fa-heart-o{
+	color: #d8cec0;
+}
+
+.fa-heart{
+	color: #ff85db;
+}
+
+#filter-btn-bar{
+	margin-top: -15px;
+	text-align: right;
+	padding: 10px;
+	width: 634px;
+}
+
+#search-panel{
+	float:right;
+	width: 650px;
+}
+
+#search-results{
+	width:650px;
+	list-style-type: none;
+	padding: 0;
+	overflow: auto;
+}
+
+.btn-default:hover, .btn-default:active{
+	background-color: white;
+}
+
+#limit-map-search {
+	background-color: white;
+	color: rgb(82, 77, 77);
+	font-size: 12;
+	margin-left: 45px;
+	/*width: 246px;*/
+	width: 177px;
+	padding: 8px;
+	bottom: 21px;
+	position: fixed;
+}
+
+#next, #prev, #search-panel, #filter-clear{
+	color: #4d4d4d;
 }
 
 #listing-form {
@@ -37,22 +168,194 @@ li{
 	font-weight: bold;
 }
 
-.attr-list{
-	list-style-type: none;
-	padding: 0;
-	display: in-line;
-}
-
-.attr-list li:nth-of-type(2n-1){
+.attr-list tr:nth-of-type(2n){
 	background: #ecf0f1;
 }
-
-#verify-bike{
-	display: None;
+.attr-list th{
+	border:0px;
 }
 
-#bike-pic{
-	width:500px;
+
+.bike-pic{
+	width:100%;
+	display:block;
+	float: left;
+	margin: 0px;
+	border-radius:5 px;
+}
+
+/* listing.html */
+
+.seller-contact{
+	width: 100px;
+	margin-bottom:60px;
+	margin-left: 0;
+	margin-right: 20px;
+	float: left;
+}
+
+#seller-text{
+	margin-bottom:15px;
+}
+
+#price{
+	color: #3887be;
+	/*margin-bottom:10px;*/
+}
+
+#bikelocation{
+	width: 430px;
+	float:left;
+	top:60px;
+	left:0;
+	bottom:0;
+    position: fixed;
+    margin-bottom:0px;
+    overflow:hidden;
+	}
+
+#listing-wrapper{
+	float:right;
+	width: 746px;
+	margin-left: 75px;
+	position: absolute;
+}
+
+#listing-form{
+	margin-top:50px;
+}
+
+.attr-list{
+	display:inline-block;
+	width:60%;
+}
+
+/* listing_form.html */
+
+#mapbox{
+	width: 430px;
+	float:left;
+	top:60px;
+	left:0;
+	bottom:0;
+    position: fixed;
+    margin-bottom:0px;
+    overflow:hidden;
+  }
+
+#search-panel{
+	float:right;
+	width: 746px;
+	margin-left: 430px;
+	position: absolute;
+	margin-top: -66px;
+}
+
+#listing-form{
+	margin-top:10px;
+	margin-bottom:100px;
+}
+
+.bike-pic{
+	width: 400px;
+	float: left;
+	margin-left: 0px;
+	border-radius:5px;
+	display:block;
+	margin-top:10px;
+}
+
+/* mylistings.html */
+
+#delete-modal .modal-body {
+	color: red;
+	text-align: center;
+}
+
+#my-listings-table{
+	width:650px;
+}
+
+#my-listings-wrapper{
+	margin-left:170px;
+}
+
+/* myfavoritebikes */
+
+#fav-bike-table{
+	width:650px;
+}
+
+#fav-bike-wrapper{
+	margin-left:170px;
+}
+
+/* Base template */
+
+a{
+  cursor: pointer;
+}
+
+h1, h2, h3, h4, #logo{
+	font-family: 'Exo 2', sans-serif;
+	font-weight: 400;
+	line-height: 1.2em;
+}
+
+body{
+	font-family: "Open Sans",sans-serif;
+	font-weight: 300;
+	padding: 37px;
+	padding-top: 70px;
+	margin: 20px;
+	margin-left:-53px;
+}
+
+
+li{
+	display: list-item;
+	text-align: -webkit-match-parent;
+}
+
+
+#maindiv{
+  margin-top:55px;
+}
+
+
+#btn-list-bike{
+  margin-top:10px;
+  margin-left:-23px;
+}
+
+#login-modal{
+  text-align:center;
+}
+
+#loading{
+  margin-left:75px;
+  width: 62px;
+  height:62px;
+  display: None;
+}
+
+.navbar-header{
+  margin-top:10px;
+}
+
+#logo{
+  font-size: 40px;
+  margin-left: -80px;
+  margin-top: -15px;
+  position: absolute;
+}
+
+.nav li{
+  margin-left: 16px;
+}
+
+.navbar-nav>li>.dropdown-menu{
+  margin-top: 0px
 }
 
 /* customized bootstrap navbar */

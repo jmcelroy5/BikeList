@@ -7,84 +7,36 @@
           <meta name="author" content="">
 
           <title> {% block title %} {% endblock %} BikeList</title>
-
+            
+            <!-- JQuery -->
             <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+            <!-- Microevent.js  -->
             <script src="{{ url_for('static',filename='js/microevent.js') }}"></script>
+
+            <!-- Mapbox -->
+            <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
+            <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
+            
+            <!-- Bootstrap -->
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+            <!-- My styles -->
+            <link rel="stylesheet" href="{{ url_for('static',filename='css/styles.css') }}">
+
+            <!-- Google webfonts -->
+            <link href='http://fonts.googleapis.com/css?family=Exo+2' rel='stylesheet' type='text/css'>
+
+            <!-- Font awesome -->
+            <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+            <!-- Favicon -->
+            <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
 
             {% block scripts %} 
             <!-- Page-specific scripts will be added here -->
             {% endblock %}
-
-            <!-- Stylesheets -->
-            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-            <link rel="stylesheet" href="{{ url_for('static',filename='css/styles.css') }}">
-           <!--  <link href='http://fonts.googleapis.com/css?family=Concert+One' rel='stylesheet' type='text/css'> -->
-            <link href='http://fonts.googleapis.com/css?family=Exo+2' rel='stylesheet' type='text/css'>
-            <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-            <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
-           
-    <style>
-
-
-    a{
-      cursor: pointer;
-    }
-
-    #header-search{
-      display:inline-block;
-      size: 40px;
-      margin-top: 41px;
-    }
-    #bikelist-header{
-      padding: 7px 20px;
-      background: #e4e4e4;
-      border-bottom: 1px solid;
-      font-color: white;
-      height:50px;
-    }
-
-    #maindiv{
-      margin-top:55px;
-    }
-
-    .navbar-header{
-      margin-top:10px;
-    }
-
-    #logo{
-      font-size: 40px;
-      margin-left: -80px;
-      margin-top: -15px;
-      position: absolute;
-    }
-
-    .nav li{
-      margin-left: 16px;
-    }
-
-    .navbar-nav>li>.dropdown-menu{
-      margin-top: 0px
-    }
-
-    #btn-list-bike{
-      margin-top:10px;
-      margin-left:-23px;
-    }
-
-    #login-modal{
-      text-align:center;
-    }
-
-    #loading{
-      margin-left:75px;
-      width: 62px;
-      height:62px;
-      display: None;
-    }
-
-    </style>
-
 
     </head>
 
@@ -152,15 +104,6 @@
                         <input class="form-control" id="bike-serial" type="text" name="serial" placeholder="Bike Serial Number"></input><br><br>
                         <strong>Note:</strong>&nbsp;Your bike must already be registered at <a href="http://www.bikeindex.org/"> BikeIndex.org </a> before you can sell it on BikeList. Make sure you have filled out as much information about your bike as possible on your BikeIndex registration. <br><br>
                       </form>
-<!--                           <div id="verify-bike" class="bike-info">
-                            <img id="bike-pic"><br><br>
-                            <div id='confirm'>
-                              <form>
-                                <button class="btn btn-primary" id="Yes">Sell this bike</button>
-                                <button class="btn btn-default" id="No">That's not my bike</button>
-                              </form> 
-                            </div>
-                          </div> -->
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -246,7 +189,6 @@
           var bikedata = JSON.stringify(bike);
 
           $.post("/addbike", {bike: bikedata}, function(){
-            // $("#verify-bike").hide();
             $(".modal-body").html("<h3 style='color:#66CD00'> We found your bike on BikeIndex.</h3>").css("color","green")
             $("#submit-serial").replaceWith("<button id='continue-to-form' class='btn btn-primary'>Continue</button>");
             $("#continue-to-form").on('click', function(){

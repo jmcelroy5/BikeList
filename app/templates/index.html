@@ -1,195 +1,12 @@
 {% extends 'base.html' %}
 
 {% block scripts %}
-	<!-- Mapbox -->
-	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
 	<script src="{{ url_for('static',filename='js/jquery.nouislider.all.min.js') }}"></script>
-	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
 	<link href="{{ url_for('static',filename='css/jquery.nouislider.css') }}" rel="stylesheet">
 
 {% endblock %}
 
 {% block content %}
-<style>
-body{
-	margin-left:-53px;
-}
-
-#map-panel{
-	width: 430px;
-	float:left;
-	top:70px;
-	left:0;
-	bottom:0;
-    position: fixed;
-    margin-bottom:0px;
-    overflow:hidden;
-  }
-
-
-#search-results li {
-	display: inline-block;
-	width: 32%;
-	vertical-align: top;
-	margin-bottom: 20px;
-}
-
-#search-panel img{
-	width: 200px;
-	width: 90%;
-	margin-right: 30px;
-	margin-bottom: 15px;
-}
-
-#search-filters{
- 	height: 288px;
- 	width: 634px;
- 	margin-top:-130px;
- 	top: 0;
- 	/*background-color: #f6f6f6;*/
- }
-
-.filter-group{
-	padding: 10px;
-	border-bottom:1px dotted #cecece;
-}
-
-input[type=number]{
-    width: 60px;
-} 
-
-#content{
-    width: 1100px;
-	margin-top: 75px;
-}
-#range{
-	margin-top: 10px;
-	margin-bottom:10px;
-}
-
-#slider-right{
-	float:right;
-}
-
-.myBtn:hover,
-.myBtn:active,
-.myBtn:focus {
-	background-color:#fff
-}
-
-.invisible{
-	visibility: hidden;
-}
-
-.marker-popup {
-	font-size:14px;
-}
-
-.marker-popup img{
-	width: 100px;
-}
-
-.img {
-    position: relative;
-    float: left;
-    width:  194px;
-    height: 133px;
-    background-position: 50% 50%;
-    background-repeat:   no-repeat;
-    background-size:     cover;
-    margin-bottom: 3px;
-    margin-top:10px;
-    border-radius: 5px;
-}
-
-.pricetag{
-	width:50px;
-	height:25px;
-	z-index: 0.5;
-	background-color: #494949;
-	opacity: 0.9;
-	position: absolute;
-	bottom:0;
-	color: white;
-	text-align: right;
-	padding:3px;
-}
-
-.heart {
-	text-align: right;
-	font-size: 20px;
-	float: right;
-	margin-right: 30px;
-	margin-top: 0px;
-}
-
-/* Empty heart  */
-.fa-heart-o{
-	color: #d8cec0;
-}
-
-.fa-heart{
-	color: #ff85db;
-}
-
-/*#sticky-bar.affix{
-	margin-top:0px;
-	top: 72px;
-	z-index: 1;
-	margin-left: -34px;
-	width: 768px;
-	padding:10px;
-}
-
-#sticky-bar {
-	margin-left: -34px;
-	background-color: #ffffff;
-	border-bottom: 1px dotted #cecece;
-	margin-top: -15px;
-	text-align: right;
-}
-*/
-
-#filter-btn-bar{
-	margin-top: -15px;
-	text-align: right;
-	padding: 10px;
-	width: 634px;
-}
-
-#search-panel{
-	float:right;
-	width: 650px;
-}
-
-#search-results{
-	width:650px;
-	list-style-type: none;
-	padding: 0;
-	overflow: auto;
-}
-
-.btn-default:hover, .btn-default:active{
-	background-color: white;
-}
-
-#limit-map-search {
-	background-color: white;
-	color: rgb(82, 77, 77);
-	font-size: 12;
-	margin-left: 45px;
-	/*width: 246px;*/
-	width: 177px;
-	padding: 8px;
-	bottom: 21px;
-	position: fixed;
-}
-
-#next, #prev, #search-panel, #filter-clear{
-	color: #4d4d4d;
-}
-
-</style>
 
 <div id="content">
 	
@@ -342,6 +159,24 @@ function updateResults(data){
 	// trigger results-update so search panel, pagination, and listings update
 	events.trigger('results-update', searchParameters["currentPage"]);
 }
+
+// var searchState = {
+
+// }
+
+
+// This runs when user clicks back button
+// window.onpopstate = function(e){ 
+
+// 	searchParameters = event.state;
+	
+// 	console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
+// }
+
+// function updateState(){
+
+// }
+
 
 // Views
 
@@ -680,6 +515,11 @@ function Filters(el){
 		
 		// reset page to 0
 		setParameter('currentPage',0)
+
+		// Push state so browser remembers which filters are applied
+		// history.pushState(searchParameters, "filters state", "/");
+
+		// trigger parameter update which triggers results-update
 		events.trigger('parameter-update');
 	});
 

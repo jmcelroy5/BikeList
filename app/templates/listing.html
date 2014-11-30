@@ -6,82 +6,44 @@
 {% endblock %}
 
 {% block content %}
-<style>
 
-	.bike-pic{
-		width: 400px;
-		float: left;
-		margin: 0px;
-		border-radius:5 px;
-	}
-
-	img.seller-contact{
-		width: 100px;
-		margin-bottom:60px;
-		margin-left: 0;
-		margin-right: 20px;
-		float: left;
-	}
-
-	#seller-text{
-		margin-bottom:15px;
-	}
-
-	#price{
-		color: #3887be;
-		/*margin-bottom:10px;*/
-	}
-
-	#bikelocation{
-		width: 430px;
-		float:left;
-		top:60px;
-		left:0;
-		bottom:0;
-	    position: fixed;
-	    margin-bottom:0px;
-	    overflow:hidden;
-  	}
-
-	#search-panel{
-		float:right;
-		width: 746px;
-		margin-left: 430px;
-		margin-top: -66;
-		position: absolute;
-	}
-
-	#listing-form{
-		margin-top:50px;
-	}
-
-	.attr-list{
-		display:inline-block;
-		width:60%;
-	}
-
-	.contact-seller{
-
-	}
-
-</style>
-	<div id="search-panel">	
+<div id="search-panel">	
+	<div id="listing-wrapper">
 		<h1> {{ bike.title }}</h1>
 		<span id="price"><h3>${{ listing.asking_price }}.00</h3></span>
-		<img class="bike-pic" src={{ bike.photo }}><br><br>
-
-		<ul class="attr-list">
-			<h3>Specs</h3>
-			<li id="serial"><span class="attr-title">Serial</span>{{ bike.serial }}</li>
-			<li id="size"><span class="attr-title">Size</span>{{ bike.size }}</li>
-			<li id="manufacturer"><span class="attr-title">Manufacturer</span>{{ bike.manufacturer }}</li>
-			<li id="model"><span class="attr-title">Model</span> {{ bike.frame_model }} </li>
-			<li id="year"><span class="attr-title">Year</span> {{ bike.year }} </li>
-			<li id="material"><span class="attr-title">Frame Material</span> {{ bike.frame_material }}</li>
-			<li id="handlebar"><span class="attr-title">Handlebar type</span> {{ bike.handlebar_type }}</li>
-			<li id="wheel"><span class="attr-title">Wheel diameter</span> {{ bike.rear_wheel_size }}</li>
-			<li id="color"><span class="attr-title">Primary colors</span>{{ bike.frame_colors }}</li>
-		</ul>
+		<img class="bike-pic" src={{ bike.photo }}>
+		
+		<table class="table attr-list">
+			<th><h3>Specs</h3></th>
+			<tr>
+				<td class="attr-title">Serial</td>
+				<td>{{ bike.serial }}</td>
+			</tr><tr>
+				<td class="attr-title">Size</td>
+				<td>{{ bike.size }}</td>
+			</tr><tr>
+				<td class="attr-title">Manufacturer</td>
+				<td>{{ bike.manufacturer }}</td>
+			</tr><tr>				
+				<td class="attr-title">Model</td>
+				<td>{{ bike.frame_model }}</td>
+			</tr><tr>
+				<td class="attr-title">Year</td>
+				<td>{{ bike.year }}</td>
+			</tr><tr>
+				<td class="attr-title">Material</td>
+				<td>{{ bike.frame_material }}</td>
+			</tr><tr>
+				<td class="attr-title">Handlebar type</td>
+				<td>{{ bike.handlebar_type }}</td>
+			</tr><tr>
+				<td class="attr-title">Rear Wheel Diameter</td>
+				<td>{{ bike.rear_wheel_size }}</td>
+			</tr><tr>
+				<td class="attr-title">Primary colors</td>
+				<td>{{ bike.frame_colors }}</td>
+			</tr>
+		</table>
 
 		<h3>A few more words</h3>
 		<p> {{ listing.additional_text }}</p>
@@ -105,9 +67,9 @@
 		<div style="clear:both">
 		<a href="/">  &lt;&lt; Back to search</a>
 		</div><br>
-
 	</div>
 
+</div>
 
 	
 <script>
@@ -152,8 +114,6 @@
 	$(document).ready(function(){
 		bikeLocationMap();
 	});
-
-
 
 </script>
 
