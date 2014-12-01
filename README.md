@@ -9,7 +9,7 @@ BikeList is an alternative used bike marketplace that introduces more transparen
 
 Shortly before I started Hackbright my touring bike that I had ridden thousands of miles was stolen. When I started scanning Craigslist for a new bike, it was frustrating to see so many listings that seemed suspicious. The loss of my bike was so devastating, I feared accidentally buying a stolen bike and becoming complicit in the crime. 
 
-In the aftermath I found out about BikeIndex, an online national bike registry that allows you to register your bike and, if the worst ever befalls, report it as stolen. The BikeIndex registry serves as a resource for used bike buyers to check a bike serial number to check if it's stolen, and the site has helped thousands of bike theft victims recover their bikes. 
+In the aftermath I found out about BikeIndex, an online national bike registry that allows you to register your bike and, if the worst ever befalls, report it as stolen. The BikeIndex registry serves as a resource for used bike buyers to check a bike serial number and see if it's stolen, and the site has helped thousands of bike theft victims recover their bikes. 
 
 This is why I decided to make a "safe" used bike marketplace that requires sellers to register on BikeIndex. The BikeIndex registration process is quick and easy, and the more people who register their bikes the closer we get to making bike theft history.
 
