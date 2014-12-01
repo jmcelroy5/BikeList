@@ -53,6 +53,10 @@
           <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h3 class="modal-title" style="color:black;">List Your Bike</h3>
+                  </div>
                 <div class="modal-body">
                   <a href="/facebook_login"><img style="width:50%" src="http://i.stack.imgur.com/pZzc4.png"></a>
                 </div>
@@ -76,7 +80,7 @@
                   <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                   <h3 class="modal-title" style="color:black;">List Your Bike</h3>
                 </div>
-                <div id="modal-body" class="modal-body">
+                <div id="list-modal-body" class="modal-body">
                   <form id="get-serial">
                     <h3>Enter your bike serial number to get started.</h3><br>
                     <img id="loading" width="62px" src="{{ url_for('static',filename='images/spinner.gif') }}" />

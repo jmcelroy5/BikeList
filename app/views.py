@@ -55,15 +55,10 @@ def add_new_user():
 	else:
 		return existing_user
 
-# login view
-@app.route("/login")
-def login():
-	return render_template("login.html")
-
 @app.route("/logout")
 def logout():
     clear_session()
-    flash("You are logged out.")
+    flash("Successfully logged out.")
     return redirect('/')
 
 @app.route('/clearsession')
@@ -89,7 +84,7 @@ def get_user_photo():
 	photo_url = photo['data']['url']
 	return photo_url
 
-# Bike Index OAuth Stuff:
+# Bike Index OAuth:
 
 @bikeindex.tokengetter # ???
 def get_bikeindex_token():
@@ -106,7 +101,6 @@ def bikeindex_authorized(resp):
 	print "\n\n\n response from bikeindex", resp
 	flask_session['BI_authorized'] = True
 	flask_session['bikeindex_token'] = resp['code']
-
 
 @app.route("/getuser_bikeindex") # This works only with hard-coded access token
 def user_data():
@@ -154,17 +148,11 @@ def index():
 @app.route("/getbikes")
 def get_bikes():
 	""" get search results """
-	sizes = request.args.getlist('sizes[]') 		# returns list of names of checkboxes that are checked when form submits
-	print "SIZES=========", sizes
-	materials = request.args.getlist('materials[]') 		# returns list of names of checkboxes that are checked when form submits
-	print "MATERIALS=========", materials
-	# materials looks like: [u'Carbon or composite', u'Aluminum']
-	handlebars = request.args.getlist('handlebars[]') 		# returns list of names of checkboxes that are checked when form submits
-	print "HANDLEBARS=========", handlebars
+	sizes = request.args.getlist('sizes[]') 		
+	materials = request.args.getlist('materials[]') 		
+	handlebars = request.args.getlist('handlebars[]') 		
 	min_price = request.args.get('minPrice')
-	print "MIN_PRICE=========", min_price
 	max_price = request.args.get('maxPrice')
-	print "MAX_PRICE=========", max_price
 
 	lat_min = request.args.get('latitudeMin')
 	lat_max = request.args.get('latitudeMax')
@@ -246,6 +234,7 @@ def get_bikes():
 
 @app.route("/fetchbike")
 def fetch_bike():
+	""" Fetches bike from BikeIndex API by serial number"""
 	serial = request.args.get("serial")
 	r = requests.get("https://bikeindex.org/api/v1/bikes?serial=" + serial)
 	bike = r.json()
@@ -262,7 +251,7 @@ def add_bike():
 	new_bike = Bike()
 
 	# Populate bike attributes
-	new_bike.id = bike["id"]	# primary key
+	new_bike.id = bike["id"]	
 	new_bike.user_id = g.user
 	new_bike.serial = bike["serial"]	
 	new_bike.size = bike["frame_size"]
@@ -275,7 +264,7 @@ def add_bike():
 	new_bike.title = bike["manufacturer_name"] + " " + bike["frame_model"]
 	new_bike.frame_model = bike["frame_model"]
 	new_bike.year = bike["year"]
-	new_bike.paint_description = bike["paint_description"] # None
+	new_bike.paint_description = bike["paint_description"] 
 	new_bike.front_tire_narrow = bike["front_tire_narrow"]
 
 	# list of valid size categories 
@@ -306,9 +295,8 @@ def add_bike():
 		elif size_convert > 59:
 			new_bike.size_category = "xl"
 
-
 	# changing size abbrevation for display
-	size_to_display = {"xs": "extra small", "s":"small", "m":"medium", "l":"large", "xl": "extra large" }
+	size_to_display = {"xs": "Extra Small", "s":"Small", "m":"Medium", "l":"Large", "xl": "Extra Lsarge" }
 	if new_bike.size in valid_sizes:
 		new_bike.size = size_to_display[new_bike.size]
 
@@ -423,8 +411,6 @@ def my_listings():
 def user_favorites():
 
 	favorites = get_favorites()
-	print "FAVORITES\n\n\n", favorites
-
 	listings = []
 
 	if favorites != None:
@@ -442,7 +428,6 @@ def user_favorites():
 @app.route("/favorite", methods=["POST"])
 def add_or_remove_favorite():
 	listing_id = request.form.get("listing")
-	print listing_id, "WILL BE DELETED!!!"
 	user_id = flask_session["user"]
 
 	# check if user has already favorited that listing
@@ -467,7 +452,6 @@ def get_favorites():
 	if user_id != None:
 		query_favorites = db.session.query(Favorite).filter(Favorite.user_id == user_id).all()
 		for favorite in query_favorites:
-			print "favorite  ", favorite.listing_id
 			favorites.append(favorite.listing_id)
 	if len(favorites) > 0:
 		return favorites

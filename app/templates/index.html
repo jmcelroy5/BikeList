@@ -14,30 +14,39 @@
 
 			<form id="filter-knobs" action= "#">
 				<div id="size-filters" class="filter-group">
-					<strong>Frame Size</strong><br>
-					<input name="xs" type="checkbox">  Xsmall  </input>
-					<input name="s" type="checkbox">  Small  </input>
-					<input name="m" type="checkbox">  Medium  </input>
-					<input name="l" type="checkbox">  Large  </input>
-					<input name="xl" type="checkbox">  Xlarge  </input>
+					<strong>Frame Size</strong>
+					<a href="#" data-toggle="modal" data-target="#info-size-modal">
+						<i class='fa fa-question-circle'></i>
+					</a><br>
+					<input name="xs" type="checkbox">   Xsmall  </input>
+					<input name="s" type="checkbox">   Small  </input>
+					<input name="m" type="checkbox">   Medium  </input>
+					<input name="l" type="checkbox">   Large  </input>
+					<input name="xl" type="checkbox">   Xlarge  </input>
 					<!-- <input name="Wood or organic material" type="checkbox">Wood/Bamboo</input>  -->
 				</div>
 				<div id="materials-filters" class="filter-group">
-					<strong>Frame Material</strong><br>
-					<input name="Titanium" type="checkbox">  Titanium</input>
-					<input name="Carbon or composite" type="checkbox">  Carbon Fiber</input>
-					<input name="Aluminum" type="checkbox">  Aluminum</input>
-					<input name="Steel" type="checkbox">  Steel</input>
+					<strong>Frame Material</strong>
+					<a href="#" data-toggle="modal" data-target="#info-material-modal">
+						<i class='fa fa-question-circle'></i>
+					</a><br>
+					<input name="Titanium" type="checkbox">   Titanium  </input>
+					<input name="Carbon or composite" type="checkbox">   Carbon Fiber  </input>
+					<input name="Aluminum" type="checkbox">   Aluminum  </input>
+					<input name="Steel" type="checkbox">   Steel  </input>
 					<!-- <input name="Wood or organic material" type="checkbox">Wood/Bamboo</input>  -->
 				</div>
 				<div id="handlebar-filters" class="filter-group">
-					<strong>Handlebar Type</strong><br>
-					<input name="Drop" type="checkbox">  Drop</input>
-					<input name="Flat" type="checkbox">  Flat</input>
-					<input name="Forward facing" type="checkbox">  Forward-facing</input>
-					<input name="Rear facing" type="checkbox">  Rear-facing</input>
-					<!-- <input name="Not handlebars" type="checkbox">Not handlebars</input>
-				<input name="BMX style" type="checkbox">BMX-style</input> -->
+					<strong>Handlebar Type</strong>
+					<a href="#" data-toggle="modal" data-target="#info-handlebars-modal">
+						<i class='fa fa-question-circle'></i>
+					</a><br>
+					<input name="Drop" type="checkbox">   Drop  </input>
+					<input name="Flat" type="checkbox">   Flat  </input>
+					<input name="Forward facing" type="checkbox">   Forward-facing  </input>
+					<input name="Rear facing" type="checkbox">   Rear-facing  </input>
+					<input name="BMX style" type="checkbox">   BMX-style  </input> 
+					<input name="Not handlebars" type="checkbox">   Not handlebars  </input>
 				</div>
 				<div id="price-filters" class="filter-group">
 					<strong>Price</strong><br>
@@ -50,6 +59,109 @@
 				</div>
 			</form>
 		</div>
+
+		<!-- Filter Info Modals -->
+
+				<!-- Handlebar Types -->
+		<div class="modal fade" id="info-size-modal" tabindex="-1" role="dialog" aria-labelledby="info-size" aria-hidden="true">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+			    <div class="modal-header">
+			      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			      <h3 class="modal-title" style="color:black;">Bike Size Guide</h3>
+			    </div>
+			    <div id="info-size-modal-body" class="modal-body">
+			    	<table class="table">
+			    		<th style="border-top:0;">Size categories </th>
+			    		<tr>
+			    			<td>Extra Small</td>
+			    			<td> &lt; 50 cm </td>
+			    		</tr><tr>
+			    			<td> Small</td>
+			    			<td> 50 cm - 53 cm </td>
+			    		</tr><tr>
+			    			<td> Medium </td>
+			    			<td> 53 cm - 56 cm </td>
+			    		</tr></tr>
+			    			<td> Large </td>
+			    			<td> 56 cm - 59 cm </td>
+			    		</tr><tr>
+			    			<td> Extra Large </td>
+			    			<td> &gt; 59 cm </td>
+						</tr>
+					</table>
+					<p>There are many factors that go into finding the right size bike for you. <a href="http://www.rei.com/learn/expert-advice/bike-fit.html"><br>Read more about bike fit</a></p>
+			    </div>
+			    <div class="modal-footer">
+			      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			    </div>
+			  </div>
+			</div>
+		</div>
+
+		<!-- Frame Materials -->
+		<div class="modal fade" id="info-material-modal" tabindex="-1" role="dialog" aria-labelledby="info-material" aria-hidden="true">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+			    <div class="modal-header">
+			      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			      <h3 class="modal-title" style="color:black;">Which Material Is Right For You?</h3>
+			    </div>
+			    <div id="info-material-modal-body" class="modal-body">
+			    	<p>It depends. Many factors—your style of riding, your weight, your sense of adventure—all play a role in your choice of material. The following paragraphs explain the different types of material commonly used on bikes. A few bikes out there are made of exotic metals, but that's another discussion entirely.</p>
+					<h4>Steel</h4>
+					<p>Steel is the most commonly used material in bike frames. Carbon (or high-tensile) steel is a good, strong, long-lasting steel, but it isn't as light as its more high-tech brother, the steel known as chromoly.</p>
+					<p>A workhorse of the industry, chromoly (chrome molybdenum) steel is light and strong. When it is butted and shaped to take off excess weight, it can deliver a fairly light frame that will last through years of hard use. Chromoly is responsive and offers good flex while maintaining its form.</p>
+					<h4>Aluminum</h4>
+					Having come a long way from the oversized tubes of old, aluminum is now less expensive and very widely used on today's bikes. It's light, strong and stiff. With proper design it can give a solid ride for climbing, or lively handling in tight situations.
+					<h4>Titanium</h4>
+					<p>Lighter than steel but just as strong, this more-expensive metal is found on high-end road or cross-country mountain bike. It flexes so well while maintaining its shape that some very high-end bikes use the metal itself as a shock absorber.</p>
+					<h4>Carbon Fiber</h4>
+					<p>Take a bundle of parallel continuous fibers and bind them together with glue. This creates a ply. Several plies are made up to form a laminate (just like plywood). And the laminate, if designed right, can be very tough. It's also light. So why aren't all bikes made out of carbon fiber? It tends to be brittle. The fact that metal can bend and regain its shape is what makes it last. Because of this, carbon fiber bikes are built even stronger than needed.</p>
+					<p><a href="http://www.rei.com/learn/expert-advice/bike-frame-materials.html">Read more</a></p>
+			    </div>
+			    <div class="modal-footer">
+			      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			    </div>
+			  </div>
+			</div>
+		</div>
+
+		<!-- Handlebar Types -->
+		<div class="modal fade" id="info-handlebars-modal" tabindex="-1" role="dialog" aria-labelledby="info-handlebars" aria-hidden="true">
+			<div class="modal-dialog">
+			  <div class="modal-content">
+			    <div class="modal-header">
+			      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			      <h3 class="modal-title" style="color:black;">Handlebar Type Guide</h3>
+			    </div>
+			    <div id="info-material-modal-body" class="modal-body">
+			    	<h4>Drop</h4>
+			    	<img src="{{ url_for('static',filename='images/handlebars/drop.png') }}" class="handlebar-img"><p>Drop bars are the standard road bike bar. They are good if you want a more aggressive riding position that allows you to go faster and for longer rides when you'll want to change hand positions.</p><br>
+			    	<h4>Flat</h4>
+			    	<img src="{{ url_for('static',filename='images/handlebars/flat.png') }}" class="handlebar-img"><p>Flat bars are the most common style of bars. They are generally perpendicular the bike's wheel and have grips that are more or less flat to the ground. They may actually have up to 40° backsweep or a bend so that the center is lower than the grips. Some examples of flat bars are straight bars and riser bars.</p><br>
+			    	<h4>Forward-facing</h4>
+			    	<img src="{{ url_for('static',filename='images/handlebars/forward.png') }}" class="handlebar-img"><p>Forward facing bars have ends that point forward, away from the seat (some flat bars have attachments to this effect, but those don't count here). Some examples of forward facing include bullhorns, time-trial bars and pursuit bars.</p><br>
+			    	<h4>Rear-facing</h4>
+			    	<img src="{{ url_for('static',filename='images/handlebars/rear.png') }}" class="handlebar-img"><p>Rear facing bars have ends that point backward, toward the seat. Some examples of rear facing bars are cruiser bars, ape-hangers and mustache bars.</p><br>
+			    	<h4>BMX</h4>
+					<img src="{{ url_for('static',filename='images/handlebars/bmx.png') }}" class="handlebar-img"><p>BMX bars are taller horizontal riser bars with a crosspiece.</p><br>
+					<h4>No handlebars</h4>
+					<img src="{{ url_for('static',filename='images/handlebars/other.png') }}" class="handlebar-img"><p>No handlebars are any bikes without handlebars and handlebars that don't fit the above categories. For example, unicycles often don't have handlebars, and recumbents sometimes have under-the-seat bars.</p>
+			    </div>
+			    <div class="modal-footer">
+			      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			    </div>
+			  </div>
+			</div>
+		</div>
+
+
+
+
+
+
+
 		<div id="search-results-wrapper">
 			<div id="filter-btn-bar">
 				<button class= "btn btn-default" id="filter-clear">Clear Filters</button>

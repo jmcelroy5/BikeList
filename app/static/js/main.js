@@ -182,7 +182,7 @@ window.App = (function(){
 			longitudeMin: null,
 			longitudeMax: null,
 
-			// searchOnMapMove: false,
+			searchOnMapMove: false,
 
 			resultLimit: 15,
 			currentPage: 0, 
@@ -194,6 +194,35 @@ window.App = (function(){
 			name: null,
 			favorites: []
 		};
+
+		// //read URL on page load
+		// events.on("filter-update", function(){
+		// 	hashString = window.location.search;
+		// 	if (hashString){
+		// 		fetchResults(function(data){
+		// 			updateResults(data);
+		// 		});
+		// 	}
+		// 	// set search parameter object to match 
+		// 	// set filter knobs to match
+		// });
+
+		// // set URL when filters update
+		// function hashSearch(obj){
+		// 	return _.pairs(obj)
+		// 		.map(function(array){
+		// 			return array[0] + '=' + encodeURIComponent(array[1]);
+		// 		})
+		// 		.reduce(function(a,b){
+		// 			return a + '&' + b;
+		// 		});
+		// }
+
+		// events.on('filter-update', function(){
+		// 	var hashString = "?" + hashSearch(searchParameters);
+		// 	history.replaceState(null, null, hashString);
+		// });
+
 
 		$.get('/getuser', function(data){
 			currentUser.id = data.user;
@@ -243,22 +272,6 @@ window.App = (function(){
 			events.trigger('results-update', searchParameters["currentPage"]);
 		}
 
-		// var searchState = {
-
-		// }
-
-		// This runs when user clicks back button
-		// window.onpopstate = function(e){ 
-
-		// 	searchParameters = event.state;
-
-		// 	console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
-		// }
-
-		// function updateState(){
-
-		// }
-
 		// Views
 
 		function Map(el) {
@@ -301,7 +314,7 @@ window.App = (function(){
 			setParameter('latitudeMax', this.map.getBounds().getNorth());
 			setParameter('longitudeMin', this.map.getBounds().getWest());
 			setParameter('longitudeMax', this.map.getBounds().getEast());
-			setParameter('currentPage',0);
+			setParameter('currentPage', 0);
 			events.trigger('parameter-update');
 		};
 
@@ -317,7 +330,7 @@ window.App = (function(){
 			this.map.off('zoomend');
 			setParameter('latitudeMin', null);
 			setParameter('latitudeMax', null);
-			setParameter('longitudeMin', null)
+			setParameter('longitudeMin', null);
 			setParameter('longitudeMax', null);
 			setParameter("searchOnMapMove", false);
 			events.trigger('parameter-update');
@@ -411,7 +424,7 @@ window.App = (function(){
 		};
 
 		// find out if an item is in a given array
-		function include(arr,obj) {
+		include = function(arr,obj) {
 			return (arr.indexOf(obj) != -1);
 		};
 
@@ -598,11 +611,10 @@ window.App = (function(){
 				// reset page to 0
 				setParameter('currentPage',0);
 
-				// Push state to remember which filters are applied
-				// history.pushState(searchParameters, "filters state", "/");
-
-				// trigger parameter update which triggers results-update
+				// triggers results-update which triggers map/listings update
 				events.trigger('parameter-update');
+				// triggers url hash update
+				events.trigger('filter-update');
 			});
 
 			$('#filter-clear').on('click', function(e){
@@ -674,7 +686,9 @@ window.App = (function(){
 			$("#bike-serial").show();
 			$("#get-serial > h3").text("Please enter a valid serial number").css("color","red");
 		}
-		getBike(serial);
+		else{
+			getBike(serial);
+		}
 	});
 
 	function getBike(serial) {
@@ -695,9 +709,9 @@ window.App = (function(){
 
 			// check if bike is stolen
 			if (bike && bike["stolen"] === true){
-				$("#modal-body").html("<img src='https://bikeindex.org/assets/home/hacksaw-man.svg'>");
-				$("#modal-body").prepend("<a href='" + bike.url + "'><h4>Notify the owner on BikeIndex</h4></a>");
-				$("#modal-body").prepend("<h1>That bike is stolen!</h1>").css("color","red").css("text-align","center");
+				$("#list-modal-body").html("<img src='https://bikeindex.org/assets/home/hacksaw-man.svg'>");
+				$("#list-modal-body").prepend("<a href='" + bike.url + "'><h4>Notify the owner on BikeIndex</h4></a>");
+				$("#list-modal-body").prepend("<h1>That bike is stolen!</h1>").css("color","red").css("text-align","center");
 				$("#submit-serial").hide();
 			}
 
@@ -713,7 +727,7 @@ window.App = (function(){
 		var bikedata = JSON.stringify(bike);
 
 		$.post("/addbike", {bike: bikedata}, function(){
-			$(".modal-body").html("<h3 style='color:#66CD00'> We found your bike on BikeIndex.</h3>").css("color","green");
+			$("#list-modal-body").html("<h3 style='color:#66CD00'> We found your bike on BikeIndex.</h3>").css("color","green");
 			$("#submit-serial").replaceWith("<button id='continue-to-form' class='btn btn-primary'>Continue</button>");
 			$("#continue-to-form").on('click', function(){
 				window.location.replace("/list");
