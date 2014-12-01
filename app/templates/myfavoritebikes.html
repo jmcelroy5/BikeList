@@ -1,8 +1,5 @@
 {% extends 'base.html' %}
 
-{% block scripts %}
-{% endblock %}
-
 {% block content %}
 
 <div id="fav-bike-wrapper">
@@ -11,7 +8,7 @@
 	{% for listing in listings %}
 
 		<tr>
-			<td><a href="{{ listing.url }}"><img src="{{ listing.photo }}"></a></td>
+			<td><a href="{{ listing.url }}"><img class="bike-pic-sm" src="{{ listing.photo }}"></a></td>
 			<td> 
 				<a href="{{ listing.url }}"><h4>{{ listing.title }}</h4></a>
 				<strong>Price:</strong> ${{ listing.price }}.00<br>
@@ -29,26 +26,10 @@
 	</table>
 </div>
 
-<script>
-	
-	events = new MicroEvent();
+{% endblock %}
 
-	$('.remove-favorite').on('click', function(e){
-		alert("")
-		listingId = $(e.currentTarget).data("id");
-		console.log("listing # ", listingId," will be deleted")
-		events.trigger("remove-favorite", listingId);
-	});
-
-	events.on("remove-favorite", function(listingId){
-		$.post("/favorite", {listing:listingId}, function(){
-			window.location.reload();
-		});
-	});	
-
-</script>
-
-
+{% block scripts %}
+	App.initialize("my-favorites");
 {% endblock %}
 
 

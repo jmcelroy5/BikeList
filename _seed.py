@@ -36,7 +36,6 @@ def populate_listings_SF():
 		listing.latitude = 	uniform(37.75, 37.8) 			# Random lat in  SF 
 		listing.longitude = uniform(-122.478,-122.4)  			# Random long in SF
 		listing.additional_text = "This is a test bike. Isn't it beautiful?"
-		listing.email = "mcelroyjessica@gmail.com"
 		db.session.add(listing)
 
 	db.session.commit()
@@ -55,7 +54,7 @@ def populate_listings_EB():
 		listing.asking_price = randrange(100,1500)
 		listing.latitude = 	uniform(37.79717, 37.89016)			# East Bay
 		listing.longitude = uniform(-122.2968864, -122.243671)	# East Bay
-		listing.email = "mcelroyjessica@gmail.com"
+		listing.additional_text = "This is a test bike. Isn't it beautiful?"
 		db.session.add(listing)
 
 	db.session.commit()

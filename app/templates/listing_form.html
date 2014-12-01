@@ -1,121 +1,34 @@
 {% extends 'base.html' %}
 
-{% block scripts %}
-<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
-<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
-<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.css' rel='stylesheet' />
-{% endblock %}
-
 {% block content %}
 
 <div id="content">
-	
-	<div id="mapbox" class="col-lg-6">
-	</div>
+	<div id="listing-form-wrapper">
+		<div id="mapbox" class="col-lg-6">
+		</div>
 
-	<div id="search-panel" class="col-lg-6">
-		<h1> Complete Your Listing </h1>
-		<img class="bike-pic" src={{ bike.photo }}>
-		<form id="listing-form" action="#" method='POST'>
-			<h4>Asking price</h4>
-			<input id="price" type="number" name="price" class="form-control" placeholder="$" required></input><br>  <!--Numbers only-->
-			<h4>Your location</h4>
-			<input id="location" type="text" name="zipcode" class="form-control" required placeholder="Enter your address, cross streets, or zipcode"></input><br>
-			<h4>Your email</h4>
-			<input id="email" type="email" name="contact" class="form-control" required placeholder="Enter a valid email"></input><br>
-			<h4>Anything else you want to say?</h4>
-			<textarea id="comments" rows="4" cols="50" name="comments" class="form-control" placeholder="What do you love about this bike? What condition is it in? What components have you upgraded? When are you available for test rides?"></textarea><br><br>
-			<input class="btn btn-primary" type="submit" value="Finish Listing"></input>
-		</form>
+		<div id="search-panel" class="col-lg-6">
+			<h1> Complete Your Listing </h1>
+			<img class="bike-pic" src={{ bike.photo }}>
+			<form id="listing-form" action="#" method='POST'>
+				<h4>Asking price</h4>
+				<input id="price" type="number" name="price" class="form-control" placeholder="$" required></input><br>  <!--Numbers only-->
+				<h4>Your location</h4>
+				<input id="location" type="text" name="zipcode" class="form-control" required placeholder="Enter your address, cross streets, or zipcode"></input><br>
+				<h4>Your email</h4>
+				<input id="email" type="email" name="contact" class="form-control" required placeholder="Enter a valid email"></input><br>
+				<h4>Anything else you want to say?</h4>
+				<textarea id="comments" rows="4" cols="50" name="comments" class="form-control" placeholder="What do you love about this bike? What condition is it in? What components have you upgraded? When are you available for test rides?"></textarea><br><br>
+				<input class="btn btn-primary" type="submit" value="Finish Listing"></input>
+			</form>
+		</div>
 	</div>
 </div>
 
-	<script>
-
-		var initializeMap = function(){
-			//Connect to MapBox API
-			L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
-			// Initiate map and set view
-			map = L.mapbox.map('mapbox', 'examples.map-i86nkdio');
-			// set starting view/zoom(SF)
-			map.setView([37.79, -122.41], 14);
-		}
-
-		$(document).ready(function(){
-			initializeMap();
-			geocoder = new google.maps.Geocoder();
-		});
-
-		$("#location").blur(function(e){
-			var value = $(this).val();
-			placeMarker(value);
-		});
-
-		$("#listing-form").on("submit", function(e){
-			// Send marker coordinates for location instead of form field value
-			e.preventDefault();
-			var price = $("#price").val();
-			var comments = $("#comments").val();
-			var email = $("#email").val();
-
-			// AJAX post to add listing to database
-			$.post("/addlisting", {
-				price: price,
-				comments: comments,
-				latitude: latitude,
-				longitude: longitude,
-				email: email
-				},
-				function(response){ 
-					window.location.href = "/mylistings";
-				});
-			});
-
-		markerList = [];
-
-		var placeMarker = function(location) {
-			geocoder.geocode({address:location}, function(results){
-			latitude = results[0].geometry.location["k"];
-			longitude = results[0].geometry.location["B"]
-
-			map.setView([latitude, longitude], 14);
-
-			// If there is already a marker, delete it
-			if (typeof markerLayer !== 'undefined'){
-				markerLayer.clearLayers();
-			} 
-
-			markerList = [];
-
-			// Create new marker/layer
-			newMarker = L.mapbox.featureLayer(); 
-
-			// Marker location and properties
-			var geoJson = [{
-			type: 'Feature',
-				"geometry": { 
-					"type": "Point", 
-					"coordinates": [longitude, latitude]
-				},
-				"properties": {
-					'marker-size': 'large',
-		        	'marker-color':  '#00529f',
-		        	'marker-symbol': 'bicycle'
-				}
-			}];
-
-			// Set geoJSON
-			newMarker.setGeoJSON(geoJson);
-
-			// Add marker to the list 
-			markerList.push(newMarker);
-			// so we can clear layer if user needs to place a new marker
-			markerLayer = L.layerGroup(markerList);
-			// and finally, add it to the map
-			markerLayer.addTo(map);
-			});
-		}
-
-	</script>
 {% endblock %}
+
+{% block scripts %}
+	App.initialize("listing-form");
+{% endblock %}
+
 

@@ -31,9 +31,9 @@
 	border-bottom:1px dotted #cecece;
 }
 
-input[type=number]{
+/*input[type=number]{
     width: 60px;
-} 
+} */
 
 #content{
     width: 1100px;
@@ -168,16 +168,33 @@ input[type=number]{
 	font-weight: bold;
 }
 
+.attr-list{
+	display:inline-block;
+	width:70%;
+}
+
 .attr-list tr:nth-of-type(2n){
 	background: #ecf0f1;
 }
+
 .attr-list th{
 	border:0px;
 }
 
+.addtl-text{
+	width:70%;
+}
 
 .bike-pic{
 	width:100%;
+	display:block;
+	float: left;
+	margin: 0px;
+	border-radius:5 px;
+}
+
+.bike-pic-sm{
+	width:300px;
 	display:block;
 	float: left;
 	margin: 0px;
@@ -206,7 +223,7 @@ input[type=number]{
 #bikelocation{
 	width: 430px;
 	float:left;
-	top:60px;
+	top:71px;
 	left:0;
 	bottom:0;
     position: fixed;
@@ -225,12 +242,15 @@ input[type=number]{
 	margin-top:50px;
 }
 
-.attr-list{
-	display:inline-block;
-	width:60%;
-}
-
 /* listing_form.html */
+
+#listing-form-wrapper{
+	float:right;
+	width: 746px;
+	margin-left: 75px;
+	top:140px;
+	position: absolute;
+}
 
 #mapbox{
 	width: 430px;
@@ -341,6 +361,10 @@ li{
 
 .navbar-header{
   margin-top:10px;
+}
+
+.navbar-right{
+	margin-right:0px;
 }
 
 #logo{

@@ -7,7 +7,6 @@ import datetime
 import json
 import requests
 import os
-from math import ceil
 
 @facebook.tokengetter
 def get_facebook_token():
@@ -248,7 +247,6 @@ def get_bikes():
 @app.route("/fetchbike")
 def fetch_bike():
 	serial = request.args.get("serial")
-	print "serial from form ", serial
 	r = requests.get("https://bikeindex.org/api/v1/bikes?serial=" + serial)
 	bike = r.json()
 	return jsonify(response=bike)
