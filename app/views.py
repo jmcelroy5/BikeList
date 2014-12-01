@@ -284,9 +284,9 @@ def add_bike():
 
 	# putting sizes into categories
 	if type(size_convert) is float:
-		if size_convert <= 50:
+		if size_convert < 50:
 			new_bike.size_category = "xs"
-		elif size_convert > 50 and size_convert <= 53:
+		elif size_convert >= 50 and size_convert <= 53:
 			new_bike.size_category = "s"
 		elif size_convert > 53 and size_convert <= 56:
 			new_bike.size_category = "m"
