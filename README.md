@@ -7,6 +7,12 @@ Bike theft is a rampant problem in urban areas, in part because thieves know the
 
 ![alt text](https://cldup.com/CsuYUBfm6l.png "BikeList Search Page Screenshot")
 
+### Technology Stack
+
+Application: Python, Flask, Jinja, SQLAlchemy, SQLite
+APIs: BikeIndex, Facebook OAuth, Mapbox.js, Google Geocoding
+Presentation: HTML/CSS, Bootstrap, JQuery, JavaScript, Backbone
+
 
 
 
