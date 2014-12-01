@@ -59,13 +59,19 @@
 }
 
 .marker-popup {
-	font-size:14px;
+	font-size:16px;
+	/*text-align:center;*/
 }
 
 .marker-popup img{
-	width: 100px;
+	width: 150px;
 }
 
+/*.leaflet-popup-content {
+  	font-size: 18px;
+  	text-align: center;
+}
+*/
 .img {
     position: relative;
     float: left;
@@ -152,15 +158,6 @@
 	width:50%;
 	float:left;
 }
-
-.leaflet-popup-content img {
-  	width: 240px;
-  }
-
-.leaflet-popup-content {
-  	font-size: 18px;
-  	text-align: center;
-  }
 
 .attr-title{
 	display: inline-block;

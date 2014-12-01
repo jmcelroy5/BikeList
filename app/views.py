@@ -367,8 +367,12 @@ def delete_listing():
 
 	listing_to_delete = db.session.query(Listing).get(listing_id)
 	bike_to_delete = db.session.query(Bike).get(listing_to_delete.bike_id)
+	favorites_to_delete = db.session.query(Favorite).filter_by(listing_id=listing_id)
+	
 	db.session.delete(listing_to_delete)
 	db.session.delete(bike_to_delete)
+	db.session.delete(favorites_to_delete)
+
 	db.session.commit()
 	# TOASK: Should post functions return a status response?
 	return "listing deleted"
