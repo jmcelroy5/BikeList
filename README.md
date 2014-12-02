@@ -22,8 +22,6 @@ Thank you to Seth Herr at BikeIndex for expanding the BikeIndex API response to 
 **Search Page**
 ![alt text](https://cldup.com/-CCK9vvr9h.png)
 
-![alt text](https://cldup.com/Q5WMu1Zb47.png)
-
 **Bike Listing Page**
 ![alt text](https://cldup.com/SG7KLqyY4C.png)
 
