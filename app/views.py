@@ -366,15 +366,19 @@ def delete_listing():
 	listing_id = request.form.get("listingId");
 
 	listing_to_delete = db.session.query(Listing).get(listing_id)
-	bike_to_delete = db.session.query(Bike).get(listing_to_delete.bike_id)
-	favorites_to_delete = db.session.query(Favorite).filter_by(listing_id=listing_id)
-	
 	db.session.delete(listing_to_delete)
+
+	bike_to_delete = db.session.query(Bike).get(listing_to_delete.bike_id)
 	db.session.delete(bike_to_delete)
-	db.session.delete(favorites_to_delete)
+
+	favorites = db.session.query(Favorite).filter_by(listing_id=listing_id).all()
+	for favorite in favorites:
+		favorite_to_delete = db.session.query(Favorite).get(favorite.id)
+		db.session.delete(favorite_to_delete)
 
 	db.session.commit()
-	# TOASK: Should post functions return a status response?
+	
+	# To figure out: How should post functions return a status response?
 	return "listing deleted"
 
 @app.route("/seebike/<int:id>")
