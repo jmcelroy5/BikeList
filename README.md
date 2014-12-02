@@ -19,7 +19,7 @@ Thank you to Seth Herr at BikeIndex for expanding the BikeIndex API response to 
 
 ### Screenshots
 
-** Search Page **
+**Search Page**
 ![alt text](https://cldup.com/-CCK9vvr9h.png)
 
 ![alt text](https://cldup.com/Q5WMu1Zb47.png)
