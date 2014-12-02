@@ -1,8 +1,4 @@
-from flask import Flask 
-from flask.ext.sqlalchemy import SQLAlchemy
-
 from app import db
-import datetime
 
 ## Class declarations
 
@@ -64,15 +60,6 @@ class User(db.Model):
 
 	# Store access token for FB/BI?
 
-	def is_authenticated(self):
-		return True
-
-	def is_active(self):
-		return True
-
-	def is_anonymous(self):
-		return False
-
 	def get_id(self):	
 		try:
 			return unicode(self.id)
@@ -105,7 +92,7 @@ class Listing(db.Model):
 	additional_text = db.Column(db.String(500),nullable=True)
 	email = db.Column(db.String(120), nullable=False)
 
-	# Listing also has comments attribute (list of comments)
+	# Listing also has comments attribute (list of comments about that bike)
 
 	def __repr__(self):
 		return '<Listing %r>' % (self.additional_text)
@@ -132,13 +119,5 @@ class Favorite(db.Model):
 
 def create_tables():
     db.Model.metadata.create_all(db.engine)
-
-def main():
-	""" in case I need it for something """
-	pass
-
-if __name__ == "__main__":
-	main()
-
 
 

@@ -25,7 +25,7 @@ def get_all_bikes():
 
 def populate_listings_SF():
 	bike_list = model.Bike.query.all()
-	for bike in bike_list[:40]:
+	for bike in bike_list[:45]:
 		listing = model.Listing()
 
 		listing.bike_id = bike.id
@@ -34,8 +34,9 @@ def populate_listings_SF():
 		listing.post_status = "Active"
 		listing.asking_price = randrange(100,1500)
 		listing.latitude = 	uniform(37.75, 37.8) 			# Random lat in  SF 
-		listing.longitude = uniform(-122.478,-122.4)  			# Random long in SF
-		listing.additional_text = "This is a test bike. Isn't it beautiful?"
+		listing.longitude = uniform(-122.478,-122.4)  		# Random long in SF
+		listing.additional_text = "Asymmetrical aesthetic Thundercats bicycle rights mustache Kickstarter cred organic kogi, stumptown put a bird on it. Single-origin coffee letterpress put a bird on it ugh sustainable. Lo-fi Pinterest church-key tofu, sustainable roof party banjo kale chips American Apparel Williamsburg mumblecore. Etsy beard PBR gastropub cray flexitarian. Sustainable yr mlkshk pickled tilde semiotics, Wes Anderson High Life chia ugh put a bird on it literally Banksy slow-carb squid. Tofu street art craft beer, brunch post-ironic paleo roof party meditation Tumblr banjo. Direct trade messenger bag swag pickled deep v."
+		listing.email = "asdvalenzuela@gmail.com"
 		db.session.add(listing)
 
 	db.session.commit()
@@ -44,7 +45,7 @@ def populate_listings_SF():
 
 def populate_listings_EB():
 	bike_list = model.Bike.query.all()
-	for bike in bike_list[40:]:
+	for bike in bike_list[45:]:
 		listing = model.Listing()
 
 		listing.bike_id = bike.id
@@ -54,7 +55,8 @@ def populate_listings_EB():
 		listing.asking_price = randrange(100,1500)
 		listing.latitude = 	uniform(37.79717, 37.89016)			# East Bay
 		listing.longitude = uniform(-122.2968864, -122.243671)	# East Bay
-		listing.additional_text = "This is a test bike. Isn't it beautiful?"
+		listing.additional_text = "Asymmetrical aesthetic Thundercats bicycle rights mustache Kickstarter cred organic kogi, stumptown put a bird on it. Single-origin coffee letterpress put a bird on it ugh sustainable. Lo-fi Pinterest church-key tofu, sustainable roof party banjo kale chips American Apparel Williamsburg mumblecore. Etsy beard PBR gastropub cray flexitarian. Sustainable yr mlkshk pickled tilde semiotics, Wes Anderson High Life chia ugh put a bird on it literally Banksy slow-carb squid. Tofu street art craft beer, brunch post-ironic paleo roof party meditation Tumblr banjo. Direct trade messenger bag swag pickled deep v."
+		listing.email = "asdvalenzuela@gmail.com"
 		db.session.add(listing)
 
 	db.session.commit()
@@ -79,7 +81,7 @@ def create_user():
 	name = user.first_name
 	print name, "added to database!"
 
-# input a list of bike serial numbers
+# input a list of bike serial numbers from file
 def populate_bikes(filename):
 
 	f = open(filename, "r")
@@ -88,6 +90,7 @@ def populate_bikes(filename):
 	f.close()
 
 	for serial in serials:
+		print "Adding", serial
 		# Create new bike instance for bike table
 		new_bike = model.Bike()
 
@@ -97,10 +100,11 @@ def populate_bikes(filename):
 		# Decode JSON 
 		bike_json = bike_request.json()	 
 
-		# Extract first bike from list
+		# Extract first bike from API response
 		if len(bike_json["bikes"]) == 0:
 			print "No bike with serial number ", serial, " found"
 			continue # go back to top of for-loop
+
 		bike = bike_json["bikes"][0] 
 
 		# Populate bike attributes
@@ -131,44 +135,38 @@ def populate_bikes(filename):
 			new_bike.handlebar_type = choice(handlebars)
 
 		# Fudging size data to fill in gaps
-		print new_bike.size
 		sizes = ['xs','s','m','l','xl']
 		if new_bike.size is None or len(new_bike.size) == 0:
 			new_bike.size = choice(sizes)
-			print "is empty. Replaced with", new_bike.size
 
 		if len(new_bike.size) > 0 and new_bike.size not in sizes:
 			if new_bike.size.endswith('in'):
 				# converting inches to centimeters
 				size_convert = float(new_bike.size[:-2]) * 2.54
-				print "inches converted to ", size_convert, "cm"
 			elif new_bike.size.endswith('cm'):
 				# floating the cm
 				size_convert = float(new_bike.size[:-2])
-				print "already in cm "
 		else:
 			size_convert = "no need to convert"
 			new_bike.size_category = new_bike.size
-			print size_convert
-			print "put in size category: ", new_bike.size_category
 
-		# put sizes into buckets 
+		# put sizes into buckets for search
 		if type(size_convert) is float:
 			if size_convert <= 50:
 				new_bike.size_category = "xs"
-				print "put in size category: ", new_bike.size_category
 			elif size_convert > 50 and size_convert <= 53:
 				new_bike.size_category = "s"
-				print "put in size category: ", new_bike.size_category
 			elif size_convert > 53 and size_convert <= 56:
 				new_bike.size_category = "m"
-				print "put in size category: ", new_bike.size_category
 			elif size_convert > 56 and size_convert <= 59:
 				new_bike.size_category = "l"
-				print "put in size category: ", new_bike.size_category
 			elif size_convert > 59:
 				new_bike.size_category = "xl"
-				print "put in size category: ", new_bike.size_category
+
+		# writing out sizes for better display
+		size_to_display = {"xs": "Extra Small", "s":"Small", "m":"Medium", "l":"Large", "xl": "Extra Large" }
+		if new_bike.size in sizes:
+			new_bike.size = size_to_display[new_bike.size]
 			
 		# breaking frame colors out of list format
 		new_bike.frame_colors = "" 			
@@ -201,6 +199,4 @@ def populate_bikes(filename):
 	db.session.commit() 
 	rows = model.Bike.query.count()
 	return rows, "bikes added to database successfully"
-
-
 

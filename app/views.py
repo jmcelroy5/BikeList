@@ -55,6 +55,11 @@ def add_new_user():
 	else:
 		return existing_user
 
+def get_user_photo():
+	photo = facebook.get('/me/picture?redirect=0&height=1000&type=normal&width=1000').data
+	photo_url = photo['data']['url']
+	return photo_url
+
 @app.route("/logout")
 def logout():
     clear_session()
@@ -78,11 +83,6 @@ def get_session():
 	print "\n BikeIndex token:", flask_session.get('bikeindex_token', 'Not set')
 	print "\n Current user:", flask_session.get("user", "Not set")
 	return "Check the console."
-
-def get_user_photo():
-	photo = facebook.get('/me/picture?redirect=0&height=1000&type=normal&width=1000').data
-	photo_url = photo['data']['url']
-	return photo_url
 
 # Bike Index OAuth:
 
@@ -132,7 +132,7 @@ def set_current_user():
     	g.logged_in = True
     # pass
 
-# makes user state available to javascript
+# makes user available to javascript
 @app.route("/getuser")
 def get_current_user():
     try:
@@ -148,6 +148,7 @@ def index():
 @app.route("/getbikes")
 def get_bikes():
 	""" get search results """
+	# Get user-submitted filters from form
 	sizes = request.args.getlist('sizes[]') 		
 	materials = request.args.getlist('materials[]') 		
 	handlebars = request.args.getlist('handlebars[]') 		
@@ -163,7 +164,7 @@ def get_bikes():
 	query = db.session.query(Listing, Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active") 
 	# query = Listing.query.join(Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active")
 
-	# Filter for listings in current map view
+	# Filter for listings within current map view
 	try:
 		query = query.filter(Listing.latitude > float(lat_min)).filter(Listing.latitude < float(lat_max))
 		query = query.filter(Listing.longitude > float(long_min)).filter(Listing.longitude < float(long_max))
@@ -247,6 +248,9 @@ def add_bike():
 	bike_JSON= request.form.get("bike")	# Get JSON bike object from ajax ({bike: bikedata})
 	bike = json.loads(bike_JSON)	# JSON string --> Python dictionary
 
+	if bike["stolen"]:
+		return "Stolen bike! Do not add."
+
 	# Create new bike instance for bike table
 	new_bike = Bike()
 
@@ -270,7 +274,7 @@ def add_bike():
 	# list of valid size categories 
 	valid_sizes = ['xs','s','m','l','xl']
 
-	# normalizing frame size measurements (inches to cm)
+	# normalizing frame size measurements 
 	if len(new_bike.size) > 0 and new_bike.size not in valid_sizes:
 		if new_bike.size.endswith('in'):
 			# converting inches to centimeters
@@ -342,7 +346,7 @@ def listing_form():
 
 @app.route("/addlisting", methods=['POST'])
 def add_listing():
-
+	
 	new_listing = Listing()
 
 	new_listing.bike_id = flask_session["bike"]	# get bike id from flask session
@@ -377,7 +381,7 @@ def delete_listing():
 		db.session.delete(favorite_to_delete)
 
 	db.session.commit()
-	
+
 	# To figure out: How should post functions return a status response?
 	return "listing deleted"
 

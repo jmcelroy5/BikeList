@@ -27,7 +27,7 @@ window.App = (function(){
 						window.location.reload();
 					});
 				});
-			});	
+			});
 		});
 	};
 
@@ -53,7 +53,7 @@ window.App = (function(){
 			// Initiate map 
 			map = L.mapbox.map('bikeLocation', 'examples.map-i86nkdio');
 
-			// get coordinates of listing
+			// get coordinates of listing 
 			var longitude = config.longitude;
 			var latitude = config.latitude;
 
@@ -127,7 +127,7 @@ window.App = (function(){
 		var placeMarker = function(location) {
 			geocoder.geocode({address:location}, function(results){
 			latitude = results[0].geometry.location["k"];
-			longitude = results[0].geometry.location["B"]
+			longitude = results[0].geometry.location["B"];
 
 			map.setView([latitude, longitude], 14);
 
@@ -166,7 +166,7 @@ window.App = (function(){
 			markerLayer.addTo(map);
 			});
 		};
-	}; // end of listing form module
+	}; 
 
 	modules["search-page"] = function(config){
 
@@ -266,7 +266,7 @@ window.App = (function(){
 			results.numResults = response["num_results"];  // length of listings array
 			results.pageLower = response["page_range_lower"]; // lower bound of items to display
 			results.pageUpper = response["page_range_upper"]; // lower bound of items to display
-			results.totalResults = response["total_results"];
+			results.totalResults = response["total_results"]; // total number of results found for query
 			results.favorites = response["favorites"];
 			// trigger results-update so search panel, pagination, and listings update
 			events.trigger('results-update', searchParameters["currentPage"]);
@@ -371,7 +371,7 @@ window.App = (function(){
 				marker.bindPopup(popupContent);
 			});
 
-			// object that will be used to map listings to their marker
+			// object that will be used to map listing cards to their map marker
 			this.markerMap = {};
 
 			for (var i = 0; i < listings.length; i++){
@@ -383,7 +383,7 @@ window.App = (function(){
 				this.geoJson.push({
 					type: 'Feature',
 					geometry: {
-						type: "Point", 
+						type: "Point",
 						coordinates: [listing.longitude, listing.latitude]
 					},
 					properties: {
@@ -597,7 +597,7 @@ window.App = (function(){
 				var minPriceValue = $('#range').val()[0];
 				setParameter('minPrice', minPriceValue);
 
-				// get max price from form
+				// get max price from slider
 				var maxPriceValue = $('#range').val()[1];
 				setParameter('maxPrice', maxPriceValue);
 
@@ -613,6 +613,7 @@ window.App = (function(){
 
 				// triggers results-update which triggers map/listings update
 				events.trigger('parameter-update');
+
 				// triggers url hash update
 				events.trigger('filter-update');
 			});
@@ -623,7 +624,7 @@ window.App = (function(){
 				$("#range").val([0, 1500]);
 				// reset checked fields
 				$("input:checked").removeAttr('checked');
-
+				// reset search parameters
 				setParameter("sizes", []);
 				setParameter("materials", []);
 				setParameter("handlebars", []);
@@ -662,13 +663,15 @@ window.App = (function(){
 
 		// TODO: function that saves search parameters to URL
 
-		// Controller
-			
+		// "Controller"
+		
+		// Runs on page load 
 		window.map = new Map(document.querySelector('#map-panel'));
 		new Listings(document.querySelector('#search-results'));
 		new Paginator(document.querySelector('#paginator'));
 		new Filters(document.querySelector('#search-filters'));
 
+		// Initial search results fetch
 		fetchResults(function(data){
 			updateResults(data);
 		});
@@ -694,7 +697,7 @@ window.App = (function(){
 	function getBike(serial) {
 
 		$.get("/fetchbike", {serial: serial}, function(data){
-			// check to make sure we got one bike back
+			// check to make sure we got one bike back from BikeIndex API
 			var bike;
 			if (data["response"]["bikes"].length === 1){
 				bike = data["response"]["bikes"][0];

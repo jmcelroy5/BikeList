@@ -8,34 +8,51 @@ To-do list:
 	- Search filters 
 		- material - DONE
 		- price - DONE (but could make into a slider)
-		- size 
+		- size - DONE (may need improved categories for live site though)
 		- handlebar type - DONE
-		- # of gears
-		- search by make/model
+		- # of gears - put it on the listing page
+		- search by make/model - 2.0 feature
 	- DB optimization stuff: Index listings for search?
-	- Airbnbify the design/css, make a navbar - DONE-ish
+	- Airbnbify the design/css, make a navbar - DONE
 	- Facebook OAuth for user sign-in - DONE
-	- user account management page (delete listings and such)
-	- flesh out individual bike listing page - IN PROGRESS
+	- user account management page (delete listings and such) - DONE
+	- flesh out individual bike listing page - DONE
 	(include map, components, seller photos)
-	- redo the listing form map (google - mapbox)
-	- listing form verification
-	- allow user to add favorite bikes!
-	- users can ask seller questions about the bike
+	- redo the listing form map (google - mapbox) - DONE
+	- listing form verification - DONE-ish
+	- allow user to add favorite bikes! - DONE!
 
-	- edit listings / post back to BikeIndex?!
+In Progress:
+	- Hash search in URL 
+	- Make CSS responsive (map goes away, navbar simplifies, fewer rows of bikes, etc)
+	^ How to handle modals on smaller screens?
+	- 'List bike' leads to login modal when no current user
+	- buy custom domain and point it to pythonanywhere url
+	- figure out why facebook oauth isnt working on live site (errno 101)
+	- handle error: bike/listing already exists
+	- fix bug on toggling "search by map move"
+	- migrate sqlite to another kind of database for live version?
+	- make email optional on form (and make it clear that email will be displayed to buyers)
+	- make sure email on listing is the one user provided on the form
 
-Questions:
+2.0 Features:
+	- anonymous email
+	- users can comment / ask seller questions about the bike 
+	- edit listings / post back to BikeIndex?! 
+	- let a user register on bikeindex through my site when they want to sell instead of requiring that they register beforehand (but this would mean duplicating bikeindex's complicated form...)
+
+Things to learn about:
 	- unit testing
-	- hiding app keys
+	- backbone and underscore
+	- js templating (handlebars?)
+	- error handling (server responses / client-side display)
+	- database dumping and migration
 
 Error cases that will need to be handled:
-	- bike is stolen
-	- bike serial number not found 
-	- OR user clicks "no" (we got the wrong bike)
-	- If a listing already exists for that bike
-	- listing form verification: all fields are filled out and in proper data format
-	- if google geocoder returns empty response on listing form
+	- bike is stolen - DONE 
+	- bike serial number not found - DONE 
+	- If a bike/listing already exists - NEED TO DO THIS!
+	- listing form verification: all fields are filled out and in proper data format - DONE-ish
 
 MVP features:
 

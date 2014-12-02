@@ -61,7 +61,7 @@
 			<a href="{{ user.facebook_url }}"><img class="seller-contact" src="{{user.avatar}}"></a>
 			<br>
 			<h4> {{ user.first_name }} </h4>
-			<p>{{ user.email }}</p>
+			<p>{{ listing.email }}</p>
 		{% else %}
 			<p> You must be <a data-toggle="modal" data-target="#login-modal">logged in</a> to see seller's contact information.</p>
 		{% endif %}
