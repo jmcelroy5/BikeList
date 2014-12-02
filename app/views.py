@@ -300,7 +300,7 @@ def add_bike():
 			new_bike.size_category = "xl"
 
 	# changing size abbrevation for display
-	size_to_display = {"xs": "Extra Small", "s":"Small", "m":"Medium", "l":"Large", "xl": "Extra Lsarge" }
+	size_to_display = {"xs": "Extra Small", "s":"Small", "m":"Medium", "l":"Large", "xl": "Extra Large" }
 	if new_bike.size in valid_sizes:
 		new_bike.size = size_to_display[new_bike.size]
 

@@ -33,7 +33,6 @@ In Progress:
 	- fix bug on toggling "search by map move"
 	- migrate sqlite to another kind of database for live version?
 	- make email optional on form (and make it clear that email will be displayed to buyers)
-	- make sure email on listing is the one user provided on the form
 
 2.0 Features:
 	- anonymous email

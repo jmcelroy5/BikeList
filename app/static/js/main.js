@@ -90,7 +90,7 @@ window.App = (function(){
 			// Initiate map and set view
 			map = L.mapbox.map('mapbox', 'examples.map-i86nkdio');
 			// set starting view/zoom(SF)
-			map.setView([37.79, -122.41], 14);
+			map.setView([37.79, -122.41], 10);
 		};
 
 		initializeMap();
@@ -166,16 +166,17 @@ window.App = (function(){
 			markerLayer.addTo(map);
 			});
 		};
-	}; 
+	};
 
 	modules["search-page"] = function(config){
 
+		// set defaults search params
 		var searchParameters = {
 			sizes: [],
 			materials: [],
 			handlebars: [],
-			maxPrice: null,
-			minPrice: null,
+			maxPrice: 1500,
+			minPrice: 0,
 
 			latitudeMin: null,
 			latitudeMax: null,
@@ -185,7 +186,7 @@ window.App = (function(){
 			searchOnMapMove: false,
 
 			resultLimit: 15,
-			currentPage: 0, 
+			currentPage: 0,
 		};
 
 		var currentUser = {
@@ -194,35 +195,6 @@ window.App = (function(){
 			name: null,
 			favorites: []
 		};
-
-		// //read URL on page load
-		// events.on("filter-update", function(){
-		// 	hashString = window.location.search;
-		// 	if (hashString){
-		// 		fetchResults(function(data){
-		// 			updateResults(data);
-		// 		});
-		// 	}
-		// 	// set search parameter object to match 
-		// 	// set filter knobs to match
-		// });
-
-		// // set URL when filters update
-		// function hashSearch(obj){
-		// 	return _.pairs(obj)
-		// 		.map(function(array){
-		// 			return array[0] + '=' + encodeURIComponent(array[1]);
-		// 		})
-		// 		.reduce(function(a,b){
-		// 			return a + '&' + b;
-		// 		});
-		// }
-
-		// events.on('filter-update', function(){
-		// 	var hashString = "?" + hashSearch(searchParameters);
-		// 	history.replaceState(null, null, hashString);
-		// });
-
 
 		$.get('/getuser', function(data){
 			currentUser.id = data.user;
@@ -258,6 +230,9 @@ window.App = (function(){
 			fetchResults(function(data){
 				updateResults(data);
 			});
+			// updates url search string	
+			var hashString = "?" + hashSearch(searchParameters);
+			history.replaceState(null, null, hashString);
 		});
 
 		function updateResults(data){
@@ -302,9 +277,11 @@ window.App = (function(){
 			$("#limit-map-search input:checkbox").change(function(){
 				if ($(this).is(':checked')){
 					window.map.enableMapSearch();
+					events.trigger("parameter-update");
 				}
 				else{
 					window.map.disableMapSearch();
+					events.trigger("parameter-update");
 				}
 			});
 		}
@@ -344,7 +321,7 @@ window.App = (function(){
 			this.map = L.mapbox.map(this.el, 'asdv.ka97lo0j', { zoomControl: false });
 
 			// // Set starting view/zoom(SF)
-			// this.map.setView([37.78, -122.44], 13);
+			this.map.setView([37.78, -122.44], 13);
 
 			// Set zoom control location
 			new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
@@ -403,9 +380,14 @@ window.App = (function(){
 			this.markerLayer.setGeoJSON(this.geoJson);
 			this.markerLayer.addTo(this.map);
 
-			// fit map bounds to markers if "search on map move" not selected
+			// debugger;
+			// // fit map bounds to markers if "search on map move" not selected
 			if (!searchParameters.searchOnMapMove && listings.length){
 				this.map.fitBounds(this.markerLayer.getBounds());
+				setParameter('latitudeMin', this.map.getBounds().getSouth());
+				setParameter('latitudeMax', this.map.getBounds().getNorth());
+				setParameter('longitudeMin', this.map.getBounds().getWest());
+				setParameter('longitudeMax', this.map.getBounds().getEast());
 			}
 		};
 
@@ -575,47 +557,70 @@ window.App = (function(){
 
 		function Filters(el){
 
+			// event triggered after app reads query string on page load
+			events.on("set-filter-knobs", function() {
+				// set filter knobs according to current searchParams
+				// sizes checkboxes
+				for (var a=0; a < searchParameters.sizes.length; a++){
+					$('#size-filters input[name="' + searchParameters.sizes[a] + '"]').prop('checked', true);
+				}
+				// materials checkboxes
+				for (var b=0; b < searchParameters.materials.length; b++){
+					$('#materials-filters input[name="' + searchParameters.materials[b] + '"]').prop('checked', true);
+				}
+				for (var c=0; c < searchParameters.handlebars.length; c++){
+					$('#handlebar-filters input[name="' + searchParameters.handlebars[c] + '"]').prop('checked', true);
+				}
+				// max/min price on slider
+				$("#range").val([searchParameters.minPrice, searchParameters.maxPrice]);
+			});
+
 			$('#filter-submit').on('click', function(e){
 
 				e.preventDefault();
 
-				var sizeList = [];
+				// var currentFilters = {}
+
 				// get checked sizes from form
+				var sizeList = [];
 				$('#size-filters input:checked').each(function(i,size){
 					sizeList.push($(size).attr('name'));
 				});
 				setParameter('sizes', sizeList);
+				// currentFilters.sizeList = sizeList;
 
-				var materialList = [];
 				// get checked materials from form
+				var materialList = [];
 				$('#materials-filters input:checked').each(function(i,material){
 					materialList.push($(material).attr('name'));
 				});
 				setParameter('materials', materialList);
+				// currentFilters.materials = materialList;
 
 				// get min price from slider
-				var minPriceValue = $('#range').val()[0];
+				minPriceValue = $('#range').val()[0];
 				setParameter('minPrice', minPriceValue);
+				// currentFilters.minPrice = minPriceValue;
 
 				// get max price from slider
-				var maxPriceValue = $('#range').val()[1];
+				maxPriceValue = $('#range').val()[1];
 				setParameter('maxPrice', maxPriceValue);
+				// currentFilters.maxPrice = maxPriceValue;
 
-				// get checked handlebars from slider
-				var handlebarList = [];
+				// get checked handlebars 
+				var handlebarList = []
 				$('#handlebar-filters input:checked').each(function(i,handlebar){
 					handlebarList.push($(handlebar).attr('name'));
 				});
 				setParameter('handlebars', handlebarList);
-				
+				// currentFilters.maxPrice = handlebarList;
+
 				// reset page to 0
-				setParameter('currentPage',0);
+				setParameter('currentPage', 0);
+				// currentFilters.currentPage = 0;
 
 				// triggers results-update which triggers map/listings update
 				events.trigger('parameter-update');
-
-				// triggers url hash update
-				events.trigger('filter-update');
 			});
 
 			$('#filter-clear').on('click', function(e){
@@ -632,6 +637,9 @@ window.App = (function(){
 				setParameter("minPrice", null);
 				setParameter("currentPage", 0);
 				events.trigger("parameter-update");
+
+				var hashString = "?" + hashSearch(searchParameters);
+				history.replaceState(null, null, hashString);
 			});
 
 			// Price Slider JQuery plugin
@@ -661,9 +669,17 @@ window.App = (function(){
 			$('#range').Link('upper').to($('#value-high'), 'html');
 		}
 
-		// TODO: function that saves search parameters to URL
-
-		// "Controller"
+		// used to set search string in URL when search filters are updated
+		// make this a method of Filters prototype?
+		var hashSearch = function(obj){
+			return _.pairs(obj) // object to key/value pairs then to standard search query format
+			.map(function(array){
+				return array[0] + '=' + array[1];
+			})
+			.reduce(function(a,b){
+				return a + '&' + b;
+			});
+		};
 		
 		// Runs on page load 
 		window.map = new Map(document.querySelector('#map-panel'));
@@ -671,10 +687,38 @@ window.App = (function(){
 		new Paginator(document.querySelector('#paginator'));
 		new Filters(document.querySelector('#search-filters'));
 
-		// Initial search results fetch
-		fetchResults(function(data){
-			updateResults(data);
-		});
+		// getQueryParams.js parses query string
+		getQueryParams = function(queryString) {
+			var query = (queryString || window.location.search).substring(1);
+			if (!query) {
+				return false;
+			}
+			return _
+				.chain(query.split('&'))
+				.map(function(params) {
+					var p = params.split('=');
+					return [p[0], decodeURIComponent(p[1])];
+				})
+				.object()
+				.value();
+		};
+
+		savedSearch = getQueryParams();
+		// parse and set search params if there's a search string in URL
+		if (savedSearch){
+			searchParameters = getQueryParams();
+			// make sure boolean option ends up in right format
+			searchParameters["searchOnMapMove"] = JSON.parse(searchParameters["searchOnMapMove"]);
+			fetchResults(function(data){
+				updateResults(data);
+				events.trigger("set-filter-knobs");
+			});
+		}
+		else{
+			fetchResults(function(data){
+				updateResults(data);
+			});
+		}
 
 	};
 
