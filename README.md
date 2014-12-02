@@ -7,20 +7,37 @@ BikeList is an alternative used bike marketplace that introduces more transparen
 
 **Inspiration**
 
-Shortly before I started Hackbright my touring bike that I had ridden thousands of miles was stolen. When I started scanning Craigslist for a new bike, it was frustrating to see so many listings that seemed suspicious. The loss of my bike was so devastating, I feared accidentally buying a stolen bike and becoming complicit in the crime. 
+Shortly before I started Hackbright my touring bike that I had ridden thousands of miles was stolen. When I started scanning Craigslist for a new bike, it was frustrating to see so many listings that seemed suspicious. The loss of my bike was so devastating, I didn't want to buy a stolen bike and become complicit in the crime. 
 
 In the aftermath I found out about BikeIndex, an online national bike registry that allows you to register your bike and, if the worst ever befalls, report it as stolen. The BikeIndex registry serves as a resource for used bike buyers to check a bike serial number and see if it's stolen, and the site has helped thousands of bike theft victims recover their bikes. 
 
-This is why I decided to make a "safe" used bike marketplace that requires sellers to register on BikeIndex. The BikeIndex registration process is quick and easy, and the more people who register their bikes the closer we get to making bike theft history.
+Part of the purpose of BikeList is to encourage more people to register their bikes. The BikeIndex registration process is quick and easy, and the more people who register their bikes the closer we get to making bike theft a thing of the past.
 
 **Acknowledgement**
 
-Thank you to Seth Herr at BikeIndex for the amazing API and bike registry service that makes BikeList possible.
+Thank you to Seth Herr at BikeIndex for expanding the BikeIndex API response to include bike frame size.
+
+### Screenshots
+
+** Search Page **
+![alt text](https://cloudup.com/cexfi-j0zwL)
+
+![alt text](https://cloudup.com/cZJ4J_3wah1)
+
+**Info Guides**
+![alt text](https://cloudup.com/ckIFcPv3w1c)
+
+**Bike Listing Page**
+![alt text](https://cloudup.com/cQowfpAolFs)
+
+**Catching Stolen Bikes**
+![alt text](https://cloudup.com/czc6uGgX_dx)
+
+**Listing a Bike**
+![alt text](https://cloudup.com/cnVcQkzxYtT)
 
 ### Technology Stack
 
-**Application:** Python, Flask, Jinja, SQLAlchemy, SQLite
-**APIs:** BikeIndex, Facebook OAuth, Mapbox.js, Google Geocoding
-**Front-End**: HTML/CSS, Bootstrap, JQuery, JavaScript, Backbone
-
-![alt text](https://cldup.com/CsuYUBfm6l.png "BikeList Search Page Screenshot")
+**Application:** Python, Flask, Jinja, SQLAlchemy, SQLite  
+**APIs:** BikeIndex, Facebook OAuth, Mapbox.js, Google Geocoding  
+**Front-End**: HTML/CSS, Bootstrap, JQuery, JavaScript, Backbone  
