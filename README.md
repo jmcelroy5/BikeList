@@ -20,21 +20,15 @@ Thank you to Seth Herr at BikeIndex for expanding the BikeIndex API response to 
 ### Screenshots
 
 ** Search Page **
-![alt text](https://cloudup.com/cexfi-j0zwL)
+![alt text](https://cldup.com/-CCK9vvr9h.png)
 
-![alt text](https://cloudup.com/cZJ4J_3wah1)
-
-**Info Guides**
-![alt text](https://cloudup.com/ckIFcPv3w1c)
+![alt text](https://cldup.com/Q5WMu1Zb47.png)
 
 **Bike Listing Page**
-![alt text](https://cloudup.com/cQowfpAolFs)
+![alt text](https://cldup.com/SG7KLqyY4C.png)
 
 **Catching Stolen Bikes**
-![alt text](https://cloudup.com/czc6uGgX_dx)
-
-**Listing a Bike**
-![alt text](https://cloudup.com/cnVcQkzxYtT)
+![alt text](https://cldup.com/Td9NE6eydd.png)
 
 ### Technology Stack
 
