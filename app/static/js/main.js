@@ -298,12 +298,16 @@ window.App = (function(){
 			this.map = L.mapbox.map(this.el, 'asdv.ka97lo0j', { zoomControl: false });
 
 			// // Set starting view/zoom(SF)
-			this.map.setView([37.78, -122.44], 13);
+			this.map.setView([37.80, -122.34], 11);
 
 			// Set zoom control location
 			new L.Control.Zoom({ position: 'bottomleft' }).addTo(this.map);
 			// Add geocoder search bar
 			this.map.addControl(L.mapbox.geocoderControl('mapbox.places-v1'));
+
+			if(searchParameters.searchOnMapMove){
+				window.map.enableMapSearch();
+			}
 		};
 
 		Map.prototype.placeMarkers = function(results){
@@ -357,10 +361,10 @@ window.App = (function(){
 			this.markerLayer.setGeoJSON(this.geoJson);
 			this.markerLayer.addTo(this.map);
 
-			// debugger;
-			// // fit map bounds to markers if "search on map move" not selected
+			// fit map bounds to markers if "search on map move" not selected
 			if (!searchParameters.searchOnMapMove && listings.length){
 				this.map.fitBounds(this.markerLayer.getBounds());
+				// one-time set
 				setParameter('latitudeMin', this.map.getBounds().getSouth());
 				setParameter('latitudeMax', this.map.getBounds().getNorth());
 				setParameter('longitudeMin', this.map.getBounds().getWest());
@@ -405,10 +409,6 @@ window.App = (function(){
 		};
 
 		function Listings(el) {
-
-			// events.on('parameter-update', function(){
-			// 	// Show loading indicator in searchpanel while results are being fetched
-			// });
 
 			events.on('results-update', function() {
 				$searchResults = $('#search-results');
@@ -590,7 +590,7 @@ window.App = (function(){
 				// currentFilters.maxPrice = maxPriceValue;
 
 				// get checked handlebars 
-				var handlebarList = []
+				var handlebarList = [];
 				$('#handlebar-filters input:checked').each(function(i,handlebar){
 					handlebarList.push($(handlebar).attr('name'));
 				});
@@ -697,8 +697,6 @@ window.App = (function(){
 
 			events.on('parameter-update', function() {
 				fetchResults(function(data){
-					console.log("returning results with these search filters ", searchParameters)
-
 					updateResults(data);
 				});
 				// updates url search string	
@@ -734,7 +732,6 @@ window.App = (function(){
 					searchParameters["handlebars"] = searchString["handlebars"].split(',');
 				}
 				events.trigger("set-filter-knobs");
-				debugger;
 				events.trigger("parameter-update");
 			}
 
