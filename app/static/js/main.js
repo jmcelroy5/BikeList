@@ -47,6 +47,12 @@ window.App = (function(){
 
 	modules["active-listing"] = function(config){
 
+		$("#back-to-search").on("click", function(e){
+			e.preventDefault();
+			history.back();
+			console.log("history backin it up");
+		});
+
 		var bikeLocationMap = function(){
 			//Connect to MapBox API
 			L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
@@ -171,7 +177,7 @@ window.App = (function(){
 	modules["search-page"] = function(config){
 
 		// set defaults search params
-		var searchParameters = {
+		searchParameters = {
 			sizes: [],
 			materials: [],
 			handlebars: [],
@@ -220,33 +226,6 @@ window.App = (function(){
 			totalResults: null,
 		};
 
-		function fetchResults(callback){
-			$.get('/getbikes', searchParameters, callback);
-			// fetches the bikes for current searchParameters
-			// once it has that data, calls callback function
-		}
-
-		events.on('parameter-update', function() {
-			fetchResults(function(data){
-				updateResults(data);
-			});
-			// updates url search string	
-			var hashString = "?" + hashSearch(searchParameters);
-			history.replaceState(null, null, hashString);
-		});
-
-		function updateResults(data){
-			var response = data["response"];
-			results.results = response["listings"]; // array of listings
-			results.numResults = response["num_results"];  // length of listings array
-			results.pageLower = response["page_range_lower"]; // lower bound of items to display
-			results.pageUpper = response["page_range_upper"]; // lower bound of items to display
-			results.totalResults = response["total_results"]; // total number of results found for query
-			results.favorites = response["favorites"];
-			// trigger results-update so search panel, pagination, and listings update
-			events.trigger('results-update', searchParameters["currentPage"]);
-		}
-
 		// Views
 
 		function Map(el) {
@@ -277,11 +256,9 @@ window.App = (function(){
 			$("#limit-map-search input:checkbox").change(function(){
 				if ($(this).is(':checked')){
 					window.map.enableMapSearch();
-					events.trigger("parameter-update");
 				}
 				else{
 					window.map.disableMapSearch();
-					events.trigger("parameter-update");
 				}
 			});
 		}
@@ -389,6 +366,11 @@ window.App = (function(){
 				setParameter('longitudeMin', this.map.getBounds().getWest());
 				setParameter('longitudeMax', this.map.getBounds().getEast());
 			}
+			// else if (listings.length){
+			// 	// set view to marker layer one time, not dynamically
+			// 	markerLayerCenter = [this.markerLayer.getBounds().getCenter().lat, this.markerLayer.getBounds().getCenter().lng];
+			// 	this.map.setView(markerLayerCenter, 11);
+			// }
 		};
 
 		Map.prototype.setMarkerActive = function(listingId){
@@ -640,6 +622,7 @@ window.App = (function(){
 
 				var hashString = "?" + hashSearch(searchParameters);
 				history.replaceState(null, null, hashString);
+				history.pushState(null,null, hashString);
 			});
 
 			// Price Slider JQuery plugin
@@ -681,44 +664,87 @@ window.App = (function(){
 			});
 		};
 		
+
 		// Runs on page load 
-		window.map = new Map(document.querySelector('#map-panel'));
-		new Listings(document.querySelector('#search-results'));
-		new Paginator(document.querySelector('#paginator'));
-		new Filters(document.querySelector('#search-filters'));
+		$(document).ready(function(){
 
-		// getQueryParams.js parses query string
-		getQueryParams = function(queryString) {
-			var query = (queryString || window.location.search).substring(1);
-			if (!query) {
-				return false;
+			window.map = new Map(document.querySelector('#map-panel'));
+			new Listings(document.querySelector('#search-results'));
+			new Paginator(document.querySelector('#paginator'));
+			new Filters(document.querySelector('#search-filters'));
+
+			// getQueryParams.js parses query string
+			getQueryParams = function(queryString) {
+				var query = (queryString || window.location.search).substring(1);
+				if (!query) {
+					return false;
+				}
+				return _
+					.chain(query.split('&'))
+					.map(function(params) {
+						var p = params.split('=');
+						return [p[0], decodeURIComponent(p[1])];
+					})
+					.object()
+					.value();
+			};
+
+			function fetchResults(callback){
+				$.get('/getbikes', searchParameters, callback);
+				// fetches the bikes for current searchParameters
+				// once it has that data, calls callback function
 			}
-			return _
-				.chain(query.split('&'))
-				.map(function(params) {
-					var p = params.split('=');
-					return [p[0], decodeURIComponent(p[1])];
-				})
-				.object()
-				.value();
-		};
 
-		savedSearch = getQueryParams();
-		// parse and set search params if there's a search string in URL
-		if (savedSearch){
-			searchParameters = getQueryParams();
-			// make sure boolean option ends up in right format
-			searchParameters["searchOnMapMove"] = JSON.parse(searchParameters["searchOnMapMove"]);
-			fetchResults(function(data){
-				updateResults(data);
+			events.on('parameter-update', function() {
+				fetchResults(function(data){
+					console.log("returning results with these search filters ", searchParameters)
+
+					updateResults(data);
+				});
+				// updates url search string	
+				var hashString = "?" + hashSearch(searchParameters);
+				history.replaceState(null, null, hashString);
+			});
+
+			function updateResults(data){
+				var response = data["response"];
+				results.results = response["listings"]; // array of listings
+				results.numResults = response["num_results"];  // length of listings array
+				results.pageLower = response["page_range_lower"]; // lower bound of items to display
+				results.pageUpper = response["page_range_upper"]; // lower bound of items to display
+				results.totalResults = response["total_results"]; // total number of results found for query
+				results.favorites = response["favorites"];
+				// trigger results-update so search panel, pagination, and listings update
+				events.trigger('results-update', searchParameters["currentPage"]);
+			}
+
+			window.savedSearch = getQueryParams();
+			// parse and set search params if there's a search string in URL
+			if (savedSearch){
+				searchString = getQueryParams();
+				// make sure search options end up in right format
+				searchParameters["searchOnMapMove"] = JSON.parse(searchString["searchOnMapMove"]);
+				if (searchString["sizes"]){
+					searchParameters["sizes"] = searchString["sizes"].split(',');
+				}
+				if (searchString["materials"]){
+					searchParameters["materials"] = searchString["materials"].split(',');
+				}
+				if (searchString["handlebars"]){
+					searchParameters["handlebars"] = searchString["handlebars"].split(',');
+				}
 				events.trigger("set-filter-knobs");
-			});
-		}
-		else{
-			fetchResults(function(data){
-				updateResults(data);
-			});
-		}
+				debugger;
+				events.trigger("parameter-update");
+			}
+
+			if(!savedSearch) {
+				fetchResults(function(data){
+					updateResults(data);
+				});
+			}
+		});
+
 
 	};
 
