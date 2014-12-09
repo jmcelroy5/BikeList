@@ -4,8 +4,8 @@ from flask_oauth import OAuth
 import os
 
 app = Flask(__name__)
-app.secret_key = 'A0Zr98j/32345(679R~XHH!jmN]LWX/,?RT'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bikelist.db'
+app.secret_key = os.environ.get('FLASK_APP_SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///bikelist'
 
 db = SQLAlchemy(app)
 
