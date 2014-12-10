@@ -265,7 +265,7 @@ window.App = (function(){
 			results.results = response["listings"]; // array of listings
 			results.numResults = response["num_results"];  // length of listings array
 			results.pageLower = response["page_range_lower"]; // lower bound of items to display
-			results.pageUpper = response["page_range_upper"]; // lower bound of items to display
+			results.pageUpper = response["page_range_upper"]; // upper bound of items to display
 			results.totalResults = response["total_results"]; // total number of results found for query
 			results.favorites = response["favorites"];
 			// trigger results-update so search panel, pagination, and listings update
@@ -470,7 +470,7 @@ window.App = (function(){
 					});
 					
 					// Create JQuery object for bike photo	
-					var $bikePhoto = $("<div class='img'>");
+					var $bikePhoto = $("<a href='" + listing.url + "'><div class='img'></a>");
 					$bikePhoto.attr('style','background-image:url("' + listing.photo + '");');
 					$bikePhoto.html("<div class='pricetag'>  $" + escapeHTML(listing.price) + "</div>");
 					
