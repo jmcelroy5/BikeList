@@ -11,7 +11,7 @@ class Bike(db.Model):
 	user = db.relationship("User", backref=db.backref("bikes"))
 	
 	# Required attributes to add a bike to BikeIndex (according to API docs)
-	serial = db.Column(db.String(20), nullable=False)
+	serial = db.Column(db.String(50), nullable=False)
 	manufacturer = db.Column(db.String(64), nullable=True)
 	frame_colors = db.Column(db.String(64), nullable=True)
 	rear_tire_narrow = db.Column(db.Boolean, nullable=True)
@@ -24,10 +24,10 @@ class Bike(db.Model):
 	# stolen = db.Column(db.Integer, nullable=False)		# Not including this - all bikes should be vetted
 
 	# Attributes I might want to require for valid listing
-	size = db.Column(db.String(5), nullable=True)
+	size = db.Column(db.String(20), nullable=True)
 	size_category = db.Column(db.String(5), nullable=True)
-	photo = db.Column(db.String(64), nullable=True)
-	thumb = db.Column(db.String(64), nullable=True)
+	photo = db.Column(db.String(200), nullable=True)
+	thumb = db.Column(db.String(200), nullable=True)
 	handlebar_type = db.Column(db.String(20), nullable=True)	
 
 	# Secondary attributes
@@ -37,7 +37,7 @@ class Bike(db.Model):
 	paint_description = db.Column(db.String(64), nullable=True)
 	front_tire_narrow = db.Column(db.Boolean, nullable=True) 
 	frame_material = db.Column(db.String(30), nullable=True) 	
-	front_wheel_size = db.Column(db.String(10), nullable=True) 
+	front_wheel_size = db.Column(db.String(20), nullable=True) 
 	front_wheel_size_iso_bsd = db.Column(db.Integer, nullable=True)
 	front_gear_type = db.Column(db.String(10), nullable=True)	
 	rear_gear_type = db.Column(db.String(10), nullable=True)	
@@ -55,7 +55,7 @@ class User(db.Model):
 	first_name = db.Column(db.String(64))
 	last_name = db.Column(db.String(64))
 	email = db.Column(db.String(120), unique=True)
-	avatar = db.Column(db.String(120))	# profile photo
+	avatar = db.Column(db.String(300))	# profile photo
 	facebook_url = db.Column(db.String(120))
 
 	# Store access token for FB/BI?
@@ -89,7 +89,7 @@ class Listing(db.Model):
 	asking_price = db.Column(db.Integer, nullable=True)
 	latitude = db.Column(db.Float, nullable=True)
 	longitude = db.Column(db.Float, nullable=True)
-	additional_text = db.Column(db.String(500),nullable=True)
+	additional_text = db.Column(db.String(2000),nullable=True)
 	email = db.Column(db.String(120), nullable=False)
 
 	# Listing also has comments attribute (list of comments about that bike)
