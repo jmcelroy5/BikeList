@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_APP_SECRET_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///bikelist')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('HEROKU_POSTGRESQL_CRIMSON_URL', 'postgresql:///bikelist')
 
 db = SQLAlchemy(app)
 
