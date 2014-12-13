@@ -148,6 +148,8 @@ def index():
 def get_bikes():
 	""" get search results """
 	# Get user-submitted filters from form
+	print "get bikes called!"
+
 	sizes = request.args.getlist('sizes[]') 		
 	materials = request.args.getlist('materials[]') 		
 	handlebars = request.args.getlist('handlebars[]') 		
