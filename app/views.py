@@ -161,6 +161,7 @@ def get_bikes():
 
 	# Base query for active listings
 	query = db.session.query(Listing, Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active") 
+	# print query
 	# query = Listing.query.join(Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active")
 
 	# Filter for listings within current map view
@@ -207,10 +208,10 @@ def get_bikes():
 	# Initializing response object
 	response = {
 		"listings": [],
-		"num_results": all_listings.count(),
+		"num_results": int(all_listings.count()),
 		"page_range_lower": None,
 		"page_range_upper": None,
-		"total_results": total_count,
+		"total_results": int(total_count),
 	}
 
 	# Building final response object
@@ -229,7 +230,7 @@ def get_bikes():
 		else:
 			response["page_range_lower"] = offset + 1
 		response["page_range_upper"] = response["page_range_lower"] + response["num_results"] - 1
-
+	print "Response object for javascript", response
 	return jsonify(response=response)
 
 @app.route("/fetchbike")
@@ -394,7 +395,7 @@ def listing_success(bike_id):
 	# Use bike_id to get listing
 	listing = db.session.query(Listing).filter(Listing.bike_id == bike_id, Listing.post_status=="Active").one()
 	# Get user from listing
-	user = db.session.query(User).filter_by(id=listing.user_id).one()
+	user = db.session.query(User).filter_by(id=listing.user_id).first()
 	# Use bike_id to get bike
 	bike = db.session.query(Bike).get(bike_id)
 	return render_template("listing.html", bike=bike, user=user, listing=listing)

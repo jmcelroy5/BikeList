@@ -464,18 +464,35 @@ window.App = (function(){
 					var listing = listings[i];
 
 					// Create JQuery object for listing title/link
-					var $listingLink = $("<a />",{
-						href: listing.url,
-						text: listing.title
+					var $titleLink = $("<a />",{
+						"href": listing.url,
+						"text": listing.title
 					});
 					
-					// Create JQuery object for bike photo	
-					var $bikePhoto = $("<a href='" + listing.url + "'><div class='img'></a>");
-					$bikePhoto.attr('style','background-image:url("' + listing.photo + '");');
-					$bikePhoto.html("<div class='pricetag'>  $" + escapeHTML(listing.price) + "</div>");
-					
-					var $li = $("<li class='listing-link' data-id='"+ listing.id + "' >");
-					$li.append($bikePhoto, $listingLink);
+					// Create JQuery object for bike photo link
+					var $photoLink = $("<a />",{
+						"href": listing.url
+					});
+
+					// var $bikePhoto = $("<div class='img'>");
+					// $bikePhoto.html("<div class='pricetag'>  $" + escapeHTML(listing.price) + "</div>");
+					// $bikePhoto.attr('style','background-image:url("' + listing.photo + '");');
+
+					var $bikePhoto = $("<div />", {
+						"class": "img",
+						"html": "<div class='pricetag'>  $" + escapeHTML(listing.price) + "</div>",
+						"style": 'background-image:url("' + listing.photo + '")'
+					});
+
+					$photoLink.append($bikePhoto);
+
+					// var $li = $("<li class='listing-link' data-id='"+ listing.id + "' >");
+					var $li = $("<li />",{
+						"class": "listing-link",
+						"data-id": listing.id
+					});
+
+					$li.append($photoLink, $titleLink);
 
 					if (currentUser["id"]) {
 						var $heartIcon = $("<i class='heart fa fa-heart-o' data-id='" + listing.id + "'></i>");
