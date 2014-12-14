@@ -209,6 +209,8 @@ def get_bikes():
 	# Finish the query
 	all_listings = query.limit(limit)	
 
+	print "FIRST 5 LISTINGS FOUND\n\n\n\n", all_listings.limit(5).all()
+
 	# Initializing response object
 	response = {
 		"listings": [],
@@ -235,7 +237,7 @@ def get_bikes():
 			response["page_range_lower"] = offset + 1
 		response["page_range_upper"] = response["page_range_lower"] + response["num_results"] - 1
 	
-	print "Response object for javascript", response
+	# print "Response object for javascript", response
 	
 	return jsonify(response=response)
 
