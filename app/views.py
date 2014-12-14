@@ -161,9 +161,11 @@ def get_bikes():
 	long_min = request.args.get('longitudeMin')
 	long_max = request.args.get('longitudeMax')
 
+	print "request from js", sizes, materials, handlebars, min_price
+
 	# Base query for active listings
-	query = db.session.query(Listing, Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active") 
-	# print query
+	query = db.session.query(model.Listing, model.Bike).filter(model.Listing.bike_id == model.Bike.id, model.Listing.post_status=="Active") 
+	print query
 	# query = Listing.query.join(Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active")
 
 	# Filter for listings within current map view
@@ -232,7 +234,9 @@ def get_bikes():
 		else:
 			response["page_range_lower"] = offset + 1
 		response["page_range_upper"] = response["page_range_lower"] + response["num_results"] - 1
+	
 	print "Response object for javascript", response
+	
 	return jsonify(response=response)
 
 @app.route("/fetchbike")
