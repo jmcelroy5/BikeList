@@ -37,3 +37,8 @@ bikeindex = oauth2.remote_app('bikeindex',
     request_token_params={'scope': ('public'), 'response_type': 'code'})
 
 from app import views, model
+
+
+
+
+

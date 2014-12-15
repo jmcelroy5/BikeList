@@ -11,6 +11,7 @@ httplib2==0.9
 itsdangerous==0.24
 oauth2==1.5.211
 oauthlib==0.7.2
+psycopg2==2.5.4
 pysqlite==2.6.3
 python-openid==2.2.5
 python-social-auth==0.2.1
