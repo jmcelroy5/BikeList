@@ -117,9 +117,10 @@
 	width: 634px;
 }
 
-#search-panel{
-	float:right;
-	width: 650px;
+.search-panel {
+	float: right;
+	width: 630px;
+	margin-top: -50;
 }
 
 #search-results{
@@ -148,12 +149,12 @@
 #next, #prev, #search-panel, #filter-clear{
 	color: #4d4d4d;
 }
-
+/*
 #listing-form {
 	width:50%;
 	float:left;
 }
-
+*/
 .attr-title{
 	display: inline-block;
 	margin-right: .4em;
@@ -170,26 +171,18 @@
 }
 
 .attr-list th{
-	border:0px;
+	border:0;
 }
 
 .addtl-text{
 	width:70%;
 }
 
-.bike-pic{
-	width:100%;
-	display:block;
-	float: left;
-	margin: 0px;
-	border-radius:5 px;
-}
-
 .bike-pic-sm{
 	width:300px;
 	display:block;
 	float: left;
-	margin: 0px;
+	margin: 0;
 	border-radius:5 px;
 }
 
@@ -221,7 +214,7 @@
     position: fixed;
     margin-bottom:0px;
     overflow:hidden;
-	}
+}
 
 #listing-wrapper{
 	float:right;
@@ -230,18 +223,23 @@
 	position: absolute;
 }
 
-#listing-form{
+/*#listing-form{
 	margin-top:50px;
 }
+*/
 
 /* listing_form.html */
 
-#listing-form-wrapper{
-	float:right;
-	width: 746px;
-	margin-left: 75px;
-	top:140px;
-	position: absolute;
+
+.dollar-sign input {
+    padding-left: 22px; 
+
+}
+
+.dollar-sign span {
+    position: absolute;
+    padding: 7px 12px;
+    pointer-events: none;
 }
 
 #mapbox{
@@ -255,16 +253,8 @@
     overflow:hidden;
   }
 
-#search-panel{
-	float:right;
-	width: 746px;
-	margin-left: 430px;
-	position: absolute;
-	margin-top: -66px;
-}
-
 #listing-form{
-	margin-top:10px;
+	margin-top: 350;
 	margin-bottom:100px;
 }
 
@@ -276,6 +266,13 @@
 	display:block;
 	margin-top:10px;
 }
+
+#listing-form-panel{
+	float:right;
+	width: 589px;
+	margin-top:-100;
+}
+
 
 /* mylistings.html */
 

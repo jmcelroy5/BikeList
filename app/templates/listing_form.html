@@ -7,12 +7,15 @@
 		<div id="mapbox" class="col-lg-6">
 		</div>
 
-		<div id="search-panel" class="col-lg-6">
+		<div id="listing-form-panel" class="col-lg-6">
 			<h1> Complete Your Listing </h1>
 			<img class="bike-pic" src={{ bike.photo }}>
 			<form id="listing-form" action="#" method='POST'>
 				<h4>Asking price</h4>
-				<input id="price" type="number" name="price" class="form-control" placeholder="$" required></input><br>  <!--Numbers only-->
+				<div class="dollar-sign">
+					<span>$</span>
+					<input id="price" type="number" name="price" class="form-control" required></input><br>
+				<div>
 				<h4>Your location</h4>
 				<input id="location" type="text" name="zipcode" class="form-control" required placeholder="Enter your address, cross streets, or zipcode"></input><br>
 				<h4>Your email</h4>
