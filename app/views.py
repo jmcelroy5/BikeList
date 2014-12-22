@@ -55,6 +55,7 @@ def add_new_user():
 	else:
 		return existing_user
 
+@app.route("/getuserphoto")
 def get_user_photo():
 	photo = facebook.get('/me/picture?redirect=0&height=1000&type=normal&width=1000').data
 	photo_url = photo['data']['url']
@@ -148,7 +149,6 @@ def index():
 def get_bikes():
 	""" get search results """
 	# Get user-submitted filters from form
-	print "get bikes called!"
 
 	sizes = request.args.getlist('sizes[]') 		
 	materials = request.args.getlist('materials[]') 		
@@ -161,11 +161,8 @@ def get_bikes():
 	long_min = request.args.get('longitudeMin')
 	long_max = request.args.get('longitudeMax')
 
-	print "request from js", sizes, materials, handlebars, min_price
-
 	# Base query for active listings
 	query = db.session.query(model.Listing, model.Bike).filter(model.Listing.bike_id == model.Bike.id, model.Listing.post_status=="Active") 
-	print query
 	# query = Listing.query.join(Bike).filter(Listing.bike_id == Bike.id, Listing.post_status=="Active")
 
 	# Filter for listings within current map view
@@ -209,8 +206,6 @@ def get_bikes():
 	# Finish the query
 	all_listings = query.limit(limit)	
 
-	print "FIRST 5 LISTINGS FOUND\n\n\n\n", all_listings.limit(5).all()
-
 	# Initializing response object
 	response = {
 		"listings": [],
@@ -236,8 +231,6 @@ def get_bikes():
 		else:
 			response["page_range_lower"] = offset + 1
 		response["page_range_upper"] = response["page_range_lower"] + response["num_results"] - 1
-	
-	# print "Response object for javascript", response
 	
 	return jsonify(response=response)
 
