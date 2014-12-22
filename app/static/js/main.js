@@ -126,44 +126,46 @@ window.App = (function(){
 
 		var placeMarker = function(location) {
 			geocoder.geocode({address:location}, function(results){
-			latitude = results[0].geometry.location["k"];
-			longitude = results[0].geometry.location["B"];
+				console.log(results[0].geometry.location);
+				latitude = results[0].geometry.location.lat();
+				longitude = results[0].geometry.location.lng();
+				console.log(latitude, longitude);
 
-			map.setView([latitude, longitude], 14);
+				map.setView([latitude, longitude], 14);
 
-			// If there is already a marker, delete it
-			if (typeof markerLayer !== 'undefined'){
-				markerLayer.clearLayers();
-			}
-
-			markerList = [];
-
-			// Create new marker/layer
-			newMarker = L.mapbox.featureLayer();
-
-			// Marker location and properties
-			var geoJson = [{
-				type: 'Feature',
-				geometry: {
-					"type": "Point",
-					"coordinates": [longitude, latitude]
-				},
-				properties: {
-					'marker-size': 'large',
-					'marker-color':  '#00529f',
-					'marker-symbol': 'bicycle'
+				// If there is already a marker, delete it
+				if (typeof markerLayer !== 'undefined'){
+					markerLayer.clearLayers();
 				}
-			}];
 
-			// Set geoJSON
-			newMarker.setGeoJSON(geoJson);
+				markerList = [];
 
-			// Add marker to the list 
-			markerList.push(newMarker);
-			// so we can clear layer if user needs to place a new marker
-			markerLayer = L.layerGroup(markerList);
-			// and finally, add it to the map
-			markerLayer.addTo(map);
+				// Create new marker/layer
+				newMarker = L.mapbox.featureLayer();
+
+				// Marker location and properties
+				var geoJson = [{
+					type: 'Feature',
+					geometry: {
+						"type": "Point",
+						"coordinates": [longitude, latitude]
+					},
+					properties: {
+						'marker-size': 'large',
+						'marker-color':  '#00529f',
+						'marker-symbol': 'bicycle'
+					}
+				}];
+
+				// Set geoJSON
+				newMarker.setGeoJSON(geoJson);
+
+				// Add marker to the list 
+				markerList.push(newMarker);
+				// so we can clear layer if user needs to place a new marker
+				markerLayer = L.layerGroup(markerList);
+				// and finally, add it to the map
+				markerLayer.addTo(map);
 			});
 		};
 	}; 
