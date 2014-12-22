@@ -168,7 +168,7 @@ window.App = (function(){
 				markerLayer.addTo(map);
 			});
 		};
-	}; 
+	};
 
 	modules["search-page"] = function(config){
 
@@ -270,6 +270,7 @@ window.App = (function(){
 			results.pageUpper = response["page_range_upper"]; // upper bound of items to display
 			results.totalResults = response["total_results"]; // total number of results found for query
 			results.favorites = response["favorites"];
+
 			// trigger results-update so search panel, pagination, and listings update
 			events.trigger('results-update', searchParameters["currentPage"]);
 		}
@@ -300,13 +301,19 @@ window.App = (function(){
 			}.bind(this));
 			// Another way: events.on('listing-mouse-out', this.setMarkerInactive.bind(this));
 
+			events.on('map-search-change', function(){
+				this.placeMarkers();
+			}.bind(this));
+
 			// User can choose whether they want map move to trigger search
 			$("#limit-map-search input:checkbox").change(function(){
 				if ($(this).is(':checked')){
 					window.map.enableMapSearch();
+					events.trigger('map-search-change');
 				}
 				else{
 					window.map.disableMapSearch();
+					events.trigger('map-search-change');
 				}
 			});
 		}
@@ -324,7 +331,6 @@ window.App = (function(){
 			this.map.on('dragend', this.getViewCoords.bind(this));
 			this.map.on('zoomend', this.getViewCoords.bind(this));
 			setParameter("searchOnMapMove",true);
-			events.trigger('parameter-update');
 		};
 
 		Map.prototype.disableMapSearch = function(){
@@ -335,7 +341,6 @@ window.App = (function(){
 			setParameter('longitudeMin', null);
 			setParameter('longitudeMax', null);
 			setParameter("searchOnMapMove", false);
-			events.trigger('parameter-update');
 		};
 
 		Map.prototype.initialize = function() {
@@ -476,10 +481,6 @@ window.App = (function(){
 						"href": listing.url
 					});
 
-					// var $bikePhoto = $("<div class='img'>");
-					// $bikePhoto.html("<div class='pricetag'>  $" + escapeHTML(listing.price) + "</div>");
-					// $bikePhoto.attr('style','background-image:url("' + listing.photo + '");');
-
 					var $bikePhoto = $("<div />", {
 						"class": "img",
 						"html": "<div class='pricetag'>  $" + escapeHTML(listing.price) + "</div>",
@@ -488,7 +489,6 @@ window.App = (function(){
 
 					$photoLink.append($bikePhoto);
 
-					// var $li = $("<li class='listing-link' data-id='"+ listing.id + "' >");
 					var $li = $("<li />",{
 						"class": "listing-link",
 						"data-id": listing.id
