@@ -28,29 +28,32 @@ BikeList is an alternative used bike marketplace that introduces more transparen
 
 ### How to run BikeList locally
 
-1. Create a virtual environment
+1. Create a virtual environment 
 
-<section>
-	> virtualenv env
-	> source env/bin/activate
-</section>
+```
+> virtualenv env
+> source env/bin/activate
+```
 
 2. Install the dependencies
 
-<section>
-	> pip install -r requirements
-</section>
+```
+> pip install -r requirements
+```
 
-3. Run the app
+3. Run the app 
 
-<section>
-	> python app.py
-</section>
+`> python app.py`
 
 4. Open your browser and navigate to 
 
-<section>
-	http://localhost:5000/
-</section>
+```
+http://localhost:5000/
+```
 
-Note: Login requires that you have a Facebook 
+Note: The login functionality requires that you have a Facebook app key and secret set as local environment variables:
+
+```
+FACEBOOK_APP_SECRET
+FACEBOOK_APP_ID
+```
