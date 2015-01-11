@@ -43,7 +43,9 @@ BikeList is an alternative used bike marketplace that introduces more transparen
 
 3. Run the app 
 
-`> python app.py`
+```
+> python app.py
+```
 
 4. Open your browser and navigate to 
 
