@@ -1,7 +1,7 @@
 BikeList
 --------
 
-*** Live Demo ***
+**Live Demo**
 
 http://bikelist.herokuapp.com/
 
@@ -28,32 +28,32 @@ BikeList is an alternative used bike marketplace that introduces more transparen
 
 ### How to run BikeList locally
 
-1. Create a virtual environment 
+Create a virtual environment 
 
 ```
 > virtualenv env
 > source env/bin/activate
 ```
 
-2. Install the dependencies
+Install the dependencies
 
 ```
 > pip install -r requirements
 ```
 
-3. Run the app 
+Run the app 
 
 ```
 > python app.py
 ```
 
-4. Open your browser and navigate to 
+Open your browser and navigate to 
 
 ```
 http://localhost:5000/
 ```
 
-Note: The login functionality requires that you have a Facebook app key and secret set as local environment variables:
+Note: The login functionality requires that you have a Facebook app id and secret set as local environment variables:
 
 ```
 FACEBOOK_APP_SECRET
