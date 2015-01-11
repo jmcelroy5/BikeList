@@ -83,7 +83,6 @@
 .pricetag{
 	width:50px;
 	height:25px;
-	z-index: 0.5;
 	background-color: #494949;
 	opacity: 0.9;
 	position: absolute;

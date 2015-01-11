@@ -5,14 +5,13 @@ import os
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_APP_SECRET_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql:///bikelist')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL','sqlite:///bikelist.db')
 
 db = SQLAlchemy(app)
 
 # Initializing OAuth
-
-FACEBOOK_APP_SECRET = os.environ.get('FACEBOOK_APP_SECRET')
-FACEBOOK_APP_ID = os.environ.get('FACEBOOK_APP_ID')
+FACEBOOK_APP_SECRET = os.environ.get('FACEBOOK_APP_SECRET', 'Not set')
+FACEBOOK_APP_ID = os.environ.get('FACEBOOK_APP_ID', 'Not set')
 
 oauth = OAuth()
 

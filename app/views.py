@@ -148,8 +148,8 @@ def index():
 @app.route("/getbikes")
 def get_bikes():
 	""" get search results """
-	# Get user-submitted filters from form
 
+	# Get user-submitted filters from form
 	sizes = request.args.getlist('sizes[]') 		
 	materials = request.args.getlist('materials[]') 		
 	handlebars = request.args.getlist('handlebars[]') 		
@@ -247,7 +247,7 @@ def add_bike():
 	""" Takes bike object from BikeIndex API and adds bike info to db"""
 
 	bike_JSON= request.form.get("bike")	# Get JSON bike object from ajax ({bike: bikedata})
-	bike = json.loads(bike_JSON)	# JSON string --> Python dictionary
+	bike = json.loads(bike_JSON) # JSON string --> Python dictionary
 
 	if bike["stolen"]:
 		return "Stolen bike! Do not add."

@@ -23,18 +23,18 @@ def get_all_bikes():
 	for bike in bikes:
 		print (bike.id, bike.title)
 
-def populate_listings_SF():
+def populate_listings():
 	bike_list = model.Bike.query.all()
-	for bike in bike_list[:45]:
+	for bike in bike_list:
 		listing = model.Listing()
 
 		listing.bike_id = bike.id
+		listing.user_id = 1
 		listing.post_date = datetime.datetime.now()
-		listing.post_expiration = datetime.datetime.now() + datetime.timedelta(30) # Post expires 30 days from now
+		listing.post_expiration = datetime.datetime.now() + datetime.timedelta(30) 
 		listing.post_status = "Active"
 		listing.asking_price = randrange(100,1500)
-		listing.latitude = 	uniform(37.75, 37.8) 			# Random lat in  SF 
-		listing.longitude = uniform(-122.478,-122.4)  		# Random long in SF
+
 		listing.additional_text = "Asymmetrical aesthetic Thundercats bicycle rights mustache Kickstarter cred organic kogi, stumptown put a bird on it. Single-origin coffee letterpress put a bird on it ugh sustainable. Lo-fi Pinterest church-key tofu, sustainable roof party banjo kale chips American Apparel Williamsburg mumblecore. Etsy beard PBR gastropub cray flexitarian. Sustainable yr mlkshk pickled tilde semiotics, Wes Anderson High Life chia ugh put a bird on it literally Banksy slow-carb squid. Tofu street art craft beer, brunch post-ironic paleo roof party meditation Tumblr banjo. Direct trade messenger bag swag pickled deep v."
 		listing.email = "asdvalenzuela@gmail.com"
 		db.session.add(listing)
@@ -43,28 +43,16 @@ def populate_listings_SF():
 	rows = model.Listing.query.count()
 	print rows, "listings generated successfuly!"
 
-def populate_listings_EB():
-	bike_list = model.Bike.query.all()
-	for bike in bike_list[45:]:
-		listing = model.Listing()
-
-		listing.bike_id = bike.id
-		listing.post_date = datetime.datetime.now()
-		listing.post_expiration = datetime.datetime.now() + datetime.timedelta(30) # Post expires 30 days from now
-		listing.post_status = "Active"
-		listing.asking_price = randrange(100,1500)
+def listing_locations():
+	listings = model.Listing.query.all()
+	for listing in listings[:45]:
+		listing.latitude = 	uniform(37.75, 37.8) 			# SF
+		listing.longitude = uniform(-122.478,-122.4)  		# SF
+	for listing in listings[45:]:
 		listing.latitude = 	uniform(37.79717, 37.89016)			# East Bay
 		listing.longitude = uniform(-122.2968864, -122.243671)	# East Bay
-		listing.additional_text = "Asymmetrical aesthetic Thundercats bicycle rights mustache Kickstarter cred organic kogi, stumptown put a bird on it. Single-origin coffee letterpress put a bird on it ugh sustainable. Lo-fi Pinterest church-key tofu, sustainable roof party banjo kale chips American Apparel Williamsburg mumblecore. Etsy beard PBR gastropub cray flexitarian. Sustainable yr mlkshk pickled tilde semiotics, Wes Anderson High Life chia ugh put a bird on it literally Banksy slow-carb squid. Tofu street art craft beer, brunch post-ironic paleo roof party meditation Tumblr banjo. Direct trade messenger bag swag pickled deep v."
-		listing.email = "asdvalenzuela@gmail.com"
-		db.session.add(listing)
 
-	db.session.commit()
-
-	rows = model.Listing.query.count()
-	print rows, "listings generated successfuly!"
-
-def create_user():
+def create_test_user():
 	me = model.User()
 
 	me.facebook_id = "2335427115026"
@@ -200,3 +188,8 @@ def populate_bikes(filename):
 	rows = model.Bike.query.count()
 	return rows, "bikes added to database successfully"
 
+if __name__ == "__main__":
+	model.create_tables()
+	create_test_user()
+	populate_bikes("_testbikes.txt")
+	populate_listings()
