@@ -22,9 +22,9 @@ BikeList is an alternative used bike marketplace that introduces more transparen
 
 ### Technology Stack
 
-**Application:** Python, Flask, Jinja, SQLAlchemy, PostgreSQL
-**APIs:** BikeIndex, Facebook OAuth, Mapbox.js, Google Geocoding
-**Front-End**: HTML/CSS, Bootstrap, JQuery, JavaScript, Backbone 
+**Application:** Python, Flask, Jinja, SQLAlchemy, PostgreSQL    
+**APIs:** BikeIndex, Facebook OAuth, Mapbox.js, Google Geocoding    
+**Front-End**: HTML/CSS, Bootstrap, JQuery, JavaScript, Backbone   
 
 ### How to run BikeList locally
 
