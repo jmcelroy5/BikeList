@@ -46,8 +46,8 @@ def populate_listings():
 def listing_locations():
 	listings = model.Listing.query.all()
 	for listing in listings[:45]:
-		listing.latitude = 	uniform(37.75, 37.8) 			# SF
-		listing.longitude = uniform(-122.478,-122.4)  		# SF
+		listing.latitude = 	uniform(37.75, 37.8) 		# SF
+		listing.longitude = uniform(-122.478,-122.4)	# SF
 	for listing in listings[45:]:
 		listing.latitude = 	uniform(37.79717, 37.89016)			# East Bay
 		listing.longitude = uniform(-122.2968864, -122.243671)	# East Bay
