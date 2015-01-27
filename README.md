@@ -38,7 +38,7 @@ Create a virtual environment
 Install the dependencies
 
 ```
-> pip install -r requirements
+> pip install -r requirements.txt
 ```
 
 Run the app 

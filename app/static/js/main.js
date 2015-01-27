@@ -50,7 +50,7 @@ window.App = (function(){
 		var bikeLocationMap = function(){
 			//Connect to MapBox API
 			L.mapbox.accessToken = "pk.eyJ1Ijoiam1jZWxyb3kiLCJhIjoiVVg5eHZldyJ9.FFzKtamuKHb_8_b_6fAOFg";
-			// Initiate map 
+			// Initialize map 
 			map = L.mapbox.map('bikeLocation', 'examples.map-i86nkdio');
 
 			// get coordinates of listing 
@@ -95,7 +95,7 @@ window.App = (function(){
 
 		initializeMap();
 
-		geocoder = new google.maps.Geocoder();
+		var geocoder = new google.maps.Geocoder();
 
 		$("#location").blur(function(e){
 			var value = $(this).val();
@@ -122,14 +122,13 @@ window.App = (function(){
 				});
 			});
 
-		markerList = [];
+		var markerList = [];
 
 		var placeMarker = function(location) {
 			geocoder.geocode({address:location}, function(results){
-				console.log(results[0].geometry.location);
-				latitude = results[0].geometry.location.lat();
-				longitude = results[0].geometry.location.lng();
-				console.log(latitude, longitude);
+
+				var latitude = results[0].geometry.location.lat();
+				var longitude = results[0].geometry.location.lng();
 
 				map.setView([latitude, longitude], 14);
 
@@ -138,10 +137,10 @@ window.App = (function(){
 					markerLayer.clearLayers();
 				}
 
-				markerList = [];
+				var markerList = [];
 
 				// Create new marker/layer
-				newMarker = L.mapbox.featureLayer();
+				var newMarker = L.mapbox.featureLayer();
 
 				// Marker location and properties
 				var geoJson = [{
@@ -159,7 +158,6 @@ window.App = (function(){
 
 				// Set geoJSON
 				newMarker.setGeoJSON(geoJson);
-
 				// Add marker to the list 
 				markerList.push(newMarker);
 				// so we can clear layer if user needs to place a new marker
@@ -363,8 +361,6 @@ window.App = (function(){
 
 			var listings = results["results"];
 
-			this.geoJson = [];
-
 			this.markerLayer = L.mapbox.featureLayer();
 
 			// Defining custom HTML for the popups
@@ -380,6 +376,8 @@ window.App = (function(){
 
 			// object that will be used to map listing cards to their map marker
 			this.markerMap = {};
+			// list to hold the marker geojson models
+			this.geoJson = [];
 
 			for (var i = 0; i < listings.length; i++){
 
@@ -431,12 +429,12 @@ window.App = (function(){
 		};
 
 		// find out if an item is in a given array
-		include = function(arr,obj) {
+		var include = function(arr,obj) {
 			return (arr.indexOf(obj) != -1);
 		};
 
 		// escape user input for display
-		escapeHTML = function(html) {
+		var escapeHTML = function(html) {
 		return String(html)
 			.replace(/&/g, '&amp;')
 			.replace(/"/g, '&quot;')
@@ -454,11 +452,11 @@ window.App = (function(){
 			// });
 
 			events.on('results-update', function() {
-				$searchResults = $('#search-results');
+				var $searchResults = $('#search-results');
 				$searchResults.empty();
 
 				// Get the updated search results
-				listings = results["results"];
+				var listings = results["results"];
 
 				if (listings.length < 1){
 					$searchResults.html("<h4>No bikes found. Expand your search and try again.</h4>");
@@ -759,11 +757,6 @@ window.App = (function(){
 
 	return App;
 })();
-
-
-
-
-
 
 
 
